@@ -1,0 +1,259 @@
+# 03. Declaración de la visión V_1_0_0
+
+## 1. Información general
+
+| Campo | Información |
+|---|---|
+| **Nombre del Proyecto** | Plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo |
+| **Producto / Sistema** | EcoLogística Huancayo |
+| **Ámbito** | Ciudad de Huancayo |
+| **Versión** | 1.0.0 |
+| **Fecha** | 28 de agosto de 2026 |
+| **Integrantes** | Flores, Toribio, Ricardo Miguel; Janampa, Navarro, Clinton; Rupay, Chira, Rosalyn Exkra; Veliz de la Cruz, Carlos Adrian |
+
+---
+
+# 2. Propósito de la visión
+
+La visión define el destino esperado del producto, los usuarios a quienes se dirige, la necesidad que busca atender y el valor diferencial que se espera obtener mediante la solución.
+
+La visión se utilizará como referencia para mantener alineados el alcance, los requisitos, el diseño y el desarrollo del producto.
+
+---
+
+# 3. Plantilla de Visión del Producto
+
+### Para
+
+**Planificadores, supervisores y responsables de operaciones de última milla, así como conductores que ejecutan las rutas de distribución en la ciudad de Huancayo.**
+
+### Quienes
+
+**Necesitan planificar, optimizar, visualizar y dar seguimiento a rutas de última milla considerando restricciones operativas y criterios de eficiencia logística, económica y ambiental.**
+
+### El / La
+
+**EcoLogística Huancayo**
+
+### Que es un
+
+**Sistema web de planificación y optimización de rutas sostenibles de última milla, complementado con una PWA para el modo conductor.**
+
+### Que
+
+**Permite generar y evaluar rutas mediante un Algoritmo Genético, visualizar recorridos y consultar indicadores que apoyen la toma de decisiones sobre la distribución.**
+
+### A diferencia de
+
+**La planificación manual o de herramientas que se limitan a representar rutas sin incorporar en el proceso de este proyecto un mecanismo específico de optimización basado en Algoritmo Genético y criterios de sostenibilidad.**
+
+### Nuestro producto
+
+**Integra gestión de pedidos, vehículos y conductores, restricciones de planificación, optimización mediante Algoritmo Genético, ruteo, visualización cartográfica, indicadores y operación mediante PWA en una plataforma orientada al contexto de última milla de Huancayo.**
+
+---
+
+# 4. Declaración consolidada de la visión
+
+> **EcoLogística Huancayo** será una plataforma web con Algoritmo Genético para apoyar la planificación y optimización de rutas sostenibles de última milla en Huancayo, permitiendo generar alternativas de rutas, visualizar recorridos y evaluar indicadores logísticos, económicos y ambientales, con una interfaz PWA para el conductor.
+
+La visión prioriza la generación de valor mediante una herramienta que permita transformar datos de pedidos y recursos disponibles en alternativas de planificación que puedan ser evaluadas y comparadas.
+
+---
+
+# 5. Problema que busca atender
+
+La última milla requiere coordinar múltiples pedidos, puntos de entrega, vehículos, conductores y restricciones.
+
+Cuando la planificación depende principalmente de procedimientos manuales o herramientas no orientadas al objetivo específico del proyecto, puede resultar difícil:
+
+- Comparar diferentes alternativas de rutas.
+- Evaluar el impacto de las restricciones.
+- Reducir recorridos innecesarios.
+- Analizar costos.
+- Considerar indicadores ambientales.
+- Reaccionar ante cambios operativos.
+- Mantener una visión consolidada de la operación.
+
+EcoLogística Huancayo busca proporcionar una herramienta de apoyo para abordar estas necesidades.
+
+---
+
+# 6. Usuarios objetivo
+
+| Usuario | Necesidad principal | Valor esperado |
+|---|---|---|
+| **Responsable logístico** | Tomar decisiones sobre la distribución | Información consolidada y rutas optimizadas |
+| **Planificador / operador** | Generar y revisar rutas | Planificación asistida |
+| **Supervisor** | Controlar desempeño | Indicadores y seguimiento |
+| **Conductor** | Ejecutar la ruta asignada | Consulta sencilla mediante PWA |
+| **Responsable de pedidos** | Mantener información de entregas | Datos organizados y trazables |
+
+---
+
+# 7. Propuesta de valor
+
+La propuesta de valor del producto se basa en cinco elementos:
+
+1. **Optimización:** uso de un Algoritmo Genético para buscar alternativas de rutas.
+2. **Integración:** conexión entre pedidos, vehículos, conductores, rutas y restricciones.
+3. **Visualización:** representación cartográfica de las rutas.
+4. **Sostenibilidad:** incorporación de indicadores económicos y ambientales.
+5. **Accesibilidad:** utilización de una plataforma web responsive y PWA para el conductor.
+
+---
+
+# 8. Objetivos estratégicos del producto
+
+| ID | Objetivo estratégico | KPI | Indicador esperado |
+|---|---|---|---|
+| **OE-01** | Mejorar la eficiencia de las rutas generadas | Distancia total de la solución vs. línea base | Reducción porcentual respecto a la línea base |
+| **OE-02** | Reducir el costo estimado de operación | Costo estimado de la solución vs. línea base | Reducción porcentual respecto a la línea base |
+| **OE-03** | Mejorar el cumplimiento de restricciones | Porcentaje de rutas factibles | Mayor porcentaje de soluciones factibles |
+| **OE-04** | Mejorar el cumplimiento de entregas | Porcentaje de entregas dentro de ventana | Incremento respecto a la línea base |
+| **OE-05** | Reducir el impacto ambiental estimado | Emisiones estimadas vs. línea base | Reducción porcentual estimada |
+| **OE-06** | Facilitar la planificación | Tiempo requerido para generar una propuesta | Reducción del tiempo de planificación frente al proceso de referencia |
+| **OE-07** | Mejorar la adopción del sistema | Porcentaje de usuarios objetivo que completan tareas críticas de prueba | Cumplimiento de las tareas definidas durante pruebas |
+| **OE-08** | Mantener una solución funcional y usable | Porcentaje de casos de prueba aprobados | Cumplimiento de los criterios de aceptación definidos |
+
+> Los valores numéricos objetivo de los KPI deberán establecerse después de obtener la línea base y los escenarios de prueba. No se fijan porcentajes arbitrarios antes de contar con evidencia de referencia.
+
+---
+
+# 9. Alcance de la visión
+
+La visión contempla como capacidades principales:
+
+- Gestión de usuarios y roles.
+- Gestión de pedidos.
+- Gestión de vehículos.
+- Gestión de conductores.
+- Definición de restricciones.
+- Generación de rutas.
+- Optimización mediante Algoritmo Genético.
+- Visualización de rutas.
+- Consulta de indicadores.
+- Gestión de estados de entrega.
+- Registro de incidencias básicas.
+- Modo conductor mediante PWA.
+
+---
+
+# 10. Elementos fuera de la visión inicial
+
+La visión del MVP no considera inicialmente:
+
+- Aplicación móvil nativa independiente.
+- Integraciones empresariales complejas no necesarias para demostrar el MVP.
+- Expansión inmediata a otras ciudades.
+- Automatización completa de todos los procesos logísticos de una empresa.
+- Funcionalidades que no aporten directamente a la demostración de la optimización de rutas.
+- Dependencias comerciales que no sean necesarias para validar la propuesta.
+
+Estos elementos podrán evaluarse como evolución futura mediante control de cambios.
+
+---
+
+# 11. Diferenciadores del producto
+
+Los principales diferenciadores esperados son:
+
+### Optimización mediante Algoritmo Genético
+
+El producto no se limitará a mostrar rutas, sino que incorporará un mecanismo computacional orientado a buscar soluciones dentro de las restricciones definidas.
+
+### Orientación a sostenibilidad
+
+Además de variables logísticas, se contemplarán indicadores económicos y ambientales estimados.
+
+### Integración web + PWA
+
+La solución permitirá gestionar la planificación desde la plataforma web y proporcionar al conductor una interfaz adaptada al uso móvil mediante PWA.
+
+### Contextualización en Huancayo
+
+Los escenarios, restricciones y pruebas estarán orientados al contexto definido para la ciudad de Huancayo.
+
+---
+
+# 12. Visión de evolución
+
+La evolución esperada del producto podrá seguir las siguientes etapas:
+
+```text
+MVP
+│
+├── Gestión básica
+├── Optimización
+├── Mapas
+├── PWA
+└── Indicadores
+      │
+      ▼
+Evolución
+│
+├── Re-optimización avanzada
+├── Mayor variedad de restricciones
+├── Integraciones externas
+├── Analítica histórica
+└── Escalabilidad a otros contextos
+```
+
+La evolución dependerá de los resultados obtenidos durante la validación del MVP.
+
+---
+
+# 13. Criterios de alineación de la visión
+
+Un requisito o funcionalidad será considerado alineado con la visión cuando contribuya directamente a uno o más de los siguientes aspectos:
+
+- Optimización de rutas.
+- Sostenibilidad.
+- Gestión de la última milla.
+- Toma de decisiones logísticas.
+- Visualización de rutas.
+- Ejecución de rutas mediante PWA.
+- Medición de resultados.
+
+Las funcionalidades que no contribuyan significativamente a estos objetivos deberán evaluarse antes de incorporarse al MVP.
+
+---
+
+# 14. Relación con la estrategia del proyecto
+
+La visión es coherente con el enfoque híbrido seleccionado porque:
+
+- Define una dirección estable del producto.
+- Permite establecer una línea base inicial.
+- Admite validación iterativa.
+- Permite ajustar funcionalidades según retroalimentación.
+- Mantiene el objetivo de valor mientras se adapta la solución técnica.
+
+---
+
+# 15. Criterio de éxito de la visión
+
+La visión se considerará alcanzada en el MVP cuando exista una solución funcional capaz de demostrar, mediante escenarios de prueba documentados, que:
+
+1. Los datos de pedidos pueden utilizarse para construir una planificación.
+2. El sistema puede generar soluciones de rutas.
+3. El Algoritmo Genético puede optimizar dichas soluciones bajo las restricciones definidas.
+4. Las rutas pueden visualizarse cartográficamente.
+5. Los usuarios pueden consultar información relevante para la operación.
+6. El conductor puede consultar su ruta mediante la PWA.
+7. Los resultados pueden compararse con una línea base.
+8. Los indicadores definidos pueden calcularse y presentarse.
+
+---
+
+# 16. Siguiente trabajo recomendado
+
+Una vez establecidos los cinco artefactos de la fase de Inicio, el siguiente paso será desarrollar la **especificación detallada de requisitos**, tomando como entradas:
+
+- La Selección del Enfoque.
+- El Acta de Constitución.
+- La Declaración de la Visión.
+- El Registro de Supuestos y Restricciones.
+- El Registro de Interesados.
+
+A partir de ello se deberán definir los requisitos funcionales y no funcionales, reglas de negocio, criterios de aceptación, prioridades y trazabilidad hacia los objetivos del proyecto.
