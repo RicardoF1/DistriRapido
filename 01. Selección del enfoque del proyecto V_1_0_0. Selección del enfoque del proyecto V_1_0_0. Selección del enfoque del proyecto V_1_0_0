@@ -1,0 +1,450 @@
+# 01. Selección del enfoque del proyecto V_1_0_0
+
+## 1. Información general
+
+| Campo | Información |
+|---|---|
+| **Título del proyecto** | Plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo |
+| **Nombre del sistema** | EcoLogística Huancayo |
+| **Ámbito de aplicación** | Ciudad de Huancayo |
+| **Tipo de proyecto** | Desarrollo de una solución de software para optimización de rutas de última milla |
+| **Enfoque seleccionado** | Híbrido con predominio adaptativo |
+| **Versión** | 1.0.0 |
+| **Estado** | Línea base inicial |
+
+---
+
+# 2. Contexto del proyecto
+
+El proyecto tiene como finalidad desarrollar una plataforma tecnológica orientada a apoyar la planificación y ejecución de operaciones de distribución de última milla en la ciudad de Huancayo.
+
+La solución busca integrar la gestión de pedidos, vehículos y conductores con un componente de optimización basado en un **Algoritmo Genético**, permitiendo generar rutas considerando restricciones operativas y criterios de sostenibilidad.
+
+La solución estará compuesta por:
+
+- Una plataforma web responsive para la gestión y supervisión.
+- Un modo conductor implementado como PWA.
+- Un backend para la lógica de negocio y servicios.
+- Una base de datos para la persistencia de información.
+- Un componente de optimización mediante Algoritmo Genético.
+- Un componente cartográfico para visualizar rutas.
+- Un motor de ruteo para obtener distancias y tiempos estimados.
+
+---
+
+# 3. Problema que aborda el proyecto
+
+La planificación de rutas de última milla puede presentar dificultades cuando se deben considerar simultáneamente múltiples pedidos, vehículos, conductores, capacidades, ventanas de tiempo y criterios de eficiencia.
+
+Una planificación que no considere estos factores de manera integrada puede generar:
+
+- Recorridos innecesarios.
+- Mayor tiempo de desplazamiento.
+- Mayor consumo de combustible.
+- Incremento de costos operativos.
+- Incumplimiento de ventanas de entrega.
+- Mayor generación de emisiones.
+- Dificultades para reaccionar ante eventos operativos.
+
+Por ello, el proyecto propone utilizar técnicas de optimización para generar rutas que permitan mejorar el desempeño de las operaciones de distribución.
+
+---
+
+# 4. Selección del enfoque de gestión
+
+## 4.1 Enfoque seleccionado
+
+Se selecciona un:
+
+> **Enfoque híbrido con predominio adaptativo**
+
+La selección responde a que el proyecto combina características de desarrollo predictivo con características que requieren adaptación e iteración.
+
+---
+
+# 5. Justificación del enfoque híbrido
+
+## 5.1 Componentes predictivos
+
+Existen elementos que requieren una planificación previa y una línea base relativamente estable:
+
+- Definición del problema.
+- Definición del alcance.
+- Arquitectura general.
+- Diseño de la base de datos.
+- Definición de tecnologías.
+- Requisitos fundamentales.
+- Restricciones técnicas.
+- Criterios de seguridad.
+- Criterios de calidad.
+- Documentación del proyecto.
+
+Estos elementos permiten establecer una base sobre la cual desarrollar el sistema.
+
+## 5.2 Componentes adaptativos
+
+Otros componentes requieren experimentación, validación y ajustes durante el desarrollo:
+
+- Diseño de la función objetivo del Algoritmo Genético.
+- Selección y ajuste de parámetros del algoritmo.
+- Evaluación de soluciones generadas.
+- Ajuste de restricciones.
+- Re-optimización.
+- Diseño de indicadores.
+- Experiencia del usuario.
+- Interfaz de visualización de rutas.
+- Modo conductor PWA.
+- Pruebas de rendimiento.
+- Ajustes derivados de las validaciones.
+
+Estos elementos pueden requerir modificaciones conforme se obtengan resultados de las pruebas.
+
+---
+
+# 6. Razones para utilizar un enfoque adaptativo predominante
+
+El componente de optimización constituye uno de los elementos técnicamente más complejos del proyecto.
+
+No es conveniente asumir desde el inicio que todos los parámetros del Algoritmo Genético producirán el rendimiento esperado.
+
+Durante el desarrollo será necesario experimentar con:
+
+- Representación de individuos.
+- Codificación de rutas.
+- Población inicial.
+- Función de aptitud.
+- Selección.
+- Cruce.
+- Mutación.
+- Elitismo.
+- Número de generaciones.
+- Penalizaciones.
+- Restricciones.
+- Criterios de parada.
+
+Por esta razón, el desarrollo deberá permitir iteraciones y ajustes controlados.
+
+---
+
+# 7. Modelo de trabajo
+
+El proyecto se desarrollará mediante iteraciones.
+
+Cada iteración deberá producir un resultado verificable y potencialmente integrable al MVP.
+
+## Iteración 1 — Análisis y diseño
+
+### Objetivo
+
+Establecer la base funcional, técnica y metodológica del proyecto.
+
+### Actividades
+
+- Análisis del problema.
+- Identificación de interesados.
+- Definición del alcance.
+- Identificación de requisitos.
+- Diseño de procesos.
+- Diseño de arquitectura.
+- Diseño inicial de base de datos.
+- Definición de interfaces principales.
+- Definición inicial del modelo de optimización.
+
+### Resultado
+
+Base documental y técnica para iniciar el desarrollo.
+
+---
+
+## Iteración 2 — Núcleo funcional y optimización inicial
+
+### Objetivo
+
+Construir el núcleo de la plataforma e integrar una primera versión del Algoritmo Genético.
+
+### Actividades
+
+- Implementación del backend.
+- Implementación de la base de datos.
+- Gestión de pedidos.
+- Gestión de vehículos.
+- Gestión de conductores.
+- Construcción de matriz de distancias y tiempos.
+- Implementación inicial del Algoritmo Genético.
+- Primera integración con el backend.
+
+### Resultado
+
+Primera versión funcional del núcleo de la solución.
+
+---
+
+## Iteración 3 — Visualización y sostenibilidad
+
+### Objetivo
+
+Integrar la visualización geográfica y los indicadores de sostenibilidad.
+
+### Actividades
+
+- Integración con Leaflet.
+- Integración con OpenStreetMap.
+- Integración con OSRM.
+- Visualización de rutas.
+- Indicadores de distancia.
+- Indicadores de tiempo.
+- Estimación de combustible.
+- Estimación de emisiones.
+- Dashboard.
+- Desarrollo del modo conductor PWA.
+
+### Resultado
+
+Versión funcional con visualización y criterios de sostenibilidad.
+
+---
+
+## Iteración 4 — Re-optimización y validación
+
+### Objetivo
+
+Validar el comportamiento de la solución y mejorar su capacidad de respuesta ante eventos.
+
+### Actividades
+
+- Re-optimización.
+- Pruebas de rendimiento.
+- Pruebas funcionales.
+- Pruebas de seguridad.
+- Pruebas de usabilidad.
+- Validación de indicadores.
+- Ajuste de parámetros del Algoritmo Genético.
+- Corrección de defectos.
+- Documentación.
+- Preparación de demostración.
+
+### Resultado
+
+MVP validado y documentado.
+
+---
+
+# 8. Arquitectura tecnológica base
+
+La arquitectura tecnológica inicial queda establecida de la siguiente manera:
+
+| Capa | Tecnología |
+|---|---|
+| **Frontend** | React + TypeScript |
+| **Modo conductor** | PWA |
+| **Backend** | Node.js + NestJS + TypeScript |
+| **API** | REST |
+| **Base de datos** | PostgreSQL |
+| **ORM** | Prisma |
+| **Mapas** | Leaflet |
+| **Datos cartográficos** | OpenStreetMap |
+| **Motor de ruteo** | OSRM |
+| **Optimización** | Algoritmo Genético |
+| **Contenedores** | Docker |
+| **Autenticación** | JWT |
+| **Documentación API** | OpenAPI / Swagger |
+
+---
+
+# 9. Principios tecnológicos
+
+El desarrollo deberá considerar los siguientes principios:
+
+## 9.1 Bajo acoplamiento
+
+Los componentes de mapas, ruteo y optimización deberán mantenerse desacoplados para facilitar su sustitución o evolución.
+
+## 9.2 Modularidad
+
+El backend deberá organizarse por módulos funcionales y responsabilidades.
+
+## 9.3 Escalabilidad
+
+La solución deberá permitir ampliar progresivamente la cantidad de pedidos y vehículos.
+
+## 9.4 Seguridad
+
+La plataforma deberá aplicar controles de autenticación, autorización y protección de comunicaciones.
+
+## 9.5 Mantenibilidad
+
+El código deberá mantener una estructura clara, modular y documentada.
+
+## 9.6 Sostenibilidad
+
+La solución deberá considerar indicadores ambientales y principios de desarrollo de software sostenible.
+
+---
+
+# 10. Gestión de requisitos
+
+Los requisitos se organizarán progresivamente en:
+
+- Requisitos funcionales.
+- Requisitos no funcionales.
+- Reglas de negocio.
+- Restricciones.
+- Criterios de aceptación.
+
+Los requisitos podrán refinarse durante las iteraciones siempre que se mantenga la trazabilidad con los objetivos del proyecto.
+
+---
+
+# 11. Gestión de cambios
+
+Los cambios serán clasificados en:
+
+### Cambios menores
+
+Cambios que no afecten significativamente:
+
+- Alcance.
+- Arquitectura.
+- Cronograma.
+- Presupuesto.
+- Objetivos.
+
+Estos podrán ser incorporados durante la siguiente iteración.
+
+### Cambios mayores
+
+Cambios que afecten:
+
+- Objetivos.
+- Alcance.
+- Arquitectura.
+- Restricciones críticas.
+- Presupuesto.
+- Cronograma.
+
+Estos deberán ser evaluados antes de incorporarse a la línea base.
+
+---
+
+# 12. Gestión de riesgos
+
+Los riesgos se revisarán al inicio y durante cada iteración.
+
+Se dará especial seguimiento a:
+
+- Rendimiento del Algoritmo Genético.
+- Calidad de los datos geográficos.
+- Disponibilidad de los servicios de ruteo.
+- Capacidad del hosting.
+- Integración entre componentes.
+- Seguridad.
+- Disponibilidad de usuarios para validación.
+- Cumplimiento del cronograma.
+
+---
+
+# 13. Estrategia de validación
+
+La validación se realizará de manera incremental.
+
+Cada iteración deberá producir evidencias que permitan comprobar:
+
+- Funcionamiento.
+- Integración.
+- Rendimiento.
+- Cumplimiento de restricciones.
+- Calidad.
+- Usabilidad.
+- Seguridad.
+- Sostenibilidad.
+
+Los resultados de las pruebas serán utilizados para ajustar las siguientes iteraciones.
+
+---
+
+# 14. Criterios de éxito del enfoque
+
+El enfoque seleccionado será considerado adecuado si permite:
+
+1. Mantener una línea base estable para los elementos previamente definidos.
+2. Adaptar el Algoritmo Genético mediante experimentación.
+3. Incorporar cambios derivados de pruebas.
+4. Validar progresivamente las funcionalidades.
+5. Detectar riesgos técnicos de forma temprana.
+6. Mantener trazabilidad entre requisitos, desarrollo y pruebas.
+7. Entregar un MVP funcional dentro del cronograma establecido.
+
+---
+
+# 15. Decisiones congeladas
+
+A partir de esta versión quedan establecidas las siguientes decisiones:
+
+| Elemento | Decisión |
+|---|---|
+| **Título** | Plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo |
+| **Sistema** | EcoLogística Huancayo |
+| **Ubicación** | Huancayo |
+| **Tipo de solución** | Plataforma web responsive + PWA |
+| **Backend** | Node.js + NestJS |
+| **Frontend** | React + TypeScript |
+| **Base de datos** | PostgreSQL |
+| **ORM** | Prisma |
+| **Mapas** | Leaflet |
+| **Datos geográficos** | OpenStreetMap |
+| **Ruteo** | OSRM |
+| **Optimización** | Algoritmo Genético |
+| **Enfoque** | Híbrido con predominio adaptativo |
+| **Contenedores** | Docker |
+
+Estas decisiones constituyen la línea base inicial y solo deberán modificarse mediante una decisión explícita y documentada.
+
+---
+
+# 16. Relación con los siguientes documentos
+
+Este documento constituye la base para:
+
+- Acta de Constitución.
+- Declaración de Visión.
+- Identificación de interesados.
+- Requisitos.
+- Casos de uso.
+- Modelamiento BPMN.
+- Arquitectura.
+- Diseño de base de datos.
+- Diseño del Algoritmo Genético.
+- Plan de iteraciones.
+- Plan de pruebas.
+- Documentación del MVP.
+
+La información metodológica relacionada con variables, dimensiones, indicadores y métricas será definida en el documento correspondiente y deberá mantener coherencia con el título oficial.
+
+---
+
+# 17. Siguiente trabajo recomendado
+
+Antes de continuar con el documento **03. Declaración de la Visión**, se recomienda elaborar:
+
+> **Matriz metodológica de variables y operacionalización**
+
+La matriz deberá establecer:
+
+1. Variable independiente.
+2. Variable dependiente.
+3. Posible variable interviniente o mediadora, si corresponde.
+4. Definición conceptual.
+5. Definición operacional.
+6. Dimensiones.
+7. Indicadores.
+8. Métricas.
+9. Instrumentos.
+10. Relación con los objetivos específicos.
+
+La finalidad es garantizar la trazabilidad:
+
+**Problema → Objetivos → Hipótesis → Variables → Dimensiones → Indicadores → Métricas → Funcionalidades → Pruebas**
+
+Una vez aprobada esta matriz, se continuará con:
+
+> **03. Declaración de la Visión V_1_0_0.md**
