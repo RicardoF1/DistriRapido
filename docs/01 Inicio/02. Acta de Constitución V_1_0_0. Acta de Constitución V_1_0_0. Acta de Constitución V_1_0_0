@@ -1,0 +1,659 @@
+# 02. Acta de Constitución V_1_0_0
+
+## 1. Información general del proyecto
+
+| Campo | Información |
+|---|---|
+| **Título del proyecto** | Plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo |
+| **Nombre del sistema** | EcoLogística Huancayo |
+| **Tipo de proyecto** | Desarrollo de una solución de software para la optimización sostenible de rutas de última milla |
+| **Enfoque de gestión** | Híbrido con predominio adaptativo |
+| **Versión del documento** | 1.0.0 |
+| **Fecha** | 28/08/2026 |
+| **Ámbito de aplicación** | Ciudad de Huancayo |
+| **Organización beneficiaria** | DistriRápido S.A.C. |
+| **Director del proyecto** | Por designar |
+| **Estado** | Versión inicial |
+
+---
+
+# 2. Propósito y justificación del proyecto
+
+## 2.1 Propósito
+
+El proyecto **“Plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo”** tiene como propósito desarrollar una plataforma web orientada a mejorar la planificación y gestión de las operaciones de distribución de última milla mediante la utilización de un **Algoritmo Genético**.
+
+La solución permitirá gestionar pedidos, vehículos y conductores; generar rutas optimizadas; visualizar las rutas mediante mapas interactivos; calcular indicadores relacionados con distancia, tiempo, combustible y emisiones; generar reportes y realizar re-optimización ante determinados cambios operativos.
+
+La solución estará conformada por una **plataforma web responsive** y un **modo conductor mediante PWA (Progressive Web App)**.
+
+---
+
+# 3. Situación problemática
+
+Las operaciones de distribución de última milla presentan dificultades relacionadas con la planificación eficiente de rutas debido a la interacción de múltiples variables y restricciones.
+
+En el contexto de aplicación del proyecto, ubicado en la **ciudad de Huancayo**, la planificación de rutas debe considerar factores como:
+
+- Distancia entre puntos de entrega.
+- Tiempo de desplazamiento.
+- Ventanas de tiempo.
+- Capacidad de los vehículos.
+- Disponibilidad de conductores.
+- Consumo de combustible.
+- Emisiones generadas.
+- Incidentes o cambios durante la operación.
+- Condiciones de circulación.
+- Restricciones operativas.
+
+La planificación convencional puede dificultar la obtención de rutas que simultáneamente reduzcan recorridos, tiempos, costos operativos e impactos ambientales.
+
+Esta situación genera la necesidad de desarrollar una herramienta que permita utilizar técnicas de optimización para generar alternativas de rutas y apoyar la toma de decisiones logísticas.
+
+---
+
+# 4. Justificación
+
+La utilización de un **Algoritmo Genético** permitirá abordar el problema de optimización de rutas como un problema de búsqueda de soluciones dentro de un conjunto amplio de alternativas.
+
+La plataforma permitirá evaluar las rutas considerando criterios como:
+
+- Distancia recorrida.
+- Tiempo de recorrido.
+- Cumplimiento de ventanas de entrega.
+- Capacidad de los vehículos.
+- Consumo estimado de combustible.
+- Emisiones de CO₂.
+- Costos asociados.
+- Restricciones operativas.
+
+El proyecto busca integrar estos criterios dentro de una solución web que permita centralizar la información, ejecutar el proceso de optimización y presentar los resultados de forma comprensible para los usuarios.
+
+La solución también permitirá incorporar criterios de sostenibilidad en la planificación de las operaciones de última milla.
+
+---
+
+# 5. Objetivo general
+
+Desarrollar una **plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo**, considerando restricciones operativas y criterios de eficiencia logística, económica y ambiental.
+
+---
+
+# 6. Objetivos específicos SMART
+
+## 6.1 Objetivo de desarrollo
+
+Desarrollar durante el periodo de ejecución del proyecto un MVP funcional de una plataforma web que integre como mínimo los módulos de gestión de pedidos, vehículos, conductores, generación de rutas, visualización cartográfica, indicadores, reportes y re-optimización.
+
+**Criterio de cumplimiento:**
+
+Los módulos priorizados deberán encontrarse implementados, integrados y demostrables dentro del MVP.
+
+---
+
+## 6.2 Objetivo de optimización
+
+Implementar un **Algoritmo Genético** capaz de generar una solución válida para escenarios de hasta **150 pedidos y 15 vehículos en un tiempo máximo de 45 segundos**.
+
+Para los escenarios que requieran re-optimización, el sistema deberá alcanzar un tiempo objetivo inferior a **30 segundos**.
+
+**Indicadores:**
+
+- Tiempo de generación de solución.
+- Tiempo de re-optimización.
+- Porcentaje de soluciones válidas.
+
+**Metas:**
+
+- Generación de solución ≤ 45 segundos.
+- Re-optimización < 30 segundos.
+- Soluciones válidas en los escenarios de prueba definidos.
+
+---
+
+## 6.3 Objetivo de eficiencia de rutas
+
+Reducir en al menos **15 % la distancia recorrida** respecto a una ruta de referencia durante las pruebas del MVP, manteniendo las restricciones operativas establecidas.
+
+**Indicador:**
+
+Porcentaje de reducción de distancia recorrida.
+
+**Fórmula:**
+
+```text
+Reducción (%) =
+((Distancia de referencia - Distancia optimizada)
+ / Distancia de referencia) × 100
+```
+
+**Meta:** ≥ 15 %.
+
+---
+
+## 6.4 Objetivo de cumplimiento de entregas
+
+Alcanzar como mínimo un **90 % de entregas dentro de las ventanas de tiempo establecidas** en los escenarios de prueba.
+
+**Indicador:**
+
+Porcentaje de entregas realizadas dentro de la ventana de tiempo.
+
+**Meta:** ≥ 90 %.
+
+---
+
+## 6.5 Objetivo ambiental
+
+Incorporar al sistema el cálculo de emisiones de CO₂ asociadas a las rutas y permitir la comparación entre una ruta de referencia y una ruta optimizada.
+
+**Indicadores:**
+
+- kg de CO₂ emitidos.
+- kg de CO₂ evitados.
+- Variación porcentual de emisiones.
+
+**Meta:** 100 % de las rutas evaluadas deberán disponer de indicadores ambientales calculados.
+
+---
+
+## 6.6 Objetivo de calidad
+
+Validar el MVP considerando criterios de rendimiento, seguridad, usabilidad, mantenibilidad, accesibilidad y sostenibilidad, tomando como referencias:
+
+- ISO/IEC 25010.
+- OWASP Top 10.
+- WCAG 2.1.
+- W3C.
+- Principios de Green Software.
+
+**Meta:**
+
+El 100 % de los requisitos no funcionales priorizados para el MVP deberá contar con evidencia de prueba o validación.
+
+---
+
+## 6.7 Objetivo de cronograma
+
+Desarrollar el MVP mediante cuatro iteraciones:
+
+1. Análisis y diseño.
+2. Desarrollo del núcleo funcional y optimización inicial.
+3. Visualización, sostenibilidad y modo conductor.
+4. Re-optimización, pruebas y documentación.
+
+**Meta:** completar el MVP dentro del cronograma académico establecido.
+
+---
+
+# 7. Criterios de éxito
+
+El proyecto será considerado exitoso cuando:
+
+- El MVP sea funcional y demostrable.
+- Los módulos priorizados estén integrados.
+- Se puedan registrar y gestionar pedidos.
+- Se puedan gestionar vehículos y conductores.
+- El sistema genere rutas mediante el Algoritmo Genético.
+- Las rutas respeten las restricciones definidas.
+- Las rutas puedan visualizarse en un mapa.
+- Se calculen indicadores logísticos y ambientales.
+- Se puedan generar reportes.
+- Se pueda realizar re-optimización ante eventos definidos.
+- El modo conductor PWA permita consultar la ruta asignada y gestionar el estado de las entregas.
+- Se hayan realizado pruebas funcionales y no funcionales.
+- Existan evidencias de cumplimiento de los criterios de aceptación.
+
+---
+
+# 8. Alcance macro
+
+## 8.1 Incluido
+
+### Gestión de pedidos
+
+- Registro de pedidos.
+- Cliente.
+- Dirección.
+- Coordenadas.
+- Peso.
+- Volumen.
+- Ventana de entrega.
+- Prioridad.
+- Tipo de producto.
+- Estado del pedido.
+
+### Gestión de vehículos
+
+- Registro de vehículos.
+- Tipo.
+- Capacidad.
+- Consumo.
+- Factor de emisión.
+- Estado operativo.
+- Disponibilidad.
+
+### Gestión de conductores
+
+- Registro de conductores.
+- Disponibilidad.
+- Licencia.
+- Experiencia.
+- Punto de partida.
+- Asignación de rutas.
+
+### Optimización
+
+- Generación de matriz de distancias y tiempos.
+- Algoritmo Genético.
+- Generación de rutas.
+- Restricciones de capacidad.
+- Ventanas de tiempo.
+- Consumo de combustible.
+- Emisiones.
+- Penalización por incumplimientos.
+- Restricciones operativas.
+
+### Visualización
+
+- Mapa interactivo.
+- Puntos de entrega.
+- Rutas.
+- Orden de visitas.
+- Distancia.
+- Tiempo estimado.
+- Estado de las entregas.
+
+### Indicadores
+
+- Distancia recorrida.
+- Tiempo total.
+- Combustible estimado.
+- Emisiones de CO₂.
+- CO₂ evitado.
+- Cumplimiento de ventanas.
+- Costos estimados.
+- Ahorro obtenido.
+
+### Reportes
+
+- Reporte de rutas.
+- Reporte de combustible.
+- Reporte de emisiones.
+- Reporte de costos.
+- Indicadores de sostenibilidad.
+
+### Re-optimización
+
+- Nuevos pedidos.
+- Cancelaciones.
+- Averías.
+- Accidentes.
+- Cambios operativos.
+- Incidencias que afecten la ruta.
+
+### Modo conductor PWA
+
+- Consulta de ruta.
+- Próxima entrega.
+- Entregas pendientes.
+- Estado de entrega.
+- Alertas.
+- Consulta desde dispositivo móvil.
+
+---
+
+# 9. Fuera del alcance inicial
+
+No forman parte del MVP:
+
+- Aplicación móvil nativa independiente para Android.
+- Aplicación móvil nativa independiente para iOS.
+- Gestión contable completa.
+- Facturación electrónica.
+- Gestión integral de almacenes.
+- Gestión de recursos humanos.
+- Compra de dispositivos GPS físicos.
+- Automatización física de vehículos.
+- Sistema completo de pagos.
+- Dependencia obligatoria de Google Maps.
+- Dependencia obligatoria de una API comercial de tráfico.
+
+Las integraciones externas podrán incorporarse posteriormente mediante interfaces desacopladas.
+
+---
+
+# 10. Arquitectura tecnológica inicial
+
+La línea base tecnológica del proyecto será:
+
+| Componente | Tecnología |
+|---|---|
+| **Frontend** | React + TypeScript |
+| **Modo conductor** | PWA |
+| **Backend** | Node.js + NestJS + TypeScript |
+| **API** | REST |
+| **Base de datos** | PostgreSQL |
+| **ORM** | Prisma |
+| **Mapas** | Leaflet |
+| **Datos geográficos** | OpenStreetMap |
+| **Motor de rutas** | OSRM |
+| **Optimización** | Algoritmo Genético |
+| **Contenedores** | Docker |
+| **Comunicación** | HTTPS |
+| **Autenticación** | JWT |
+| **Documentación API** | OpenAPI / Swagger |
+
+La arquitectura deberá mantener desacoplados los componentes de mapas, ruteo y optimización para permitir futuras modificaciones o integraciones.
+
+---
+
+# 11. Requisitos de alto nivel
+
+| Código | Requisito |
+|---|---|
+| **RF-01** | Gestionar vehículos de la flota. |
+| **RF-02** | Gestionar conductores. |
+| **RF-03** | Registrar y gestionar pedidos. |
+| **RF-04** | Gestionar restricciones de entrega. |
+| **RF-05** | Generar rutas mediante Algoritmo Genético. |
+| **RF-06** | Visualizar rutas en un mapa interactivo. |
+| **RF-07** | Calcular indicadores logísticos y ambientales. |
+| **RF-08** | Generar reportes. |
+| **RF-09** | Re-optimizar rutas ante eventos operativos. |
+| **RF-10** | Permitir al conductor consultar y actualizar el estado de sus entregas mediante PWA. |
+
+---
+
+# 12. Requisitos no funcionales de alto nivel
+
+| Código | Requisito |
+|---|---|
+| **RNF-01** | Generar una solución válida para hasta 150 pedidos y 15 vehículos en ≤ 45 segundos. |
+| **RNF-02** | Ejecutar la re-optimización en un tiempo objetivo inferior a 30 segundos. |
+| **RNF-03** | Aplicar mecanismos de autenticación y autorización. |
+| **RNF-04** | Proteger las comunicaciones mediante HTTPS. |
+| **RNF-05** | Mantener una arquitectura modular y mantenible. |
+| **RNF-06** | Diseñar interfaces responsive. |
+| **RNF-07** | Considerar criterios de accesibilidad WCAG 2.1. |
+| **RNF-08** | Mantener compatibilidad con navegadores modernos. |
+| **RNF-09** | Considerar principios de Green Software. |
+| **RNF-10** | Mantener integridad y consistencia de los datos. |
+
+---
+
+# 13. Riesgos iniciales
+
+| ID | Riesgo | Probabilidad | Impacto | Nivel | Respuesta |
+|---|---|---|---|---|---|
+| **R-01** | El Algoritmo Genético no alcance el rendimiento requerido. | Media | Alto | Alto | Realizar pruebas tempranas y ajustar parámetros. |
+| **R-02** | Direcciones o coordenadas geográficas incorrectas. | Media | Medio | Medio | Validar y normalizar datos geográficos. |
+| **R-03** | Limitaciones de los servicios de mapas o ruteo. | Media | Alto | Alto | Mantener arquitectura desacoplada y alternativas de servicio. |
+| **R-04** | Las rutas generadas no sean suficientemente eficientes. | Media | Alto | Alto | Comparar contra rutas de referencia y ajustar función objetivo. |
+| **R-05** | Cambios de requisitos afecten el cronograma. | Media | Medio | Medio | Gestionar cambios mediante iteraciones. |
+| **R-06** | Disponibilidad limitada de usuarios para validación. | Media | Medio | Medio | Programar validaciones y utilizar escenarios representativos. |
+| **R-07** | Vulnerabilidades de seguridad. | Media | Alto | Alto | Aplicar controles basados en OWASP Top 10. |
+| **R-08** | Insuficiente capacidad del hosting. | Media | Alto | Alto | Realizar pruebas de rendimiento y dimensionamiento. |
+| **R-09** | Datos insuficientes para estimar emisiones. | Media | Medio | Medio | Definir parámetros y fuentes de referencia. |
+| **R-10** | Problemas de integración entre frontend, backend y optimizador. | Media | Medio | Medio | Definir contratos API y realizar integración incremental. |
+
+---
+
+# 14. Restricciones
+
+| ID | Restricción | Categoría |
+|---|---|---|
+| **RES-01** | Presupuesto empresarial de referencia de hasta S/ 500,000 para el MVP. | Económica |
+| **RES-02** | Costo operativo anual de referencia de S/ 120,000. | Económica |
+| **RES-03** | Generación de solución para hasta 150 pedidos y 15 vehículos en ≤ 45 segundos. | Técnica |
+| **RES-04** | Re-optimización en menos de 30 segundos. | Técnica |
+| **RES-05** | Consideración de capacidad vehicular. | Operativa |
+| **RES-06** | Consideración de ventanas de tiempo. | Operativa |
+| **RES-07** | Consideración de restricciones de conducción y descanso. | Operativa |
+| **RES-08** | Consideración de restricciones ambientales. | Ambiental |
+| **RES-09** | Cumplimiento de criterios de seguridad. | Seguridad |
+| **RES-10** | Consideración de sostenibilidad y costo del ciclo de vida. | Ambiental / Económica |
+
+---
+
+# 15. Supuestos iniciales
+
+| ID | Supuesto |
+|---|---|
+| **SUP-01** | Se contará con información suficiente para construir escenarios de prueba. |
+| **SUP-02** | Se dispondrá de información básica de vehículos. |
+| **SUP-03** | Se dispondrá de información de pedidos y restricciones de entrega. |
+| **SUP-04** | Los puntos de entrega podrán representarse mediante coordenadas geográficas. |
+| **SUP-05** | OpenStreetMap proporcionará información geográfica suficiente para los escenarios definidos. |
+| **SUP-06** | OSRM podrá utilizarse como motor de ruteo del MVP. |
+| **SUP-07** | Los conductores dispondrán de dispositivos móviles compatibles con la PWA. |
+| **SUP-08** | Los interesados participarán en las actividades de validación. |
+| **SUP-09** | Las reglas de negocio podrán formalizarse antes de implementar la versión definitiva del optimizador. |
+| **SUP-10** | Se podrán definir parámetros de consumo y factores de emisión para calcular indicadores ambientales. |
+
+---
+
+# 16. Hitos principales
+
+| ID | Hito | Resultado esperado |
+|---|---|---|
+| **H-01** | Aprobación del proyecto | Acta de Constitución aprobada |
+| **H-02** | Definición de visión y alcance | Visión, interesados, supuestos y restricciones |
+| **H-03** | Análisis y diseño | Requisitos, arquitectura y diseño |
+| **H-04** | Núcleo funcional | Gestión de pedidos, vehículos y conductores |
+| **H-05** | Optimización inicial | Algoritmo Genético integrado |
+| **H-06** | Visualización | Mapas y rutas |
+| **H-07** | Indicadores | Dashboard y métricas de sostenibilidad |
+| **H-08** | Modo conductor | PWA funcional |
+| **H-09** | Re-optimización | Re-optimización ante eventos |
+| **H-10** | Validación final | Pruebas, documentación y demostración |
+
+Las fechas específicas serán establecidas en el cronograma detallado del proyecto.
+
+---
+
+# 17. Presupuesto de referencia
+
+## 17.1 Presupuesto empresarial
+
+La consigna establece un presupuesto máximo de referencia de:
+
+**S/ 500,000 para el desarrollo del MVP**
+
+y:
+
+**S/ 120,000 anuales para operación, mantenimiento y soporte.**
+
+Estos montos corresponden al escenario empresarial planteado para DistriRápido S.A.C.
+
+### Distribución preliminar
+
+| Categoría | Porcentaje | Monto |
+|---|---:|---:|
+| Análisis y gestión | 10 % | S/ 50,000 |
+| Diseño y arquitectura | 10 % | S/ 50,000 |
+| Frontend y PWA | 20 % | S/ 100,000 |
+| Backend y API | 20 % | S/ 100,000 |
+| Optimización e integración geográfica | 20 % | S/ 100,000 |
+| Pruebas, seguridad y calidad | 10 % | S/ 50,000 |
+| Despliegue y documentación | 10 % | S/ 50,000 |
+| **Total** | **100 %** | **S/ 500,000** |
+
+La distribución constituye una estimación preliminar y podrá ser refinada durante la planificación detallada.
+
+---
+
+## 17.2 Estrategia tecnológica para el desarrollo académico
+
+Para la construcción del proyecto académico se priorizará el uso de tecnologías de código abierto y servicios de bajo costo.
+
+| Componente | Estrategia |
+|---|---|
+| React | Open source |
+| TypeScript | Open source |
+| NestJS | Open source |
+| PostgreSQL | Open source |
+| Leaflet | Open source |
+| OpenStreetMap | Datos geográficos abiertos |
+| OSRM | Software / servicio de ruteo |
+| Algoritmo Genético | Desarrollo propio |
+| Docker | Contenedores |
+| PWA | Tecnologías web |
+| Google Maps | No obligatorio |
+| API comercial de tráfico | No obligatoria |
+
+---
+
+# 18. Gobernanza
+
+## 18.1 Director del Proyecto
+
+El Director del Proyecto será responsable de coordinar la planificación, ejecución, seguimiento y cierre del proyecto.
+
+### Responsabilidades
+
+- Coordinar al equipo.
+- Gestionar el alcance.
+- Coordinar las iteraciones.
+- Gestionar riesgos.
+- Coordinar con interesados.
+- Supervisar avances.
+- Coordinar decisiones.
+- Validar entregables.
+- Gestionar cambios.
+- Supervisar la calidad.
+- Mantener la documentación.
+
+---
+
+## 18.2 Organización inicial
+
+| Rol | Responsabilidad |
+|---|---|
+| **Director del Proyecto** | Gestión y coordinación |
+| **Analista de Sistemas** | Requisitos y análisis |
+| **Líder Técnico** | Arquitectura e integración |
+| **Desarrollador Frontend** | React, interfaz y PWA |
+| **Desarrollador Backend** | NestJS, API y lógica |
+| **Especialista en Optimización** | Algoritmo Genético |
+| **Especialista BD** | PostgreSQL y modelo de datos |
+| **QA / Tester** | Pruebas |
+| **Documentador** | Documentación técnica y de gestión |
+
+Los roles podrán ser asumidos por uno o varios integrantes del equipo según la organización del proyecto.
+
+---
+
+# 19. Gestión de cambios
+
+Debido al enfoque híbrido con predominio adaptativo, los cambios serán evaluados según su impacto.
+
+## Cambios menores
+
+Podrán ser incorporados dentro de la planificación de la siguiente iteración cuando no afecten significativamente:
+
+- Objetivos.
+- Alcance.
+- Arquitectura.
+- Cronograma.
+- Presupuesto.
+
+## Cambios significativos
+
+Los cambios que afecten significativamente:
+
+- Objetivos.
+- Alcance.
+- Arquitectura.
+- Presupuesto.
+- Cronograma.
+- Restricciones críticas.
+
+deberán ser evaluados y aprobados antes de su incorporación.
+
+---
+
+# 20. Criterios de aprobación
+
+La aprobación del Acta de Constitución implica aceptar:
+
+1. El título oficial del proyecto.
+2. El propósito del proyecto.
+3. La problemática identificada.
+4. El objetivo general.
+5. Los objetivos específicos.
+6. El alcance macro.
+7. Los requisitos de alto nivel.
+8. Los riesgos iniciales.
+9. Las restricciones.
+10. Los supuestos.
+11. Los hitos.
+12. El presupuesto de referencia.
+13. La estructura de gobernanza.
+14. El enfoque híbrido con predominio adaptativo.
+15. La arquitectura tecnológica inicial.
+
+---
+
+# 21. Autorización del proyecto
+
+Con la aprobación de esta Acta de Constitución se autoriza formalmente el inicio del proyecto:
+
+> **“Plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo”**
+
+El proyecto utilizará como nombre del sistema:
+
+> **EcoLogística Huancayo**
+
+El presente documento constituye la línea base inicial para el desarrollo de los documentos de visión, requisitos, análisis, diseño, arquitectura, desarrollo, pruebas y cierre.
+
+La planificación podrá refinarse durante las iteraciones manteniendo la trazabilidad con los objetivos, alcance, restricciones, riesgos y criterios de éxito establecidos.
+
+---
+
+# 22. Trazabilidad
+
+El presente documento toma como entrada el documento:
+
+**`01. Selección del enfoque del proyecto V_1_0_0.md`**
+
+Se mantiene el enfoque:
+
+> **Híbrido con predominio adaptativo**
+
+Asimismo, se incorpora como línea base el título oficial:
+
+> **Plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo**
+
+y la arquitectura tecnológica previamente definida.
+
+Los documentos posteriores deberán mantener coherencia con estas decisiones, salvo que se registre y apruebe formalmente un cambio.
+
+---
+
+# 23. Siguiente trabajo recomendado
+
+**Siguiente trabajo:** definir la **matriz metodológica de variables** antes de continuar con la Declaración de Visión.
+
+Se recomienda trabajar:
+
+1. Variable independiente.
+2. Variable dependiente.
+3. Posible variable interviniente o mediadora, únicamente si metodológicamente corresponde.
+4. Dimensiones.
+5. Indicadores.
+6. Métricas.
+7. Instrumentos de medición.
+8. Relación entre variables y objetivos.
+
+**¿Por qué?**
+
+El título oficial ya está congelado, pero para que los siguientes documentos sean metodológicamente consistentes debemos determinar exactamente qué se aplica mediante el sistema y qué resultado se pretende mejorar.
+
+La matriz de variables permitirá posteriormente alinear:
+
+**Problema → Objetivos → Hipótesis → Variables → Dimensiones → Indicadores → Métricas → Funcionalidades del sistema → Pruebas**
+
+Una vez definida y aprobada esta matriz, se continuará con:
+
+**03. Declaración de la Visión V_1_0_0.md**
