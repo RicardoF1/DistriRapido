@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Rol {
+  rol_id      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nombre      String    @unique @db.VarChar(50)
+  descripcion String    @db.VarChar(255)
+  usuarios    Usuario[]
+
+  @@map("roles")
+}
+
+model Usuario {
+  usuario_id    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  rol_id        String   @db.Uuid
+  email         String   @unique @db.VarChar(255)
+  password_hash String   @db.VarChar(255)
+  estado        String   @default("ACTIVO") @db.VarChar(20)
+  creado_en     DateTime @default(now()) @db.Timestamptz(6)
+  rol           Rol      @relation(fields: [rol_id], references: [rol_id], onDelete: Restrict)
+
+  @@index([rol_id], map: "idx_usuarios_rol_id")
+  @@map("usuarios")
+}
+
+model Cliente {
+  cliente_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nombre String @db.VarChar(150)
+  telefono String? @db.VarChar(30)
+  email String? @db.VarChar(255)
+  direccion String @db.VarChar(255)
+  referencia String? @db.VarChar(255)
+  latitud Decimal @db.Decimal(9, 6)
+  longitud Decimal @db.Decimal(9, 6)
+  estado String @default("ACTIVO") @db.VarChar(20)
+  pedidos Pedido[]
+  @@map("clientes")
+}
+
+model Pedido {
+  pedido_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cliente_id String @db.Uuid
+  peso_kg Decimal @db.Decimal(10, 2)
+  volumen_m3 Decimal @db.Decimal(10, 3)
+  ventana_inicio DateTime @db.Timestamptz(6)
+  ventana_fin DateTime @db.Timestamptz(6)
+  prioridad String @db.VarChar(20)
+  tipo_producto String @db.VarChar(30)
+  estado String @default("PENDIENTE") @db.VarChar(20)
+  creado_en DateTime @default(now()) @db.Timestamptz(6)
+  cliente Cliente @relation(fields: [cliente_id], references: [cliente_id], onDelete: Restrict)
+  @@index([cliente_id], map: "idx_pedidos_cliente")
+  @@map("pedidos")
+}

@@ -1,0 +1,18 @@
+:root {
+  --color-primary: #006948; --color-primary-hover: #005137; --color-primary-container: #00855d;
+  --color-on-primary: #fff; --color-surface: #f8f9ff; --color-card: #fff;
+  --color-surface-low: #eff4ff; --color-surface-container: #e5eeff;
+  --color-text: #0b1c30; --color-text-muted: #565e74; --color-border: #bccac0; --color-border-subtle: #e2e8f0;
+  --color-error: #93000a; --color-error-surface: #ffdad6;
+  --color-planned-bg: #f1f5f9; --color-planned-text: #475569;
+  --color-in-transit-bg: #ecfdf5; --color-in-transit-text: #065f46;
+  --color-delivered-bg: #f0fdf4; --color-delivered-text: #15803d;
+  --color-incident-bg: #fef3c7; --color-incident-text: #b45309;
+  --font-heading: 'Outfit', sans-serif; --font-body: 'Inter', sans-serif;
+  --space-2xs: .25rem; --space-xs: .5rem; --space-sm: .75rem; --space-md: 1rem;
+  --space-lg: 1.5rem; --space-xl: 2rem; --space-2xl: 3rem;
+  --gutter-mobile: .875rem; --gutter-desktop: 1.5rem;
+  --radius-sm: .25rem; --radius-md: .375rem; --radius-lg: .5rem; --radius-xl: .75rem; --radius-pill: 9999px;
+  --touch-min: 3rem; --touch-primary: 3.5rem;
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, .06), 0 6px 24px rgba(15, 23, 42, .025);
+}

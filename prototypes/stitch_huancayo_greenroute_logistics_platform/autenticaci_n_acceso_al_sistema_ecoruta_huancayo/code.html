@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>EcoRuta Huancayo - Acceso al Sistema</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        overscroll-behavior: none;
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 0px);
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-high": "#dce9ff",
+            "on-secondary-fixed-variant": "#3f465c",
+            "error-container": "#ffdad6",
+            "surface-dim": "#cbdbf5",
+            "on-tertiary-fixed": "#002113",
+            "inverse-surface": "#213145",
+            "on-background": "#0b1c30",
+            "on-primary-fixed": "#002114",
+            "inverse-primary": "#68dba9",
+            "primary-fixed-dim": "#68dba9",
+            "on-secondary": "#ffffff",
+            "on-error-container": "#93000a",
+            "outline": "#6d7a72",
+            "inverse-on-surface": "#eaf1ff",
+            "surface-variant": "#d3e4fe",
+            "surface-bright": "#f8f9ff",
+            "primary-container": "#00855d",
+            "on-surface": "#0b1c30",
+            "on-primary-fixed-variant": "#005137",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#ffffff",
+            "secondary-fixed": "#dae2fd",
+            "surface": "#f8f9ff",
+            "on-surface-variant": "#3d4a42",
+            "secondary-container": "#dae2fd",
+            "error": "#ba1a1a",
+            "surface-container-highest": "#d3e4fe",
+            "primary": "#006948",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed": "#131b2e",
+            "tertiary-fixed-dim": "#4edea3",
+            "surface-container-low": "#eff4ff",
+            "primary-fixed": "#85f8c4",
+            "secondary-fixed-dim": "#bec6e0",
+            "tertiary-container": "#00855b",
+            "on-secondary-container": "#5c647a",
+            "on-error": "#ffffff",
+            "tertiary-fixed": "#6ffbbe",
+            "background": "#f8f9ff",
+            "on-tertiary": "#ffffff",
+            "secondary": "#565e74",
+            "on-tertiary-container": "#f5fff6",
+            "outline-variant": "#bccac0",
+            "surface-container": "#e5eeff",
+            "on-primary-container": "#f5fff7",
+            "surface-tint": "#006c4a",
+            "tertiary": "#006947"
+          },
+          fontFamily: {
+            "display": ["Outfit"],
+            "headline-lg": ["Outfit"],
+            "headline-md": ["Outfit"],
+            "headline-sm": ["Outfit"],
+            "body-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "body-sm": ["Inter"],
+            "label-caps": ["Inter"],
+            "code-telemetry": ["Inter"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-[#F8F9FF] font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between">
+<main class="flex-1 flex flex-col w-full max-w-md mx-auto px-4 pt-safe pb-safe justify-between py-6">
+<div class="flex flex-col w-full">
+<!-- Brand & Telemetry Header Card -->
+<div class="w-full flex flex-col items-center text-center pt-2 pb-4">
+<!-- Logo -->
+<div class="w-[72px] h-[72px] rounded-2xl overflow-hidden shadow-sm flex items-center justify-center mb-3">
+<svg fill="none" height="72" viewbox="0 0 120 120" width="72" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#065F46" height="120" rx="28" width="120"></rect>
+<path d="M28 84C28 84 38 48 54 48C70 48 62 76 78 76C90 76 94 36 94 36" stroke="#34D399" stroke-linecap="round" stroke-linejoin="round" stroke-width="8"></path>
+<circle cx="28" cy="84" fill="#FFFFFF" r="8"></circle>
+<circle cx="54" cy="48" fill="#F59E0B" r="6"></circle>
+<circle cx="78" cy="76" fill="#38BDF8" r="6"></circle>
+<circle cx="94" cy="36" fill="#10B981" r="8"></circle>
+<path d="M50 88L62 76L54 70" stroke="#A7F3D0" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path>
+</svg>
+</div>
+<!-- Name & Subtitle -->
+<h1 class="font-display text-2xl font-bold text-[#0B1C30] tracking-tight">EcoRuta Huancayo</h1>
+<p class="font-body-sm text-sm text-[#565E74] mt-1 max-w-[290px] leading-snug">
+          Sistema de Despacho &amp; Optimización Genética de Última Milla
+        </p>
+<!-- Subtle Telemetry Pill -->
+<div class="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1 bg-[#E5EEFF] border border-[#CBD5E1] rounded-full text-xs font-medium text-[#0B1C30] shadow-sm">
+<span class="w-2 h-2 rounded-full bg-[#006948] animate-pulse"></span>
+<span>Valle del Mantaro · 3,259 m.s.n.m. · Enlace OSRM en línea</span>
+</div>
+</div>
+<!-- Segmented Role Selector -->
+<div class="w-full bg-[#E2E8F0] p-1 rounded-xl grid grid-cols-2 gap-1 mb-4">
+<button class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-headline-sm font-semibold text-sm transition-all duration-200 bg-[#006948] text-white shadow-sm" id="tab-courier" onclick="switchRole('courier')" type="button">
+<span class="material-symbols-outlined text-[19px]">local_shipping</span>
+<span>Conductor PWA</span>
+</button>
+<button class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-headline-sm font-semibold text-sm transition-all duration-200 text-[#565E74] hover:text-[#0B1C30]" id="tab-dispatcher" onclick="switchRole('dispatcher')" type="button">
+<span class="material-symbols-outlined text-[19px]">hub</span>
+<span>Operador / Despacho</span>
+</button>
+</div>
+<!-- Main Login Form Card -->
+<div class="w-full bg-white rounded-2xl p-5 border border-[#E2E8F0] shadow-[0_1px_3px_rgba(0,0,0,0.05)] mb-4 flex flex-col gap-4">
+<!-- Sub-header inside Card -->
+<div class="flex items-center gap-3 bg-[#F8FAFC] border border-[#E2E8F0] p-2.5 rounded-xl" id="role-hint">
+<div class="w-9 h-9 rounded-lg bg-[#ECFDF5] text-[#006948] border border-[#A7F3D0] flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" id="role-icon">electric_rickshaw</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-sm font-bold text-[#0B1C30] truncate" id="role-title">Acceso Flota Móvil PWA</span>
+<span class="font-body-sm text-xs text-[#565E74] truncate" id="role-desc">Ingresa tu DNI o código de cabina asignada</span>
+</div>
+</div>
+<form class="flex flex-col gap-3.5" onsubmit="event.preventDefault(); triggerAuth();">
+<!-- Input 1: DNI / Cabina -->
+<div class="flex flex-col gap-1.5">
+<label class="font-body-sm text-xs font-semibold text-[#0B1C30] uppercase tracking-wide flex items-center justify-between" for="user-id">
+<span id="label-user-id">DNI / Código de Cabina</span>
+<span class="text-[#006948] font-normal lowercase tracking-normal text-xs" id="hint-user-id">ej: HYO-042</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-[#6D7A72] text-[20px] pointer-events-none">badge</span>
+<input class="w-full h-12 bg-white border border-[#E2E8F0] text-[#0B1C30] font-body-md text-sm pl-11 pr-3.5 rounded-lg focus:outline-none focus:border-[#006948] focus:ring-2 focus:ring-[#006948]/20 transition-all placeholder:text-[#94A3B8]" id="user-id" placeholder="HYO-042" required="" type="text"/>
+</div>
+</div>
+<!-- Input 2: Contraseña Maestra -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-body-sm text-xs font-semibold text-[#0B1C30] uppercase tracking-wide" for="password">Contraseña Maestra</label>
+<a class="font-body-sm text-xs font-medium text-[#006948] hover:underline" href="#">¿Olvidaste tu contraseña?</a>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-[#6D7A72] text-[20px] pointer-events-none">lock</span>
+<input class="w-full h-12 bg-white border border-[#E2E8F0] text-[#0B1C30] font-body-md text-sm pl-11 pr-11 rounded-lg focus:outline-none focus:border-[#006948] focus:ring-2 focus:ring-[#006948]/20 transition-all placeholder:text-[#94A3B8]" id="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-3 text-[#6D7A72] hover:text-[#0B1C30] p-1 flex items-center" onclick="togglePasswordVisibility()" type="button">
+<span class="material-symbols-outlined text-[20px]" id="pwd-icon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember & Network Persistence -->
+<div class="flex items-center justify-between pt-1">
+<label class="flex items-center gap-2 cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded border-[#CBD5E1] text-[#006948] focus:ring-[#006948] accent-[#006948] cursor-pointer" type="checkbox"/>
+<span class="font-body-sm text-xs text-[#0B1C30]">Recordar en este dispositivo</span>
+</label>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#ECFDF5] text-[#006948] font-code-telemetry text-[11px] font-semibold">
+<span class="material-symbols-outlined text-[13px] text-[#006948]">cloud_done</span>
+              Sinc. Local Offline
+            </span>
+</div>
+<!-- Primary CTA Button (Height 52px) -->
+<button class="w-full h-[52px] bg-[#006948] hover:bg-[#059669] text-white rounded-lg font-headline-sm font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99] mt-1" id="btn-submit" type="submit">
+<span>Iniciar Turno y Entrar a Ruta →</span>
+</button>
+</form>
+<!-- Divider with quick access label -->
+<div class="relative flex py-1 items-center">
+<div class="flex-grow border-t border-[#E2E8F0]"></div>
+<span class="flex-shrink mx-3 font-label-caps text-[11px] uppercase tracking-wider text-[#6D7A72]">o acceso simplificado</span>
+<div class="flex-grow border-t border-[#E2E8F0]"></div>
+</div>
+<!-- Botón secundario outline o acceso rápido -->
+<button class="w-full h-11 bg-[#F8FAFC] hover:bg-[#F1F5F9] border border-[#E2E8F0] text-[#0B1C30] rounded-lg font-body-md text-xs font-semibold flex items-center justify-center gap-2 transition-colors active:scale-[0.99]" onclick="quickBioAuth()" type="button">
+<span class="material-symbols-outlined text-[#006948] text-[18px]">fingerprint</span>
+<span>Acceso Rápido por Huella / PIN</span>
+</button>
+</div>
+<!-- Supporting Topographic Context Banner -->
+<div class="w-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] rounded-xl p-3 shadow-sm flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[#006948] text-[20px] shrink-0 mt-0.5" style="font-variation-settings: 'FILL' 1;">eco</span>
+<div class="flex flex-col min-w-0">
+<p class="font-body-sm text-xs leading-relaxed text-[#065F46]">
+<strong class="font-semibold text-[#006948]">Optimización Topográfica Activa:</strong> Prioriza frenado regenerativo en bajadas hacia El Tambo y Chilca.
+          </p>
+</div>
+</div>
+</div>
+<!-- Institutional Footer -->
+<footer class="w-full flex flex-col items-center text-center gap-1.5 pt-5 pb-2 text-[#6D7A72]">
+<div class="flex items-center gap-2 font-code-telemetry text-xs text-[#6D7A72]">
+<span>PWA v4.2</span>
+<span>·</span>
+<span>Algoritmo Genético v2.5</span>
+<span>·</span>
+<span>Red Huancayo</span>
+</div>
+<div class="flex items-center gap-1.5 font-body-sm text-xs text-[#565E74] mt-0.5">
+<span>¿Problemas de enlace en ruta?</span>
+<a class="text-[#006948] font-semibold hover:underline inline-flex items-center gap-1" href="tel:+5164998822">
+<span class="material-symbols-outlined text-[14px]">support_agent</span>
+          Central Despacho
+        </a>
+</div>
+</footer>
+</main>
+<script>
+    let activeRole = 'courier';
+
+    function switchRole(role) {
+      activeRole = role;
+      const tabCourier = document.getElementById('tab-courier');
+      const tabDispatcher = document.getElementById('tab-dispatcher');
+      const roleIcon = document.getElementById('role-icon');
+      const roleTitle = document.getElementById('role-title');
+      const roleDesc = document.getElementById('role-desc');
+      const labelUserId = document.getElementById('label-user-id');
+      const hintUserId = document.getElementById('hint-user-id');
+      const inputUserId = document.getElementById('user-id');
+      const btnSubmit = document.getElementById('btn-submit');
+
+      if (role === 'courier') {
+        tabCourier.className = 'flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-headline-sm font-semibold text-sm transition-all duration-200 bg-[#006948] text-white shadow-sm';
+        tabDispatcher.className = 'flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-headline-sm font-semibold text-sm transition-all duration-200 text-[#565E74] hover:text-[#0B1C30]';
+        roleIcon.textContent = 'electric_rickshaw';
+        roleTitle.textContent = 'Acceso Flota Móvil PWA';
+        roleDesc.textContent = 'Ingresa tu DNI o código de cabina asignada';
+        labelUserId.textContent = 'DNI / Código de Cabina';
+        hintUserId.textContent = 'ej: HYO-042';
+        inputUserId.placeholder = 'HYO-042';
+        btnSubmit.innerHTML = '<span>Iniciar Turno y Entrar a Ruta →</span>';
+      } else {
+        tabDispatcher.className = 'flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-headline-sm font-semibold text-sm transition-all duration-200 bg-[#006948] text-white shadow-sm';
+        tabCourier.className = 'flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-headline-sm font-semibold text-sm transition-all duration-200 text-[#565E74] hover:text-[#0B1C30]';
+        roleIcon.textContent = 'hub';
+        roleTitle.textContent = 'Torre de Control & Despacho';
+        roleDesc.textContent = 'Credenciales operativas para optimización central';
+        labelUserId.textContent = 'Usuario Corporativo / Correo';
+        hintUserId.textContent = 'ej: j.meza@ecoruta.pe';
+        inputUserId.placeholder = 'j.meza@ecoruta.pe';
+        btnSubmit.innerHTML = '<span>Acceder a Mesa de Despacho →</span>';
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const pwdInput = document.getElementById('password');
+      const pwdIcon = document.getElementById('pwd-icon');
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        pwdIcon.textContent = 'visibility_off';
+      } else {
+        pwdInput.type = 'password';
+        pwdIcon.textContent = 'visibility';
+      }
+    }
+
+    function triggerAuth() {
+      const btn = document.getElementById('btn-submit');
+      const initialText = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span><span>Sincronizando ruta...</span>';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check_circle</span><span>¡Enlace Exitoso!</span>';
+        setTimeout(() => {
+          btn.innerHTML = initialText;
+          btn.disabled = false;
+        }, 1500);
+      }, 1000);
+    }
+
+    function quickBioAuth() {
+      const roleDesc = document.getElementById('role-desc');
+      const prevText = roleDesc.textContent;
+      roleDesc.textContent = 'Escaneando sensor biométrico / PIN...';
+      roleDesc.classList.add('text-[#006948]', 'font-semibold');
+      setTimeout(() => {
+        triggerAuth();
+        setTimeout(() => {
+          roleDesc.textContent = prevText;
+          roleDesc.classList.remove('text-[#006948]', 'font-semibold');
+        }, 2000);
+      }, 600);
+    }
+  </script>
+</body></html>
