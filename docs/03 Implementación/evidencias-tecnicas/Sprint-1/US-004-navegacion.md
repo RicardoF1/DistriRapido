@@ -1,8 +1,11 @@
 # Verificación de navegación US-004 — 2026-10-01
 
+> **Evidencia técnica histórica del Sprint 1.**
+> Este documento registra el estado y las decisiones existentes en el momento de implementación de la historia. Puede contener comportamientos posteriormente refinados. Para el estado vigente del Sprint 1, consultar la [documentación oficial en docs/03 Implementación/](../../).
+
 ## Diagnóstico antes de modificar archivos
 
-Se inspeccionaron AdminLayout, OrderLayout, AccessPage, AppRoutes, ProtectedRoute y el proceso Vite de localhost:5173. El proceso original PID 18192 correspondía a C:\Users\HP\Desktop\DistriRapido\frontend\node_modules\vite\bin\vite.js y era el único listener en 5173.
+Se inspeccionaron AdminLayout, OrderLayout, AccessPage, AppRoutes, ProtectedRoute y el proceso Vite de localhost:5173. El proceso original correspondía a frontend/node_modules/vite/bin/vite.js y era el único listener en 5173.
 
 AdminLayout ya incluía Acceso, Usuarios y Registrar pedido sin una condición que ocultara este último al Administrador. OrderLayout y AccessPage también tenían acceso al registro para los roles permitidos. AppRoutes definía /pedidos/nuevo y ProtectedRoute autorizaba Administrador y Operador / Técnico. El código transformado servido por Vite contenía el enlace y la ruta antes del reinicio.
 
@@ -38,4 +41,4 @@ No se guardaron formularios, no se modificó PostgreSQL, no se ejecutó bootstra
 4. Completar parcialmente, cambiar de pestaña/aplicación y volver: conservar los valores. F5 conserva sesión, aunque puede limpiar el borrador no guardado. Cerrar sesión debe bloquear las rutas protegidas.
 5. Como Operador / Técnico, iniciar sesión con su contraseña actual: Registrar pedido visible, sin Usuarios y roles. Como Conductor/Auditor, no debe aparecer Registrar pedido.
 
-Si necesitas reiniciar otra vez: detener con Ctrl+C únicamente la terminal cuya salida corresponde a DistriRapido frontend y http://localhost:5173; desde C:\Users\HP\Desktop\DistriRapido\frontend ejecutar npm run dev. Si npm global falla, usar node 'C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js' run dev. No reiniciar backend, Docker ni otros proyectos para esta comprobación.
+Si necesitas reiniciar otra vez: detener con Ctrl+C únicamente la terminal cuya salida corresponde a DistriRapido frontend y http://localhost:5173; desde frontend ejecutar npm run dev. Si npm global falla, usar node "$env:ProgramFiles\nodejs\node_modules\npm\bin\npm-cli.js" run dev. No reiniciar backend, Docker ni otros proyectos para esta comprobación.

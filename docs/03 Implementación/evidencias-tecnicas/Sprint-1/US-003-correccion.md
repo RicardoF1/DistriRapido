@@ -1,5 +1,8 @@
 # Corrección de la prueba manual de US-003 — 2026-10-01
 
+> **Evidencia técnica histórica del Sprint 1.**
+> Este documento registra el estado y las decisiones existentes en el momento de implementación de la historia. Puede contener comportamientos posteriormente refinados. Para el estado vigente del Sprint 1, consultar la [documentación oficial en docs/03 Implementación/](../../).
+
 ## Causa comprobada
 
 El proceso real de backend en localhost:3000 seguía ejecutando US-002 mediante `ts-node src/main.ts`, sin observar cambios. Aunque el código fuente ya importaba UsersModule/RolesModule, el proceso no había cargado US-003. GET /users devolvía 404 `Cannot GET /users`; GET /roles devolvía 404 `Cannot GET /roles`. Su OpenAPI solo incluía /auth/login, /auth/logout y /auth/me.
@@ -43,7 +46,7 @@ No se repitió auditoría de dependencias: no hubo cambios de dependencias o loc
 ## Repetir manualmente
 
 1. Mantener PostgreSQL Docker de DistriRapido en localhost:5433. No ejecutar bootstrap ni migraciones para esta corrección.
-2. El backend actualizado quedó iniciado en localhost:3000 y el frontend existente se conserva en localhost:5173. Si las terminales ya se cerraron, desde backend ejecutar `npm run start:dev`; desde frontend ejecutar `npm run dev`. Si npm global falla, usar en cada carpeta `node 'C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js' run start:dev` o `run dev`, respectivamente. No iniciar un segundo backend sobre 3000.
+2. El backend actualizado quedó iniciado en localhost:3000 y el frontend existente se conserva en localhost:5173. Si las terminales ya se cerraron, desde backend ejecutar `npm run start:dev`; desde frontend ejecutar `npm run dev`. Si npm global falla, usar en cada carpeta `node "$env:ProgramFiles\nodejs\node_modules\npm\bin\npm-cli.js" run start:dev` o `run dev`, respectivamente. No iniciar un segundo backend sobre 3000.
 3. Abrir http://localhost:3000/api/docs y confirmar que aparecen Usuarios y Roles. Abrir http://localhost:5173/login e iniciar sesión con admin@distrirapido.local y su contraseña actual.
 4. Pulsar «Usuarios y roles»: /usuarios debe mostrar el administrador existente, email, rol, estado, Editar, Crear usuario y Cerrar sesión. En Network, GET /users debe devolver 200.
 5. Pulsar «Crear usuario»: /usuarios/nuevo debe mostrar el formulario. GET /roles = 200 y no debe existir GET /users/nuevo.

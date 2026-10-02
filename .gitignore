@@ -10,3 +10,11 @@ coverage/
 *.tsbuildinfo
 playwright-report/
 test-results/
+
+# Temporales y configuración personal del IDE
+*.tmp
+*.temp
+*.swp
+*~
+.vscode/
+.idea/
