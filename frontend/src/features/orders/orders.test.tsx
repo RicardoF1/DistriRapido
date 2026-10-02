@@ -8,22 +8,81 @@ import { authApi, ApiError } from '../../services/api';
 import { ordersApi } from '../../services/orders-api';
 import { loginResponse } from '../../test/fixtures';
 import type { RegisteredOrder } from '../../types/orders';
+vi.mock('./DeliveryMap', () => ({ DeliveryMap: ({ onChange }: { onChange: (point: { latitud: number; longitud: number }) => void }) => <button type="button" onClick={() => onChange({ latitud: -12.065, longitud: -75.204 })}>Seleccionar destino de prueba</button> }));
 vi.mock('../../services/orders-api', () => ({ ordersApi: { create: vi.fn() } }));
 vi.mock('../../services/api', async () => ({ ...await vi.importActual<typeof import('../../services/api')>('../../services/api'), authApi: { me: vi.fn(), login: vi.fn(), logout: vi.fn() } }));
 const identity = (role = 'Administrador') => ({ ...loginResponse.user, rol: { ...loginResponse.user.rol, nombre: role }, expiresAt: Date.now() + 900000 });
 const result: RegisteredOrder = { pedido_id: 'registered-id', cliente_id: 'client-id', peso_kg: '2.5', volumen_m3: '0.015', ventana_inicio: '2026-10-02T09:00:00Z', ventana_fin: '2026-10-02T11:00:00Z', prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO', estado: 'PENDIENTE', creado_en: '2026-10-01T00:00:00Z' };
-const labels = { nombre: 'Nombre del cliente', direccion: 'Dirección de entrega', latitud: 'Latitud', longitud: 'Longitud', peso: 'Peso (kg)', volumen: 'Volumen (m³)', inicio: 'Inicio de ventana de entrega', fin: 'Fin de ventana de entrega' };
+const labels = { nombre: 'Nombre del cliente', direccion: 'Dirección de entrega', latitud: 'Latitud', longitud: 'Longitud', peso: 'Peso (kg)', volumen: 'Volumen (m³) — opcional', fechaInicio: 'Fecha de inicio', inicio: 'Hora de inicio', fechaFin: 'Fecha de fin', fin: 'Hora de fin' };
 function setup(role = 'Administrador') {
   vi.mocked(authApi.me).mockResolvedValue(identity(role));
   return render(<MemoryRouter initialEntries={['/pedidos/nuevo']}><AuthProvider><AppRoutes /></AuthProvider></MemoryRouter>);
 }
 async function fill() {
   await screen.findByRole('form', { name: 'Registrar pedido' });
-  for (const [label, value] of [[labels.nombre, 'Cliente prueba'], [labels.direccion, 'Destino prueba'], [labels.latitud, '-12.065'], [labels.longitud, '-75.204'], [labels.peso, '2.5'], [labels.volumen, '0.015'], [labels.inicio, '2026-10-02T09:00'], [labels.fin, '2026-10-02T11:00']]) fireEvent.change(screen.getByLabelText(label), { target: { value } });
+  for (const [label, value] of [[labels.nombre, 'Cliente prueba'], [labels.direccion, 'Destino prueba'], [labels.peso, '2.5'], [labels.volumen, '0.015'], [labels.fechaInicio, '2026-10-02'], [labels.inicio, '09:00'], [labels.fechaFin, '2026-10-02'], [labels.fin, '11:00']]) fireEvent.change(screen.getByLabelText(label), { target: { value } });
+  await userEvent.click(screen.getByRole('button', { name: 'Seleccionar destino de prueba' }));
   await userEvent.selectOptions(screen.getByLabelText('Prioridad'), 'ESTANDAR'); await userEvent.selectOptions(screen.getByLabelText('Tipo de producto'), 'NO_PERECEDERO');
 }
 beforeEach(() => { vi.resetAllMocks(); vi.mocked(authApi.logout).mockResolvedValue(undefined); vi.mocked(ordersApi.create).mockResolvedValue(result); });
 describe('US-004 Registrar pedido', () => {
+  it('combina fecha y hora como Lima sin convertir 09:00 en otra hora local', async () => {
+    setup(); await fill();
+    expect(screen.getByLabelText(labels.fechaInicio)).toHaveAttribute('type', 'date');
+    expect(screen.getByLabelText(labels.inicio)).toHaveAttribute('type', 'time');
+    expect(document.querySelector('input[type="datetime-local"]')).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    const payload = vi.mocked(ordersApi.create).mock.calls[0][0];
+    expect(payload.ventana_inicio).toBe('2026-10-02T09:00:00-05:00');
+    expect(payload.ventana_fin).toBe('2026-10-02T11:00:00-05:00');
+    expect(new Date(payload.ventana_inicio).toISOString()).toBe('2026-10-02T14:00:00.000Z');
+  });
+  it.each([[labels.fechaInicio, 'fecha de inicio'], [labels.inicio, 'hora de inicio'], [labels.fechaFin, 'fecha de fin'], [labels.fin, 'hora de fin']])('rechaza %s incompleto y enfoca su input', async (label, message) => {
+    setup(); await fill(); fireEvent.change(screen.getByLabelText(label), { target: { value: '' } });
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(screen.getByText(`Selecciona una ${message} válida.`)).toBeVisible();
+    expect(screen.getByLabelText(label)).toHaveFocus(); expect(ordersApi.create).not.toHaveBeenCalled();
+  });
+  it.each(['09:00', '08:59'])('rechaza fin igual/anterior %s y permite corregirlo', async time => {
+    setup(); await fill(); fireEvent.change(screen.getByLabelText(labels.fin), { target: { value: time } });
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(screen.getByText('El fin de la ventana de entrega debe ser posterior al inicio.')).toBeVisible();
+    expect(ordersApi.create).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText(labels.fin), { target: { value: '11:00' } });
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' })); expect(ordersApi.create).toHaveBeenCalledTimes(1);
+  });
+  it('compara también fechas: acepta la entrega al día siguiente y rechaza el día anterior', async () => {
+    setup(); await fill(); fireEvent.change(screen.getByLabelText(labels.fechaFin), { target: { value: '2026-10-01' } });
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' })); expect(ordersApi.create).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText(labels.fechaFin), { target: { value: '2026-10-03' } });
+    fireEvent.change(screen.getByLabelText(labels.fin), { target: { value: '00:30' } });
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ ventana_fin: '2026-10-03T00:30:00-05:00' }));
+  });
+  it('volumen vacío se envía como null y conserva descripción/referencia', async () => {
+    setup(); await fill(); fireEvent.change(screen.getByLabelText(labels.volumen), { target: { value: '' } });
+    fireEvent.change(screen.getByLabelText('Descripción de carga'), { target: { value: 'Costal de ropa' } });
+    fireEvent.change(screen.getByLabelText('Referencia (opcional)'), { target: { value: 'Puerta azul' } });
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ volumen_m3: null, descripcion_carga: 'Costal de ropa', cliente: expect.objectContaining({ referencia: 'Puerta azul' }) }));
+  });
+  it('sin ubicación seleccionada no registra ni usa el centro inicial como destino', async () => {
+    setup(); await fill();
+    // Remount a fresh form and fill every field except the map selection.
+    fireEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    await screen.findByText('Pedido registrado correctamente');
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar otro pedido' }));
+    vi.mocked(ordersApi.create).mockClear();
+    for (const [label, value] of [[labels.nombre, 'Cliente'], [labels.direccion, 'Destino'], [labels.peso, '2'], [labels.fechaInicio, '2026-10-02'], [labels.inicio, '09:00'], [labels.fechaFin, '2026-10-02'], [labels.fin, '11:00']]) fireEvent.change(screen.getByLabelText(label), { target: { value } });
+    await userEvent.selectOptions(screen.getByLabelText('Prioridad'), 'ESTANDAR'); await userEvent.selectOptions(screen.getByLabelText('Tipo de producto'), 'NO_PERECEDERO');
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(screen.getByText('Selecciona un punto de entrega válido en el mapa.')).toBeVisible(); expect(ordersApi.create).not.toHaveBeenCalled();
+    expect(screen.queryByLabelText('Latitud')).not.toBeInTheDocument(); expect(screen.queryByLabelText('Longitud')).not.toBeInTheDocument();
+  });
+  it.each(['0', '-1'])('rechaza volumen %s sin llamar a la API', async value => {
+    setup(); await fill(); fireEvent.change(screen.getByLabelText(labels.volumen), { target: { value } });
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' })); expect(ordersApi.create).not.toHaveBeenCalled();
+  });
   it.each(['Administrador', 'Operador / Técnico'])('%s registra y recibe confirmación sin pantalla de consulta', async role => {
     setup(role); await fill(); await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
     expect(await screen.findByText('Pedido registrado correctamente')).toBeVisible(); expect(screen.getByText('Código: registered-id')).toBeVisible();
@@ -46,9 +105,9 @@ describe('US-004 Registrar pedido', () => {
   });
   it('rechaza rangos, precisión y ventana invertida', async () => {
     setup(); await fill();
-    for (const [label, value] of [[labels.latitud, '91'], [labels.longitud, '-181'], [labels.peso, '0'], [labels.volumen, '0.0001'], [labels.fin, '2026-10-02T08:00']]) fireEvent.change(screen.getByLabelText(label), { target: { value } });
+    for (const [label, value] of [[labels.peso, '0'], [labels.volumen, '0.0001'], [labels.fin, '08:00']]) fireEvent.change(screen.getByLabelText(label), { target: { value } });
     await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
-    expect(screen.getByText('Indica un fin posterior al inicio de la ventana de entrega.')).toBeVisible(); expect(ordersApi.create).not.toHaveBeenCalled();
+    expect(screen.getByText('El fin de la ventana de entrega debe ser posterior al inicio.')).toBeVisible(); expect(ordersApi.create).not.toHaveBeenCalled();
   });
   it('mantiene formulario durante focus/visibility y /auth/me pendiente', async () => {
     setup(); await fill(); const input = screen.getByLabelText(labels.nombre);
