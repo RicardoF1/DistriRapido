@@ -1,0 +1,28 @@
+import { test, expect } from '@playwright/test';
+import { randomBytes, randomUUID } from 'node:crypto';
+test('US-003: Administrador crea y edita cuenta; F5 y logout mantienen protección', async ({ page }) => {
+  const email = process.env.E2E_LOGIN_EMAIL; const password = process.env.E2E_LOGIN_PASSWORD;
+  if (!email || !password) throw new Error('Configura una cuenta administradora exclusiva de pruebas.');
+  const accountEmail = `e2e-${randomUUID()}@example.com`; const editedEmail = `edited-${accountEmail}`;
+  await page.goto('/login'); await page.getByLabel('Correo electrónico').fill(email); await page.getByLabel('Contraseña', { exact: true }).fill(password);
+  await page.getByRole('button', { name: 'Iniciar sesión' }).click(); await expect(page.getByRole('heading', { name: 'Acceso permitido' })).toBeVisible();
+  await page.getByRole('link', { name: 'Usuarios y roles' }).click(); await expect(page.getByRole('heading', { name: 'Usuarios', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Crear usuario' }).click();
+  await page.getByRole('button', { name: 'Crear usuario' }).click(); await expect(page.getByText('Introduce un correo electrónico válido.')).toBeVisible();
+  await page.getByLabel('Correo electrónico').fill(accountEmail); await page.getByLabel('Contraseña', { exact: true }).fill(randomBytes(18).toString('hex'));
+  await page.getByLabel('Rol', { exact: true }).selectOption({ label: 'Operador / Técnico' }); await page.getByRole('button', { name: 'Crear usuario' }).click();
+  const row = page.getByRole('row').filter({ has: page.getByRole('cell', { name: accountEmail, exact: true }) });
+  await expect(row).toContainText('Operador / Técnico'); await expect(row).toContainText('Activo');
+  await row.getByRole('link', { name: `Editar ${accountEmail}` }).click();
+  await expect(page.getByLabel('Correo electrónico')).toHaveValue(accountEmail); await expect(page.getByLabel('Contraseña', { exact: true })).toHaveCount(0);
+  await page.getByLabel('Correo electrónico').fill(editedEmail); await page.getByLabel('Rol', { exact: true }).selectOption({ label: 'Auditor Externo' }); await page.getByLabel('Estado', { exact: true }).selectOption('INACTIVO');
+  await page.getByRole('button', { name: 'Guardar cambios' }).click();
+  const edited = page.getByRole('row').filter({ has: page.getByRole('cell', { name: editedEmail, exact: true }) }); await expect(edited).toContainText('Auditor Externo'); await expect(edited).toContainText('Inactivo');
+  await page.reload(); await expect(edited).toBeVisible(); await expect(page).toHaveURL(/\/usuarios$/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  expect((await page.getByRole('button', { name: 'Cerrar sesión' }).boundingBox())?.height).toBeGreaterThanOrEqual(48);
+  await page.screenshot({ path: test.info().outputPath('usuarios.png'), fullPage: true });
+  expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
+  await page.getByRole('button', { name: 'Cerrar sesión' }).click(); await expect(page).toHaveURL(/\/login$/);
+  await page.goto('/usuarios'); await expect(page).toHaveURL(/\/login$/);
+});
