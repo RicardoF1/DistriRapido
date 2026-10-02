@@ -20,7 +20,13 @@
 - Conviene aclarar permisos y reglas de negocio antes de implementar una historia. En US-004, los documentos mencionaban el rol Planificador, que no está en el catálogo de roles, y diferían sobre cómo tratar pedidos incompletos; las decisiones quedaron registradas en `implementation/US-004.md`.
 - Una prueba de navegación que simula la API verifica la experiencia de interfaz, pero no demuestra persistencia real. Para aceptar US-004 se debe complementar la prueba automatizada con una validación del `POST /orders` y de los datos persistidos.
 - La reproducción local depende de instrucciones y configuración coherentes. En la preparación posterior al Sprint se detectó que faltaba `.env.example` y fue necesario habilitar el entorno de Node/Docker/WSL. Estos hallazgos son posteriores al periodo planificado del Sprint y no se atribuyen a él.
-- Los cambios de alcance deben reflejarse de manera consistente en el backlog, el tablero, la documentación y el criterio de cierre. Jira muestra US-005 dentro de la selección del Sprint 1; los documentos de implementación indican que no se inició y que debe esperar a US-004.
+- Los cambios de alcance y el cierre de historias deben reflejarse de manera consistente en el backlog, el tablero, la documentación y el criterio de aceptación. Según la última confirmación recibida, **US-005 — Consultar pedidos está completada**; falta registrar en el repositorio la fecha de cierre y enlazar su evidencia de implementación, pruebas y aceptación.
+
+### Estado de US-005
+
+| Historia de usuario | Estado | Trazabilidad pendiente |
+|---|---|---|
+| **US-005 — Consultar pedidos** | **Completada** (según confirmación recibida) | No se indicó la fecha de cierre ni se adjuntó evidencia técnica o de aceptación; incorporarlas para que el estado quede verificable en el repositorio. |
 
 ## 3. ¿Qué estamos haciendo bien?
 
@@ -67,7 +73,7 @@ Las acciones y responsables siguientes son **propuestas para aprobación del equ
 | Realizar una Sprint Review con los stakeholders y registrar comentarios, cambios y aceptación. | Líder del proyecto | Acta de revisión enlazada desde el repositorio. |
 | Corregir los cuatro fallos de pruebas unitarias frontend y repetir la suite completa. | Responsable frontend, por asignar por el equipo | Suite frontend aprobada; causa y cambio documentados. |
 | Añadir un `.env.example` seguro y probar los pasos de arranque desde una instalación limpia. | Responsable técnico, por asignar por el equipo | Plantilla sin secretos, Compose validado y guía reproducible. |
-| Alinear la selección de US-005 en Jira con el alcance aprobado y cerrar la discrepancia de nombre del sistema entre Acta e interfaz. | Líder del proyecto y equipo | Decisiones acordadas y consistentes en Jira, README y documentos afectados. |
+| Registrar la fecha de cierre y enlazar las evidencias de implementación, pruebas y aceptación de US-005; sincronizar Jira, README y las notas de implementación con el estado completado. | Líder del proyecto y responsable técnico, por asignar | Estado de US-005 trazable y consistente en Jira, README y documentos afectados. |
 
 ## 6. Cierre
 
@@ -77,4 +83,4 @@ Esta propuesta identifica mejoras apoyadas por evidencias verificables y evita p
 
 | Versión | Fecha | Descripción |
 |---|---|---|
-| **1.0.0** | 2026-10-02 | Creación de propuesta de retrospectiva basada en el estado documentado del proyecto; pendiente de validación del equipo. |
+| **1.0.0** | 2026-10-02 | Actualización para marcar US-005 como completada según confirmación recibida; falta incorporar fecha y evidencia de cierre. |
