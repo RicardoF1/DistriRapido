@@ -8,7 +8,9 @@ import { authApi, ApiError } from '../../services/api';
 import { ordersApi } from '../../services/orders-api';
 import { loginResponse } from '../../test/fixtures';
 import type { RegisteredOrder } from '../../types/orders';
+import { geocoding } from '../../services/geocoding';
 vi.mock('./DeliveryMap', () => ({ DeliveryMap: ({ onChange }: { onChange: (point: { latitud: number; longitud: number }) => void }) => <button type="button" onClick={() => onChange({ latitud: -12.065, longitud: -75.204 })}>Seleccionar destino de prueba</button> }));
+vi.mock('../../services/geocoding', () => ({ geocoding: { search: vi.fn().mockResolvedValue([]), reverse: vi.fn().mockRejectedValue(new Error('offline')) } }));
 vi.mock('../../services/orders-api', () => ({ ordersApi: { create: vi.fn() } }));
 vi.mock('../../services/api', async () => ({ ...await vi.importActual<typeof import('../../services/api')>('../../services/api'), authApi: { me: vi.fn(), login: vi.fn(), logout: vi.fn() } }));
 const identity = (role = 'Administrador') => ({ ...loginResponse.user, rol: { ...loginResponse.user.rol, nombre: role }, expiresAt: Date.now() + 900000 });
@@ -24,12 +26,69 @@ async function fill() {
   await userEvent.click(screen.getByRole('button', { name: 'Seleccionar destino de prueba' }));
   await userEvent.selectOptions(screen.getByLabelText('Prioridad'), 'ESTANDAR'); await userEvent.selectOptions(screen.getByLabelText('Tipo de producto'), 'NO_PERECEDERO');
 }
-beforeEach(() => { vi.resetAllMocks(); vi.mocked(authApi.logout).mockResolvedValue(undefined); vi.mocked(ordersApi.create).mockResolvedValue(result); });
+beforeEach(() => { vi.resetAllMocks(); vi.mocked(geocoding.search).mockResolvedValue([]); vi.mocked(geocoding.reverse).mockRejectedValue(new Error('offline')); vi.mocked(authApi.logout).mockResolvedValue(undefined); vi.mocked(ordersApi.create).mockResolvedValue(result); });
 describe('US-004 Registrar pedido', () => {
+  it('busca con debounce, selecciona coordenadas y exige reconfirmar tras editar', async () => {
+    setup(); await fill();
+    vi.mocked(geocoding.search).mockResolvedValue([{ address: 'Av. Giráldez, Huancayo', latitud: -12.07, longitud: -75.21 }]);
+    fireEvent.change(screen.getByLabelText(labels.direccion), { target: { value: 'Av. Giráldez' } });
+    expect(geocoding.search).not.toHaveBeenCalled();
+    await userEvent.click(await screen.findByRole('button', { name: 'Av. Giráldez, Huancayo' }));
+    expect(screen.getByText('Ubicación confirmada.')).toBeVisible();
+    fireEvent.change(screen.getByLabelText(labels.direccion), { target: { value: 'Otra calle' } });
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(ordersApi.create).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText(labels.direccion), { target: { value: 'Av. Giráldez' } });
+    await userEvent.click(await screen.findByRole('button', { name: 'Av. Giráldez, Huancayo' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ cliente: expect.objectContaining({ latitud: -12.07, longitud: -75.21, direccion: 'Av. Giráldez, Huancayo' }) }));
+  });
+  it('selección manual consulta dirección inversa y conserva datos ante fallo', async () => {
+    setup(); await fill();
+    expect(geocoding.reverse).toHaveBeenCalledWith({ latitud: -12.065, longitud: -75.204 }, expect.any(AbortSignal));
+    expect(await screen.findByText(/No se pudo obtener la dirección/)).toBeVisible();
+    expect(screen.getByLabelText(labels.direccion)).toHaveValue('Destino prueba');
+    vi.mocked(geocoding.reverse).mockResolvedValue('Calle nueva, Huancayo');
+    await userEvent.click(screen.getByRole('button', { name: 'Seleccionar destino de prueba' }));
+    await waitFor(() => expect(screen.getByLabelText(labels.direccion)).toHaveValue('Calle nueva, Huancayo'));
+  });
+  it('fecha inicio limpia un fin anterior y aplica min', async () => {
+    setup(); await fill(); fireEvent.change(screen.getByLabelText(labels.fechaInicio), { target: { value: '2026-10-03' } });
+    expect(screen.getByLabelText(labels.fechaFin)).toHaveValue('');
+    expect(screen.getByLabelText(labels.fechaFin)).toHaveAttribute('min', '2026-10-03');
+  });
+  it.each(['32', '13', '25:00', '12:75', 'texto'])('rechaza hora escrita inválida %s', async value => {
+    setup(); await fill(); fireEvent.change(screen.getByLabelText(labels.inicio), { target: { value } });
+    expect(screen.getByLabelText(labels.inicio)).toHaveValue('09:00');
+    expect(ordersApi.create).not.toHaveBeenCalled(); expect(screen.getByLabelText(labels.inicio)).toHaveAttribute('aria-invalid', 'true');
+  });
+  it('acepta cierre a las 8 PM y apertura al día siguiente', async () => {
+    setup(); await fill();
+    fireEvent.change(screen.getByLabelText(labels.inicio), { target: { value: '07:00' } });
+    await userEvent.selectOptions(screen.getByLabelText('AM/PM de inicio'), 'PM');
+    fireEvent.change(screen.getByLabelText(labels.fechaFin), { target: { value: '2026-10-03' } });
+    fireEvent.change(screen.getByLabelText(labels.fin), { target: { value: '07:00' } });
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ ventana_inicio: '2026-10-02T19:00:00-05:00', ventana_fin: '2026-10-03T07:00:00-05:00' }));
+  });
+  it.each(['01:30', '08:30'])('rechaza %s PM fuera de atención', async time => {
+    setup(); await fill(); fireEvent.change(screen.getByLabelText(labels.fin), { target: { value: time } });
+    await userEvent.selectOptions(screen.getByLabelText('AM/PM de fin'), 'PM');
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(ordersApi.create).not.toHaveBeenCalled(); expect(screen.getByText(/Hora de fin fuera de atención/)).toBeVisible();
+  });
+  it('convierte 12 PM y permite terminar el turno a la 1 PM', async () => {
+    setup(); await fill(); fireEvent.change(screen.getByLabelText(labels.inicio), { target: { value: '12:00' } });
+    fireEvent.change(screen.getByLabelText(labels.fin), { target: { value: '01:00' } });
+    await userEvent.selectOptions(screen.getByLabelText('AM/PM de inicio'), 'PM');
+    await userEvent.selectOptions(screen.getByLabelText('AM/PM de fin'), 'PM');
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ ventana_inicio: '2026-10-02T12:00:00-05:00', ventana_fin: '2026-10-02T13:00:00-05:00' }));
+  });
   it('combina fecha y hora como Lima sin convertir 09:00 en otra hora local', async () => {
     setup(); await fill();
     expect(screen.getByLabelText(labels.fechaInicio)).toHaveAttribute('type', 'date');
-    expect(screen.getByLabelText(labels.inicio)).toHaveAttribute('type', 'time');
+    expect(screen.getByLabelText(labels.inicio)).toHaveAttribute('type', 'text');
     expect(document.querySelector('input[type="datetime-local"]')).toBeNull();
     await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
     const payload = vi.mocked(ordersApi.create).mock.calls[0][0];
@@ -55,9 +114,9 @@ describe('US-004 Registrar pedido', () => {
     setup(); await fill(); fireEvent.change(screen.getByLabelText(labels.fechaFin), { target: { value: '2026-10-01' } });
     await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' })); expect(ordersApi.create).not.toHaveBeenCalled();
     fireEvent.change(screen.getByLabelText(labels.fechaFin), { target: { value: '2026-10-03' } });
-    fireEvent.change(screen.getByLabelText(labels.fin), { target: { value: '00:30' } });
+    fireEvent.change(screen.getByLabelText(labels.fin), { target: { value: '07:30' } });
     await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
-    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ ventana_fin: '2026-10-03T00:30:00-05:00' }));
+    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ ventana_fin: '2026-10-03T07:30:00-05:00' }));
   });
   it('volumen vacío se envía como null y conserva descripción/referencia', async () => {
     setup(); await fill(); fireEvent.change(screen.getByLabelText(labels.volumen), { target: { value: '' } });

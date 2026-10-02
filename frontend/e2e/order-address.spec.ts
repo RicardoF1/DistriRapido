@@ -1,0 +1,31 @@
+import { test, expect } from '@playwright/test';
+test('US-004 sugerencia, arrastre y dirección inversa en Leaflet', async ({ page, baseURL }) => {
+  const headers = { 'Access-Control-Allow-Origin': new URL(baseURL!).origin, 'Access-Control-Allow-Credentials': 'true' };
+  await page.route('**/auth/me', route => route.fulfill({ headers, json: { usuario_id: 'address-user', email: 'address@example.com', rol: { nombre: 'Administrador' }, expiresAt: Date.now() + 900000 } }));
+  await page.route('https://tile.openstreetmap.org/**', route => route.abort());
+  let searches = 0; let reverses = 0;
+  await page.route('https://photon.komoot.io/**', route => {
+    const reverse = new URL(route.request().url()).pathname.includes('reverse');
+    if (reverse) reverses++; else searches++;
+    return route.fulfill({ headers: { 'Access-Control-Allow-Origin': '*' }, json: { features: [{ geometry: { coordinates: [-75.204, -12.065] }, properties: { name: reverse ? 'Calle después del arrastre' : 'Av. Giráldez', city: 'Huancayo' } }] } });
+  });
+  await page.goto('/pedidos/nuevo');
+  const address = page.getByLabel('Dirección de entrega');
+  await address.fill('Av'); await page.waitForTimeout(800); expect(searches).toBe(0);
+  await address.fill('Av. Giráldez');
+  const suggestion = page.getByRole('button', { name: 'Av. Giráldez, Huancayo' });
+  await expect(suggestion).toBeVisible(); await suggestion.focus(); await page.keyboard.press('Enter');
+  await expect(address).toHaveValue('Av. Giráldez, Huancayo');
+  await expect(page.getByText('Ubicación confirmada.', { exact: true })).toBeVisible();
+  const marker = page.locator('.delivery-marker'); await expect(marker).toHaveCount(1);
+  await marker.hover();
+  const box = (await marker.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down();
+  await page.mouse.move(box.x + 70, box.y + 30, { steps: 8 }); expect(reverses).toBe(0);
+  await page.mouse.up();
+  await expect(address).toHaveValue('Calle después del arrastre, Huancayo'); expect(reverses).toBe(1);
+  await address.fill('Otra dirección');
+  await expect(page.getByText(/Ubicación no confirmada/)).toBeVisible();
+  await page.getByRole('button', { name: 'Registrar pedido', exact: true }).click();
+  await expect(page.getByText('Selecciona un punto de entrega válido en el mapa.')).toBeVisible();
+});

@@ -2,6 +2,23 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { StrictMode } from 'react';
 import { vi } from 'vitest';
 import { DeliveryMap } from './DeliveryMap';
+import L from 'leaflet';
+
+it('sugerencia centra mapa y dragend notifica nuevas coordenadas una sola vez', () => {
+  const markerSpy = vi.spyOn(L, 'marker');
+  const viewSpy = vi.spyOn(L.Map.prototype, 'setView');
+  const onChange = vi.fn();
+  render(<DeliveryMap disabled={false} onChange={onChange} point={{ latitud: -12.07, longitud: -75.21 }} />);
+  const marker = markerSpy.mock.results.at(-1)!.value as L.Marker;
+  expect(marker.getLatLng()).toMatchObject({ lat: -12.07, lng: -75.21 });
+  expect(viewSpy).toHaveBeenCalledWith([-12.07, -75.21], 17);
+  expect(onChange).not.toHaveBeenCalled();
+  marker.setLatLng([-12.08, -75.22]); marker.fire('drag');
+  expect(onChange).not.toHaveBeenCalled();
+  marker.fire('dragend');
+  expect(onChange).toHaveBeenCalledExactlyOnceWith({ latitud: -12.08, longitud: -75.22 });
+  markerSpy.mockRestore(); viewSpy.mockRestore();
+});
 
 it('Leaflet requiere selección explícita, admite teclado y conserva mapa tras re-render', () => {
   const onChange = vi.fn();
