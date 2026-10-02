@@ -22,8 +22,8 @@ En esta fase se realiza la transformación ágil, configuración de herramientas
 
 ```text
 prototypes/  → referencias visuales de Stitch
-frontend/    → aplicación React + TypeScript
-backend/     → API NestJS + TypeScript
+src/frontend/ → aplicación React + TypeScript
+src/backend/ → API NestJS + TypeScript
 docs/        → documentación académica del proyecto
 ```
 
@@ -35,7 +35,7 @@ Inicio local: copia `.env.example` a `.env`, configura secretos propios y ejecut
 
 ## Incremento US-002
 
-Persistencia mediante cookie HttpOnly, restauración con `/auth/me` y cierre explícito mediante `/auth/logout`. PostgreSQL de DistriRapido conserva el puerto configurado 5433. Decisiones, pruebas y pasos manuales en [implementation/US-002.md](./implementation/US-002.md). `start:dev` observa los cambios en `backend/src` y reinicia el backend automáticamente; los cambios en `.env` requieren reinicio manual.
+Persistencia mediante cookie HttpOnly, restauración con `/auth/me` y cierre explícito mediante `/auth/logout`. PostgreSQL de DistriRapido conserva el puerto configurado 5433. Decisiones, pruebas y pasos manuales en [implementation/US-002.md](./implementation/US-002.md). `start:dev` observa los cambios en `src/backend/src` y reinicia el backend automáticamente; los cambios en `.env` requieren reinicio manual.
 
 ## Incremento US-003
 

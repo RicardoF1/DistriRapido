@@ -15,7 +15,7 @@ services:
       timeout: 5s
       retries: 10
   backend:
-    build: ./backend
+    build: ./src/backend
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@postgres:5432/${POSTGRES_DB:?}?schema=public
       JWT_SECRET: ${JWT_SECRET:?Configura JWT_SECRET}
@@ -30,7 +30,7 @@ services:
     command: ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
   frontend:
     build:
-      context: ./frontend
+      context: ./src/frontend
       args:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
     ports:

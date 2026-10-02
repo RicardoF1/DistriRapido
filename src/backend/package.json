@@ -4,17 +4,17 @@
   "private": true,
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "start": "dotenv -e ../.env -- node dist/main.js",
-    "start:dev": "dotenv -e ../.env -- node --watch --watch-path=src --watch-preserve-output -r ts-node/register src/main.ts",
+    "start": "dotenv -e ../../.env -- node dist/main.js",
+    "start:dev": "dotenv -e ../../.env -- node --watch --watch-path=src --watch-preserve-output -r ts-node/register src/main.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:integration": "jest --config jest.integration.config.cjs --runInBand",
     "prisma:generate": "prisma generate",
-    "prisma:validate": "dotenv -e ../.env -- prisma validate",
-    "db:migrate": "dotenv -e ../.env -- prisma migrate deploy",
-    "db:bootstrap": "dotenv -e ../.env -- ts-node prisma/bootstrap.ts"
+    "prisma:validate": "dotenv -e ../../.env -- prisma validate",
+    "db:migrate": "dotenv -e ../../.env -- prisma migrate deploy",
+    "db:bootstrap": "dotenv -e ../../.env -- ts-node prisma/bootstrap.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.0",
