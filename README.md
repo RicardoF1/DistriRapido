@@ -11,12 +11,19 @@ En esta fase se realiza la transformación ágil, configuración de herramientas
 - [03 Registro de riesgos V_1_0_0](./docs/02%20Planificación/03%20Registro%20de%20riesgos%20V_1_0_0.md)
 - [04 Presupuesto del proyecto V_1_0_0](./docs/02%20Planificación/04%20Presupuesto%20del%20proyecto%20V_1_0_0.md)
 
+## Fase 03: Implementación — Sprint 1
+
+- [01 Informe de estado del proyecto V_1_0_0](./docs/03%20Implementación/01%20Informe%20de%20estado%20del%20proyecto%20V_1_0_0.md)
+- [02 Registro de Impedimentos V_1_0_0](./docs/03%20Implementación/02%20Registro%20de%20Impedimentos%20V_1_0_0.md)
+- [03 Revisión del Sprint V_1_0_0](./docs/03%20Implementación/03%20Revisión%20del%20Sprint%20V_1_0_0.md)
+- [04 Retrospectiva del Sprint V_1_0_0](./docs/03%20Implementación/04%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
+
 ## Estructura de implementación
 
 ```text
 prototypes/  → referencias visuales de Stitch
-frontend/    → aplicación React + TypeScript
-backend/     → API NestJS + TypeScript
+src/frontend/ → aplicación React + TypeScript
+src/backend/ → API NestJS + TypeScript
 docs/        → documentación académica del proyecto
 ```
 
