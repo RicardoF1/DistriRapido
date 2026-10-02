@@ -10,4 +10,4 @@ coverage/
 *.tsbuildinfo
 playwright-report/
 test-results/
-.LEVANTAR.md
+LEVANTAR.md
