@@ -47,7 +47,8 @@ model Pedido {
   pedido_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cliente_id String @db.Uuid
   peso_kg Decimal @db.Decimal(10, 2)
-  volumen_m3 Decimal @db.Decimal(10, 3)
+  volumen_m3 Decimal? @db.Decimal(10, 3)
+  descripcion_carga String? @db.VarChar(255)
   ventana_inicio DateTime @db.Timestamptz(6)
   ventana_fin DateTime @db.Timestamptz(6)
   prioridad String @db.VarChar(20)

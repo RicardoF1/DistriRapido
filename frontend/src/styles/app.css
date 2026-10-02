@@ -79,3 +79,30 @@ th { background: var(--color-surface-low); white-space: nowrap; }
 .admin-header nav { flex-wrap: wrap; }
 .order-form legend { font-weight: 600; padding: 0 .5rem; }
 .order-form input { width: 100%; min-width: 0; }
+.delivery-map { height: 320px; width: 100%; min-width: 0; border-radius: 8px; z-index: 0; }
+.delivery-marker { color: #006b50; background: white; border: 3px solid #006b50; border-radius: 50%; text-align: center; font-size: 18px; line-height: 22px; }
+.delivery-map:focus-visible { outline: 3px solid #006b50; outline-offset: 3px; }
+.delivery-window-inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.delivery-window-inputs input { min-width: 0; width: 100%; }
+@media (max-width: 480px) { .delivery-window-inputs { grid-template-columns: 1fr; } }
+
+.delivery-input { position: relative; }
+.delivery-input input[type='text'] { padding-right: 2.5rem; }
+.delivery-clock { position: absolute; right: .8rem; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 1.4rem; }
+.address-suggestions { list-style: none; margin: 0; padding: 0; border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; }
+.address-suggestions button { width: 100%; min-height: var(--touch-min); padding: .75rem; font: inherit; text-align: left; overflow-wrap: anywhere; border: 0; background: var(--color-card); color: var(--color-text); cursor: pointer; }
+.address-suggestions button:hover, .address-suggestions button:focus-visible { background: var(--color-surface-low); }
+
+.delivery-time-entry { display: grid; grid-template-columns: minmax(0, 1fr) 5rem; gap: .5rem; }
+
+.order-query { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; align-items: end; }
+.order-query .form-field:first-child { grid-column: 1 / -1; }
+.order-query input { width: 100%; }
+.order-pagination { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+.order-pagination .button { width: auto; }
+.order-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.order-detail-section { padding: 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+.order-detail-section dl { margin: 0; }
+.order-detail-section dt { margin-top: .75rem; color: var(--color-text-muted); }
+.order-detail-section dd { margin: .25rem 0; overflow-wrap: anywhere; }
+@media (max-width: 600px) { .order-query, .order-detail-grid { grid-template-columns: 1fr; } }

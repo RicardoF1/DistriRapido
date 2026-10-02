@@ -35,7 +35,7 @@ for (const role of ['Administrador', 'Operador / Técnico', 'Usuario Final / Con
         await expect(page.getByRole('link', { name: 'Usuarios', exact: true })).toHaveCount(0); expect(userRequests).toBe(0);
       }
       await expect(page).toHaveURL(/\/pedidos\/nuevo$/); await expect(page.getByRole('form', { name: 'Registrar pedido' })).toBeVisible();
-      for (const label of ['Nombre del cliente', 'Dirección de entrega', 'Latitud', 'Longitud', 'Peso (kg)', 'Volumen (m³)', 'Inicio de ventana de entrega', 'Fin de ventana de entrega', 'Prioridad', 'Tipo de producto']) await expect(page.getByLabel(label, { exact: true })).toBeVisible();
+      for (const label of ['Nombre del cliente', 'Dirección de entrega', 'Peso (kg)', 'Volumen (m³) — opcional', 'Fecha de inicio', 'Hora de inicio', 'Fecha de fin', 'Hora de fin', 'Prioridad', 'Tipo de producto']) await expect(page.getByLabel(label, { exact: true })).toBeVisible();
       await page.getByLabel('Nombre del cliente').fill('Borrador en memoria');
       const checked = page.waitForResponse(response => response.url().endsWith('/auth/me') && response.status() === 200);
       await page.evaluate(() => window.dispatchEvent(new Event('focus'))); await checked; await expect(page.getByLabel('Nombre del cliente')).toHaveValue('Borrador en memoria');

@@ -9,6 +9,45 @@ import { OrdersController } from './orders.controller';
 import { OrderRegistrationGuard } from './order-registration.guard';
 const valid = { cliente: { nombre: 'Cliente', direccion: 'Destino', latitud: -12.065, longitud: -75.204 }, peso_kg: 2.25, volumen_m3: 0.015, ventana_inicio: '2026-10-02T09:00:00-05:00', ventana_fin: '2026-10-02T11:00:00-05:00', prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO' };
 describe('RF-003 → US-004', () => {
+  it.each(['06:59', '13:00', '13:30', '20:00', '20:01'])('rechaza inicio fuera de atención %s sin transacción', time => {
+    const prisma = { $transaction: jest.fn() };
+    expect(() => new OrdersService(prisma as unknown as PrismaService).create({ ...valid, ventana_inicio: `2026-10-02T${time}:00-05:00`, ventana_fin: '2026-10-03T11:00:00-05:00' })).toThrow('horario de atención');
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+  it.each(['13:01', '13:59', '20:01'])('rechaza fin fuera de atención %s', time => {
+    const prisma = { $transaction: jest.fn() };
+    expect(() => new OrdersService(prisma as unknown as PrismaService).create({ ...valid, ventana_fin: `2026-10-02T${time}:00-05:00` })).toThrow('horario de atención');
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+  it.each([['07:00', '13:00'], ['14:00', '20:00'], ['12:00', '15:00']])('acepta extremos de atención %s–%s', async (start, end) => {
+    const tx = { cliente: { create: jest.fn().mockResolvedValue({ cliente_id: 'client' }) }, pedido: { create: jest.fn().mockResolvedValue({}) } };
+    const prisma = { $transaction: jest.fn(callback => callback(tx)) };
+    await new OrdersService(prisma as unknown as PrismaService).create({ ...valid, ventana_inicio: `2026-10-02T${start}:00-05:00`, ventana_fin: `2026-10-02T${end}:00-05:00` });
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+  });
+  it('valida atención en Lima aunque reciba timestamps UTC', async () => {
+    const tx = { cliente: { create: jest.fn().mockResolvedValue({ cliente_id: 'client' }) }, pedido: { create: jest.fn().mockResolvedValue({}) } };
+    const prisma = { $transaction: jest.fn(callback => callback(tx)) };
+    await new OrdersService(prisma as unknown as PrismaService).create({ ...valid, ventana_inicio: '2026-10-02T19:00:00Z', ventana_fin: '2026-10-03T01:00:00Z' });
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+  });
+  it.each([undefined, null])('DTO acepta volumen desconocido %s', async volumen_m3 => {
+    expect(await validate(plainToInstance(CreateOrderDto, { ...valid, volumen_m3 }))).toHaveLength(0);
+  });
+  it.each([-1, 0, ''])('rechaza volumen informado inválido %s', async volumen_m3 => {
+    expect((await validate(plainToInstance(CreateOrderDto, { ...valid, volumen_m3 }))).length).toBeGreaterThan(0);
+  });
+  it('normaliza descripción y referencia sin aceptar campos nuevos de cliente', async () => {
+    const dto = plainToInstance(CreateOrderDto, { ...valid, descripcion_carga: ' Costal de ropa ', cliente: { ...valid.cliente, referencia: ' Puerta azul ' } });
+    expect(await validate(dto)).toHaveLength(0);
+    expect(dto.descripcion_carga).toBe('Costal de ropa'); expect(dto.cliente.referencia).toBe('Puerta azul');
+  });
+  it('servicio conserva volumen desconocido como null y descripción informada', async () => {
+    const tx = { cliente: { create: jest.fn().mockResolvedValue({ cliente_id: 'client-id' }) }, pedido: { create: jest.fn().mockResolvedValue({}) } };
+    const prisma = { $transaction: jest.fn(callback => callback(tx)) };
+    await new OrdersService(prisma as unknown as PrismaService).create({ ...valid, volumen_m3: undefined, descripcion_carga: 'Costal de ropa' });
+    expect(tx.pedido.create).toHaveBeenCalledWith({ data: expect.objectContaining({ volumen_m3: null, descripcion_carga: 'Costal de ropa' }) });
+  });
   it.each(['Administrador', 'Operador / Técnico'])('autoriza %s', role => {
     const context = { switchToHttp: () => ({ getRequest: () => ({ user: { rol: { nombre: role } } }) }) } as ExecutionContext;
     expect(new OrderRegistrationGuard().canActivate(context)).toBe(true);
@@ -44,7 +83,7 @@ describe('RF-003 → US-004', () => {
     const service = new OrdersService(prisma as unknown as PrismaService);
     expect(await new OrdersController(service).create(valid)).toEqual(result);
     expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-    expect(tx.pedido.create).toHaveBeenCalledWith({ data: { cliente_id: 'client-id', peso_kg: 2.25, volumen_m3: 0.015, ventana_inicio: new Date(valid.ventana_inicio), ventana_fin: new Date(valid.ventana_fin), prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO' } });
+    expect(tx.pedido.create).toHaveBeenCalledWith({ data: { cliente_id: 'client-id', peso_kg: 2.25, volumen_m3: 0.015, descripcion_carga: null, ventana_inicio: new Date(valid.ventana_inicio), ventana_fin: new Date(valid.ventana_fin), prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO' } });
   });
   it.each([['invalid', valid.ventana_fin], [valid.ventana_inicio, 'invalid'], [valid.ventana_fin, valid.ventana_inicio], [valid.ventana_inicio, valid.ventana_inicio]])('rechaza ventana inválida sin iniciar transacción %s / %s', (inicio, fin) => {
     const prisma = { $transaction: jest.fn() }; const service = new OrdersService(prisma as unknown as PrismaService);

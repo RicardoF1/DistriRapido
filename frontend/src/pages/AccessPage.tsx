@@ -30,6 +30,7 @@ export function AccessPage() {
       <p>Has iniciado sesión correctamente.</p><dl><dt>Cuenta</dt><dd>{user.email}</dd><dt>Rol</dt><dd>{user.rol.nombre}</dd></dl>
       {user.rol.nombre === 'Administrador' && <Link className="button button-primary" to="/usuarios">Usuarios y roles</Link>}
       {['Administrador', 'Operador / Técnico'].includes(user.rol.nombre) && <Link className="button button-primary" to="/pedidos/nuevo">Registrar pedido</Link>}
+      {['Administrador', 'Operador / Técnico'].includes(user.rol.nombre) && <Link className="button button-primary" to="/pedidos">Consultar pedidos</Link>}
       <p className="access-note">Los módulos operativos se incorporarán en los siguientes incrementos.</p>
     </> : <p role="status">Comprobando tu identidad con el servidor.</p>}
     <LogoutButton />
