@@ -11,3 +11,11 @@ coverage/
 playwright-report/
 test-results/
 LEVANTAR.md
+
+# Temporales y configuración personal del IDE
+*.tmp
+*.temp
+*.swp
+*~
+.vscode/
+.idea/
