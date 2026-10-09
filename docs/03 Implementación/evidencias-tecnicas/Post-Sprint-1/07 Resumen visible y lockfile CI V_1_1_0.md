@@ -12,7 +12,7 @@ El fallo npm ci de Actions #18 se reprodujo por la diferencia de resolvedor: npm
 
 ## Archivos
 
-- src/backend/package-lock.json.
+- src/backend/package-lock.json y test/orders.integration.ts.
 - src/frontend/src/features/admin/AdminSummary.tsx y AdminSummary.test.tsx.
 - src/frontend/src/styles/app.css.
 - src/frontend/src/routes/AppRoutes.test.tsx.
@@ -28,6 +28,10 @@ El fallo npm ci de Actions #18 se reprodujo por la diferencia de resolvedor: npm
 - E2E: 30 aprobadas, API simulada, Edge, 390/768/1366/1440 px, navegación, permisos, carga/error/reintento y respuesta vacía.
 - Un primer intento Jest no inició por permisos del directorio temporal Windows; la repetición autorizada aprobó. La primera pasada frontend detectó un centro no determinista en jsdom y la primera E2E detectó dos expectativas antiguas; se corrigieron sus precondiciones/expectativas y se repitieron completas.
 - El build local puede incluir los recursos privados disponibles localmente; dist está ignorado y no se publica. CI comprueba un checkout sin dichos recursos. La validación geográfica de producción conserva el bloqueo por ausencia o corrupción.
+
+## Resultado remoto y corrección adicional
+
+Actions #19 aprobó npm ci, las 243 pruebas backend, frontend y CodeQL; falló en integración PostgreSQL porque orders.integration.ts todavía dependía de cobertura privada. Se añadió exclusivamente en esa suite un proveedor de prueba que carga el paquete sintético verificado durante onModuleInit; las coordenadas y expectativas de persistencia ahora usan el punto ficticio (2, 2). Se mantienen todas las aserciones HTTP, persistencia y rollback, el acceso real a la base efímera de CI y el servicio de producción sin cambios. Typecheck y lint aprobados tras este ajuste. El resultado de integración se verificará en la siguiente ejecución remota; no se ejecutó contra PostgreSQL local.
 
 ## Publicación y límites
 
