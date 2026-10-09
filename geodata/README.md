@@ -99,6 +99,10 @@ Desde la raíz: `node scripts/provision-coverage.cjs --source "/directorio/priva
 
 Detalles y resultados de esta fase: [informe 05](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md).
 
+## Instalación individual para el equipo (Windows)
+
+Consultar [la guía V_1_1_0](EQUIPO-WINDOWS-V_1_1_0.md): nueve recursos exactos, descarga directa individual desde INEI, generación aislada, comprobación de hashes y prueba del mapa sin registrar pedidos. No se acreditó redistribución interna y no se preparó paquete compartido.
+
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Resolver y documentar los permisos de redistribución INEI antes de publicar datos o imágenes. Revisar la evidencia técnica 05 y verificar persistencia en una base exclusivamente de pruebas, sin utilizar los registros existentes.
