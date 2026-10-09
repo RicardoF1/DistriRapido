@@ -6,25 +6,26 @@ import { districtAt, normalizePoint, validateCoverage, type Coverage, type Deliv
 import { coverageRelease } from './generated/release';
 export const COVERAGE_UNAVAILABLE = 'La cobertura geográfica no está disponible o no pudo verificarse. No se puede registrar el pedido.';
 export const OUTSIDE_COVERAGE = 'Ubicación fuera de cobertura: selecciona Huancayo, El Tambo, Chilca, Pilcomayo o Huancán.';
-export function readCoverage(directory: string): Coverage {
+export type CoverageReference = Pick<typeof coverageRelease, "version" | "enabled" | "files_sha256">;
+export function readCoverage(directory: string, approved: CoverageReference = coverageRelease): Coverage {
   const manifest = JSON.parse(readFileSync(resolve(directory, 'manifest.json'), 'utf8')) as { version: string; enabled: Record<string, string>; files_sha256: Record<string, string> };
   const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
-  if (manifest.version !== coverageRelease.version || !same(manifest.enabled, coverageRelease.enabled) || !same(manifest.files_sha256, coverageRelease.files_sha256)) throw new Error('Manifiesto no aprobado.');
+  if (manifest.version !== approved.version || !same(manifest.enabled, approved.enabled) || !same(manifest.files_sha256, approved.files_sha256)) throw new Error('Manifiesto no aprobado.');
   let combined = '';
-  for (const [name, hash] of Object.entries(coverageRelease.files_sha256)) {
+  for (const [name, hash] of Object.entries(approved.files_sha256)) {
     const bytes = readFileSync(resolve(directory, name));
     if (createHash('sha256').update(bytes).digest('hex') !== hash) throw new Error('Integridad geográfica inválida.');
     if (name === 'coverage.geojson') combined = bytes.toString('utf8');
   }
-  return validateCoverage(JSON.parse(combined), coverageRelease.enabled);
+  return validateCoverage(JSON.parse(combined), approved.enabled);
 }
 @Injectable()
 export class CoverageService {
   private coverage: Coverage | null = null;
   onModuleInit() { this.load(); }
-  load(directory = resolve(__dirname, '../../../../geodata/coverage/v1')) {
+  load(directory = resolve(__dirname, '../../../../geodata/coverage/v1'), approved: CoverageReference = coverageRelease) {
     this.coverage = null;
-    try { this.coverage = readCoverage(directory); }
+    try { this.coverage = readCoverage(directory, approved); }
     catch { Logger.warn(COVERAGE_UNAVAILABLE, 'CoverageService'); }
   }
   assertDelivery(point: DeliveryPoint): DeliveryPoint {

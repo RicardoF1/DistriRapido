@@ -100,7 +100,15 @@ El perfil de mantenimiento de `docker-compose.migrations.yml` sustituye el antig
 
 La rama `feature/post-sprint1-ui-geocoverage` comparte código, documentación, configuración y pruebas; no distribuye los nueve recursos privados de `geodata/coverage/v1/` ni imágenes Docker con ellos. Cada integrante necesita obtener el paquete aprobado por un canal privado autorizado y ejecutar el procedimiento de aprovisionamiento anterior.
 
-Sin esos recursos, el frontend no puede compilar sus importaciones estáticas de cobertura y las pruebas geográficas no pueden ejecutarse completas. El backend puede compilar la política, pero responde HTTP 503 al registrar pedidos si no logra cargar/verificar el paquete. Login y consulta no dependen de la cobertura, siempre que se configure normalmente la API y su base. Esta entrega de código no autoriza redistribuir los datos INEI ni publicar imágenes que los contengan.
+Sin esos recursos, frontend y backend pueden compilar y las pruebas unitarias/HTTP de CI usan exclusivamente fixtures sintéticos. El frontend muestra un error de cobertura y bloquea la confirmación; el build no incorpora ningún polígono de prueba como recurso operativo. El backend puede compilar la política, pero responde HTTP 503 al registrar pedidos si no logra cargar/verificar el paquete. Login y consulta no dependen de la cobertura, siempre que se configure normalmente la API y su base. Esta entrega de código no autoriza redistribuir los datos INEI ni publicar imágenes que los contengan.
+
+## CI reproducible sin recursos privados
+
+Los fixtures de `test-fixtures/coverage-synthetic.json` contienen únicamente rectángulos y puntos inventados en una cuadrícula cerca de 0,0; no proceden del INEI. Se inyectan en pruebas backend, Vitest y pruebas de aprovisionamiento, nunca como fallback de producción. Los cinco códigos administrativos prueban la estructura del contrato, sin afirmar que esas geometrías representen distritos. Los umbrales de pruebas y audit se mantienen.
+
+Vite carga recursos privados solo si están aprovisionados y su SHA-256 coincide con el release. Sin el paquete, compila sin emitir cobertura; la carga en navegador falla cerrada. Los E2E que ejercitan el mapa de producción necesitan un entorno privado autorizado; no forman parte del workflow actual ni se declara que hayan sido ejecutados en esta corrección.
+
+La corrección y sus verificaciones están documentadas en [Corrección CI y fixtures sintéticos V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/06%20Corrección%20CI%20y%20fixtures%20sintéticos%20V_1_1_0.md).
 
 ## Siguiente documento / Siguiente trabajo recomendado
 

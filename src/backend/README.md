@@ -50,6 +50,10 @@ Revisar proyecto Compose y base de destino antes de hacerlo. En una actualizaci�
 
 Pruebas de esta fase: Jest ejecuta HTTP Nest/Supertest con Prisma simulado y paquete GeoJSON real. Las pruebas de integración contra una base aislada siguen siendo un procedimiento independiente, no un resultado acreditado aquí. Véase [informe 05](../../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md).
 
+## Inyección de datos solo en pruebas
+
+El loader acepta una referencia explícita de integridad para probar paquetes sintéticos. Los tests la suministran; el arranque de producción no recibe esa referencia y mantiene el release aprobado v1.0.0 por defecto. Una prueba verifica que el paquete sintético sea rechazado por la configuración de producción. `prepare-coverage.cjs` solo requiere política y metadatos públicos; no lee GeoJSON, manifiesto privado ni test-points.
+
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Resolver y documentar los permisos de redistribución INEI antes de publicar datos o imágenes. Revisar la evidencia técnica 05 y verificar persistencia en una base exclusivamente de pruebas, sin utilizar los registros existentes.

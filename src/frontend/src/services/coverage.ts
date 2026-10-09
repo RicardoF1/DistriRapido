@@ -1,10 +1,9 @@
 import releaseRaw from '../../../../geodata/coverage-release.json?raw';
-import manifestRaw from '../../../../geodata/coverage/v1/manifest.json?raw';
-import coverageUrl from '../../../../geodata/coverage/v1/coverage.geojson?url';
+const coverageUrl = `${import.meta.env.BASE_URL}geodata/coverage/v1/coverage.geojson`;
 import { validateCoverage, type Coverage } from '../../../../geodata/coverage';
 export { districtAt, normalizePoint, coverageBounds } from '../../../../geodata/coverage';
 export type { Coverage, DeliveryPoint } from '../../../../geodata/coverage';
-export const coverageManifest = JSON.parse(manifestRaw) as { version: string; enabled: Record<string, string>; files_sha256: Record<string, string> };
+export const coverageManifest = JSON.parse(releaseRaw) as { version: string; enabled: Record<string, string>; files_sha256: Record<string, string> };
 export const COVERAGE_ERROR = 'No se pudo cargar o verificar la cobertura. No puedes confirmar el destino. Recarga la página e inténtalo de nuevo.';
 export const OUTSIDE_COVERAGE = 'Ubicación fuera de cobertura. Selecciona un destino en Huancayo, El Tambo, Chilca, Pilcomayo o Huancán.';
 export async function decodeCoverage(raw: string): Promise<Coverage> {

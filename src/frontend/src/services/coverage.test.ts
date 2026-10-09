@@ -1,16 +1,17 @@
-import raw from '../../../../geodata/coverage/v1/coverage.geojson?raw';
-import fixtureRaw from '../../../../geodata/coverage/v1/test-points.json?raw';
+import synthetic from '../../../../test-fixtures/coverage-synthetic.json';
+const raw = JSON.stringify(synthetic.coverage);
+const fixtureRaw = JSON.stringify({points:synthetic.points});
 import { districtAt, normalizePoint, validateCoverage, type Coverage } from '../../../../geodata/coverage';
 import { coverageManifest, decodeCoverage, loadCoverage } from './coverage';
 const coverage = validateCoverage(JSON.parse(raw), coverageManifest.enabled);
 const fixtures = JSON.parse(fixtureRaw) as { points: { id: string; coordinates: [number, number]; expected_covered: boolean; expected_district?: string }[] };
-it.each(fixtures.points)('$id: pertenencia con seis decimales', item => {
+it.each(fixtures.points)('$id: pertenencia sintética con seis decimales', item => {
   const result = districtAt(coverage, { longitud: item.coordinates[0], latitud: item.coordinates[1] });
   expect(Boolean(result)).toBe(item.expected_covered);
   if (item.expected_covered) expect(result?.id).toBe(item.expected_district);
 });
 it('rechaza Jauja y coordenadas inválidas', () => {
-  for (const point of [{ latitud: -11.775, longitud: -75.5 }, { latitud: NaN, longitud: -75 }, { latitud: 91, longitud: 0 }]) expect(districtAt(coverage, point)).toBeNull();
+  for (const point of [{ latitud: 20, longitud: 40 }, { latitud: NaN, longitud: -75 }, { latitud: 91, longitud: 0 }]) expect(districtAt(coverage, point)).toBeNull();
 });
 it('verifica SHA-256 y falla ante archivo modificado o truncado', async () => {
   await expect(loadCoverage()).resolves.toEqual(coverage);

@@ -9,7 +9,7 @@ import { ordersApi } from '../../services/orders-api';
 import { loginResponse } from '../../test/fixtures';
 import type { RegisteredOrder } from '../../types/orders';
 import { geocoding } from '../../services/geocoding';
-vi.mock('./DeliveryMap', () => ({ DeliveryMap: ({ onChange }: { onChange: (point: { latitud: number; longitud: number }) => void }) => <button type="button" onClick={() => onChange({ latitud: -12.065, longitud: -75.204 })}>Seleccionar destino de prueba</button> }));
+vi.mock('./DeliveryMap', () => ({ DeliveryMap: ({ onChange }: { onChange: (point: { latitud: number; longitud: number }) => void }) => <button type="button" onClick={() => onChange({ latitud: 2, longitud: 2 })}>Seleccionar destino de prueba</button> }));
 vi.mock('../../services/geocoding', () => ({ geocoding: { search: vi.fn().mockResolvedValue([]), reverse: vi.fn().mockRejectedValue(new Error('offline')) } }));
 vi.mock('../../services/orders-api', () => ({ ordersApi: { create: vi.fn() } }));
 vi.mock('../../services/api', async () => ({ ...await vi.importActual<typeof import('../../services/api')>('../../services/api'), authApi: { me: vi.fn(), login: vi.fn(), logout: vi.fn() } }));
@@ -32,7 +32,7 @@ describe('US-004 Registrar pedido', () => {
     setup(); await fill();
     // Ignore searches initiated while preparing the other form fields.
     vi.mocked(geocoding.search).mockClear();
-    vi.mocked(geocoding.search).mockResolvedValue([{ address: 'Av. Giráldez, Huancayo', latitud: -12.07, longitud: -75.21 }]);
+    vi.mocked(geocoding.search).mockResolvedValue([{ address: 'Av. Giráldez, Huancayo', latitud: 1, longitud: 1 }]);
     fireEvent.change(screen.getByLabelText(labels.direccion), { target: { value: 'Av. Giráldez' } });
     expect(geocoding.search).not.toHaveBeenCalled();
     await userEvent.click(await screen.findByRole('button', { name: 'Av. Giráldez, Huancayo' }));
@@ -43,12 +43,12 @@ describe('US-004 Registrar pedido', () => {
     fireEvent.change(screen.getByLabelText(labels.direccion), { target: { value: 'Av. Giráldez' } });
     await userEvent.click(await screen.findByRole('button', { name: 'Av. Giráldez, Huancayo' }));
     await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
-    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ cliente: expect.objectContaining({ latitud: -12.07, longitud: -75.21, direccion: 'Av. Giráldez, Huancayo' }) }));
+    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ cliente: expect.objectContaining({ latitud: 1, longitud: 1, direccion: 'Av. Giráldez, Huancayo' }) }));
   });
   it('selección manual consulta dirección inversa y conserva datos ante fallo', async () => {
     vi.mocked(geocoding.reverse).mockRejectedValue(new Error('offline'));
     setup(); await fill();
-    expect(geocoding.reverse).toHaveBeenCalledWith({ latitud: -12.065, longitud: -75.204 }, expect.any(AbortSignal));
+    expect(geocoding.reverse).toHaveBeenCalledWith({ latitud: 2, longitud: 2 }, expect.any(AbortSignal));
     expect(await screen.findByText(/No se pudo obtener la dirección/)).toBeVisible();
     expect(screen.getByLabelText(labels.direccion)).toHaveValue('Destino prueba');
     expect(screen.queryByText('Ubicación confirmada.')).not.toBeInTheDocument();
@@ -151,7 +151,7 @@ describe('US-004 Registrar pedido', () => {
   it.each(['Administrador', 'Operador / Técnico'])('%s registra y recibe confirmación sin pantalla de consulta', async role => {
     setup(role); await fill(); await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
     expect(await screen.findByText('Pedido registrado correctamente')).toBeVisible(); expect(screen.getByText('Código: registered-id')).toBeVisible();
-    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ cliente: { nombre: 'Cliente prueba', direccion: 'Destino prueba', latitud: -12.065, longitud: -75.204 }, peso_kg: 2.5, volumen_m3: 0.015, prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO' }));
+    expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ cliente: { nombre: 'Cliente prueba', direccion: 'Destino prueba', latitud: 2, longitud: 2 }, peso_kg: 2.5, volumen_m3: 0.015, prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO' }));
     expect(vi.mocked(ordersApi.create).mock.calls[0][0]).not.toHaveProperty('estado');
     await userEvent.click(screen.getByRole('button', { name: 'Registrar otro pedido' })); expect(screen.getByLabelText(labels.nombre)).toHaveValue('');
   });

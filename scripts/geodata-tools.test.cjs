@@ -5,7 +5,8 @@ const path = require('node:path');
 const os = require('node:os');
 const cp = require('node:child_process');
 const root = path.resolve(__dirname, '..');
-const release = JSON.parse(fs.readFileSync(path.join(root, 'geodata/coverage-release.json'), 'utf8'));
+const synthetic = JSON.parse(fs.readFileSync(path.join(root, 'test-fixtures/coverage-synthetic.json'), 'utf8'));
+const release = synthetic.release;
 function fixture() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'distrirapido-geodata-tools-'));
   fs.mkdirSync(path.join(dir, 'scripts')); fs.mkdirSync(path.join(dir, 'geodata'));
@@ -16,7 +17,8 @@ function fixture() {
 function run(dir, script, args = []) { return cp.spawnSync(process.execPath, [path.join(dir, 'scripts', script), ...args], { encoding: 'utf8' }); }
 function source(dir) {
   const from = path.join(dir, 'private'); fs.mkdirSync(from);
-  for (const file of ['manifest.json', ...Object.keys(release.files_sha256)]) fs.copyFileSync(path.join(root, 'geodata/coverage/v1', file), path.join(from, file));
+  fs.writeFileSync(path.join(from,'manifest.json'),JSON.stringify(release));
+  for (const [file,bytes] of Object.entries(synthetic.files)) fs.writeFileSync(path.join(from,file),bytes);
   return from;
 }
 test('detecta GeoJSON indexado en un repositorio temporal, sin tocar el índice real', () => {
@@ -26,7 +28,7 @@ test('detecta GeoJSON indexado en un repositorio temporal, sin tocar el índice 
   cp.execFileSync('git', ['-C', dir, 'add', 'assets/district.geojson']);
   const result = run(dir, 'check-geodata-publication.cjs'); assert.equal(result.status, 1); assert.match(result.stderr, /district.geojson/);
 });
-test('aprovisiona bytes privados aprobados y es idempotente', () => {
+test('aprovisiona bytes sintéticos aprobados en entorno de prueba y es idempotente', () => {
   const dir = fixture(); const from = source(dir);
   assert.equal(run(dir, 'provision-coverage.cjs', ['--source', from]).status, 0);
   const target = path.join(dir, 'geodata/coverage/v1/coverage.geojson'); const before = fs.readFileSync(target);

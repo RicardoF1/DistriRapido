@@ -1,0 +1,354 @@
+{
+  "notice": "TEST ONLY. Invented Cartesian grid near 0,0. Not INEI, not territorial coverage. Never provision in production.",
+  "coverage": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "id": "120101",
+        "properties": {
+          "ubigeo": "120101",
+          "nombdist": "HUANCAYO",
+          "nombprov": "HUANCAYO",
+          "nombdep": "JUNIN"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                4,
+                0
+              ],
+              [
+                4,
+                4
+              ],
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                0
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "id": "120107",
+        "properties": {
+          "ubigeo": "120107",
+          "nombdist": "CHILCA",
+          "nombprov": "HUANCAYO",
+          "nombdep": "JUNIN"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                6,
+                0
+              ],
+              [
+                10,
+                0
+              ],
+              [
+                10,
+                4
+              ],
+              [
+                6,
+                4
+              ],
+              [
+                6,
+                0
+              ]
+            ],
+            [
+              [
+                7,
+                1
+              ],
+              [
+                9,
+                1
+              ],
+              [
+                9,
+                3
+              ],
+              [
+                7,
+                3
+              ],
+              [
+                7,
+                1
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "id": "120114",
+        "properties": {
+          "ubigeo": "120114",
+          "nombdist": "EL TAMBO",
+          "nombprov": "HUANCAYO",
+          "nombdep": "JUNIN"
+        },
+        "geometry": {
+          "type": "MultiPolygon",
+          "coordinates": [
+            [
+              [
+                [
+                  12,
+                  0
+                ],
+                [
+                  16,
+                  0
+                ],
+                [
+                  16,
+                  4
+                ],
+                [
+                  12,
+                  4
+                ],
+                [
+                  12,
+                  0
+                ]
+              ]
+            ],
+            [
+              [
+                [
+                  12,
+                  5
+                ],
+                [
+                  16,
+                  5
+                ],
+                [
+                  16,
+                  6
+                ],
+                [
+                  12,
+                  6
+                ],
+                [
+                  12,
+                  5
+                ]
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "id": "120119",
+        "properties": {
+          "ubigeo": "120119",
+          "nombdist": "HUANCAN",
+          "nombprov": "HUANCAYO",
+          "nombdep": "JUNIN"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                18,
+                0
+              ],
+              [
+                22,
+                0
+              ],
+              [
+                22,
+                4
+              ],
+              [
+                18,
+                4
+              ],
+              [
+                18,
+                0
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "id": "120125",
+        "properties": {
+          "ubigeo": "120125",
+          "nombdist": "PILCOMAYO",
+          "nombprov": "HUANCAYO",
+          "nombdep": "JUNIN"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                24,
+                0
+              ],
+              [
+                28,
+                0
+              ],
+              [
+                28,
+                4
+              ],
+              [
+                24,
+                4
+              ],
+              [
+                24,
+                0
+              ]
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "points": [
+    {
+      "id": "synthetic-120101",
+      "coordinates": [
+        2,
+        2
+      ],
+      "expected_covered": true,
+      "expected_district": "120101"
+    },
+    {
+      "id": "synthetic-120107",
+      "coordinates": [
+        8,
+        0.5
+      ],
+      "expected_covered": true,
+      "expected_district": "120107"
+    },
+    {
+      "id": "synthetic-120114",
+      "coordinates": [
+        14,
+        2
+      ],
+      "expected_covered": true,
+      "expected_district": "120114"
+    },
+    {
+      "id": "synthetic-120119",
+      "coordinates": [
+        20,
+        2
+      ],
+      "expected_covered": true,
+      "expected_district": "120119"
+    },
+    {
+      "id": "synthetic-120125",
+      "coordinates": [
+        26,
+        2
+      ],
+      "expected_covered": true,
+      "expected_district": "120125"
+    },
+    {
+      "id": "outside-0",
+      "coordinates": [
+        40,
+        20
+      ],
+      "expected_covered": false
+    },
+    {
+      "id": "outside-1",
+      "coordinates": [
+        41,
+        20
+      ],
+      "expected_covered": false
+    },
+    {
+      "id": "outside-2",
+      "coordinates": [
+        42,
+        20
+      ],
+      "expected_covered": false
+    },
+    {
+      "id": "outside-3",
+      "coordinates": [
+        43,
+        20
+      ],
+      "expected_covered": false
+    }
+  ],
+  "release": {
+    "version": "1.0.0",
+    "enabled": {
+      "120101": "HUANCAYO",
+      "120107": "CHILCA",
+      "120114": "EL TAMBO",
+      "120119": "HUANCAN",
+      "120125": "PILCOMAYO"
+    },
+    "files_sha256": {
+      "coverage.geojson": "01cfc37ac75cdd423b4db237959cd84818e9ec315625e07cb1679f4043f6529a",
+      "test-points.json": "96a176a871b189aedcacc5e338a4572e9fd66d78c4c44efebeb83334a384ce8d",
+      "validation.json": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "120101.geojson": "6b1e6298b2f62f02207e39a5c74c7fc892f712561f245edd5f96fd39cd88f4cd",
+      "120107.geojson": "bd3f2fa79be79cd6d3029b05c00c52cce99c1f18d08e9933d3a6016492d74aa4",
+      "120114.geojson": "32ad14ad2f4d1cdd6e95a7ba04e31340458cfe9f784efdb4fb94a7499eac2e88",
+      "120119.geojson": "e379433ff8feaa69924b9cb100c9e523e31530fdee82cffd49ff524a8e997020",
+      "120125.geojson": "eccca54f22a44d4df64175bedd3234d7490daad5bccfb53729316b52e38f2b54"
+    },
+    "redistribution": {
+      "status": "unconfirmed",
+      "publicReleaseAllowed": false
+    }
+  },
+  "files": {
+    "coverage.geojson": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"id\":\"120101\",\"properties\":{\"ubigeo\":\"120101\",\"nombdist\":\"HUANCAYO\",\"nombprov\":\"HUANCAYO\",\"nombdep\":\"JUNIN\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[4,0],[4,4],[0,4],[0,0]]]}},{\"type\":\"Feature\",\"id\":\"120107\",\"properties\":{\"ubigeo\":\"120107\",\"nombdist\":\"CHILCA\",\"nombprov\":\"HUANCAYO\",\"nombdep\":\"JUNIN\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[6,0],[10,0],[10,4],[6,4],[6,0]],[[7,1],[9,1],[9,3],[7,3],[7,1]]]}},{\"type\":\"Feature\",\"id\":\"120114\",\"properties\":{\"ubigeo\":\"120114\",\"nombdist\":\"EL TAMBO\",\"nombprov\":\"HUANCAYO\",\"nombdep\":\"JUNIN\"},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[12,0],[16,0],[16,4],[12,4],[12,0]]],[[[12,5],[16,5],[16,6],[12,6],[12,5]]]]}},{\"type\":\"Feature\",\"id\":\"120119\",\"properties\":{\"ubigeo\":\"120119\",\"nombdist\":\"HUANCAN\",\"nombprov\":\"HUANCAYO\",\"nombdep\":\"JUNIN\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[18,0],[22,0],[22,4],[18,4],[18,0]]]}},{\"type\":\"Feature\",\"id\":\"120125\",\"properties\":{\"ubigeo\":\"120125\",\"nombdist\":\"PILCOMAYO\",\"nombprov\":\"HUANCAYO\",\"nombdep\":\"JUNIN\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[24,0],[28,0],[28,4],[24,4],[24,0]]]}}]}",
+    "test-points.json": "{\"points\":[{\"id\":\"synthetic-120101\",\"coordinates\":[2,2],\"expected_covered\":true,\"expected_district\":\"120101\"},{\"id\":\"synthetic-120107\",\"coordinates\":[8,0.5],\"expected_covered\":true,\"expected_district\":\"120107\"},{\"id\":\"synthetic-120114\",\"coordinates\":[14,2],\"expected_covered\":true,\"expected_district\":\"120114\"},{\"id\":\"synthetic-120119\",\"coordinates\":[20,2],\"expected_covered\":true,\"expected_district\":\"120119\"},{\"id\":\"synthetic-120125\",\"coordinates\":[26,2],\"expected_covered\":true,\"expected_district\":\"120125\"},{\"id\":\"outside-0\",\"coordinates\":[40,20],\"expected_covered\":false},{\"id\":\"outside-1\",\"coordinates\":[41,20],\"expected_covered\":false},{\"id\":\"outside-2\",\"coordinates\":[42,20],\"expected_covered\":false},{\"id\":\"outside-3\",\"coordinates\":[43,20],\"expected_covered\":false}]}",
+    "validation.json": "{\"synthetic\":true}",
+    "120101.geojson": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"id\":\"120101\",\"properties\":{\"ubigeo\":\"120101\",\"nombdist\":\"HUANCAYO\",\"nombprov\":\"HUANCAYO\",\"nombdep\":\"JUNIN\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[4,0],[4,4],[0,4],[0,0]]]}}]}",
+    "120107.geojson": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"id\":\"120107\",\"properties\":{\"ubigeo\":\"120107\",\"nombdist\":\"CHILCA\",\"nombprov\":\"HUANCAYO\",\"nombdep\":\"JUNIN\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[6,0],[10,0],[10,4],[6,4],[6,0]],[[7,1],[9,1],[9,3],[7,3],[7,1]]]}}]}",
+    "120114.geojson": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"id\":\"120114\",\"properties\":{\"ubigeo\":\"120114\",\"nombdist\":\"EL TAMBO\",\"nombprov\":\"HUANCAYO\",\"nombdep\":\"JUNIN\"},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[12,0],[16,0],[16,4],[12,4],[12,0]]],[[[12,5],[16,5],[16,6],[12,6],[12,5]]]]}}]}",
+    "120119.geojson": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"id\":\"120119\",\"properties\":{\"ubigeo\":\"120119\",\"nombdist\":\"HUANCAN\",\"nombprov\":\"HUANCAYO\",\"nombdep\":\"JUNIN\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[18,0],[22,0],[22,4],[18,4],[18,0]]]}}]}",
+    "120125.geojson": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"id\":\"120125\",\"properties\":{\"ubigeo\":\"120125\",\"nombdist\":\"PILCOMAYO\",\"nombprov\":\"HUANCAYO\",\"nombdep\":\"JUNIN\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[24,0],[28,0],[28,4],[24,4],[24,0]]]}}]}"
+  }
+}

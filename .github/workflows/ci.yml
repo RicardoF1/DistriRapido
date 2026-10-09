@@ -1,4 +1,4 @@
-name: US-001 checks
+name: DistriRapido checks
 on:
   push:
   pull_request:
@@ -43,6 +43,11 @@ jobs:
       - run: npm run test:integration
       - run: npm run build
       - run: npm audit --audit-level=high
+      - name: Synthetic provisioning and publication guard
+        working-directory: .
+        run: |
+          node --test scripts/geodata-tools.test.cjs
+          node scripts/check-geodata-publication.cjs
   frontend:
     runs-on: ubuntu-latest
     defaults:

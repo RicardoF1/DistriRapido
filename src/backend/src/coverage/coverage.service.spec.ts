@@ -4,11 +4,12 @@ import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { CoverageService, readCoverage } from './coverage.service';
-import { coverageRelease } from './generated/release';
+import { synthetic, syntheticPackage } from '../../test/synthetic-coverage';
+const coverageRelease = synthetic.release;
 import { districtAt, normalizePoint, validateCoverage, type Coverage } from './generated/coverage';
 const root = resolve(__dirname, '../../../..');
-const directory = join(root, 'geodata/coverage/v1');
-const fixtures = JSON.parse(readFileSync(join(directory, 'test-points.json'), 'utf8')) as { points: { id: string; coordinates: [number, number]; expected_covered: boolean; expected_district?: string }[] };
+const directory = syntheticPackage();
+const fixtures = { points: synthetic.points };
 const sandbox = mkdtempSync(join(tmpdir(), 'distrirapido-coverage-tests-'));
 let serial = 0;
 function damaged(change: (dir: string) => void) {
@@ -19,42 +20,42 @@ function damaged(change: (dir: string) => void) {
 beforeEach(() => jest.spyOn(Logger, 'warn').mockImplementation(() => undefined));
 afterEach(() => jest.restoreAllMocks());
 it.each(fixtures.points)('v1.0.0: $id', item => {
-  const service = new CoverageService(); service.load(directory);
+  const service = new CoverageService(); service.load(directory, coverageRelease);
   const point = normalizePoint({ longitud: item.coordinates[0], latitud: item.coordinates[1] })!;
   if (item.expected_covered) {
     expect(service.assertDelivery(point)).toEqual(point);
-    expect(districtAt(readCoverage(directory), point)?.id).toBe(item.expected_district);
+    expect(districtAt(readCoverage(directory, coverageRelease), point)?.id).toBe(item.expected_district);
   } else expect(() => service.assertDelivery(point)).toThrow(BadRequestException);
 });
-it('rechaza Jauja', () => {
-  const service = new CoverageService(); service.onModuleInit();
-  expect(() => service.assertDelivery({ latitud: -11.775, longitud: -75.5 })).toThrow(BadRequestException);
+it('rechaza un punto ficticio exterior', () => {
+  const service = new CoverageService(); service.load(directory, coverageRelease);
+  expect(() => service.assertDelivery({ latitud: 20, longitud: 40 })).toThrow(BadRequestException);
 });
-it.each([{latitud:NaN,longitud:0},{latitud:Infinity,longitud:0},{latitud:91,longitud:0},{latitud:0,longitud:-181},{latitud:-12.0650001,longitud:-75.204}])('rechaza coordenadas inválidas %j', point => {
-  const service=new CoverageService(); service.load(); expect(()=>service.assertDelivery(point)).toThrow(BadRequestException);
+it.each([{latitud:NaN,longitud:0},{latitud:Infinity,longitud:0},{latitud:91,longitud:0},{latitud:0,longitud:-181},{latitud:2.0000001,longitud:2}])('rechaza coordenadas inválidas %j', point => {
+  const service=new CoverageService(); service.load(directory, coverageRelease); expect(()=>service.assertDelivery(point)).toThrow(BadRequestException);
 });
 it('sin inicialización falla cerrada', () => {
-  expect(()=>new CoverageService().assertDelivery({latitud:-12.065,longitud:-75.204})).toThrow(ServiceUnavailableException);
+  expect(()=>new CoverageService().assertDelivery({latitud:2,longitud:2})).toThrow(ServiceUnavailableException);
 });
 it.each(['manifest.json', ...Object.keys(coverageRelease.files_sha256)])('recurso ausente %s impide confirmación', name => {
   // Own temp package only; original resources remain untouched.
-  const dir=damaged(dir=>unlinkSync(join(dir,name))); const service=new CoverageService(); service.load(dir);
-  expect(()=>service.assertDelivery({latitud:-12.065,longitud:-75.204})).toThrow(ServiceUnavailableException);
+  const dir=damaged(dir=>unlinkSync(join(dir,name))); const service=new CoverageService(); service.load(dir, coverageRelease);
+  expect(()=>service.assertDelivery({latitud:2,longitud:2})).toThrow(ServiceUnavailableException);
 });
 it('directorio ausente y recarga corrupta invalidan el snapshot anterior', () => {
-  const service=new CoverageService();service.load();expect(service.assertDelivery({latitud:-12.065,longitud:-75.204})).toBeDefined();
-  service.load(join(sandbox,'absent'));expect(()=>service.assertDelivery({latitud:-12.065,longitud:-75.204})).toThrow(ServiceUnavailableException);
+  const service=new CoverageService();service.load(directory, coverageRelease);expect(service.assertDelivery({latitud:2,longitud:2})).toBeDefined();
+  service.load(join(sandbox,'absent'));expect(()=>service.assertDelivery({latitud:2,longitud:2})).toThrow(ServiceUnavailableException);
 });
 it.each(['version','enabled','files_sha256'])('rechaza manifiesto manipulado: %s', field=>{
   const dir=damaged(dir=>{const p=join(dir,'manifest.json');const m=JSON.parse(readFileSync(p,'utf8'));m[field]=field==='version'?'2.0.0':{};writeFileSync(p,JSON.stringify(m));});
-  expect(()=>readCoverage(dir)).toThrow('Manifiesto');
+  expect(()=>readCoverage(dir, coverageRelease)).toThrow('Manifiesto');
 });
 it('rechaza hash incorrecto aun si el GeoJSON conserva JSON válido',()=>{
-  const dir=damaged(dir=>{const p=join(dir,'coverage.geojson');writeFileSync(p,readFileSync(p,'utf8')+' ');});expect(()=>readCoverage(dir)).toThrow('Integridad');
+  const dir=damaged(dir=>{const p=join(dir,'coverage.geojson');writeFileSync(p,readFileSync(p,'utf8')+' ');});expect(()=>readCoverage(dir, coverageRelease)).toThrow('Integridad');
 });
 it('valida códigos, departamento, provincia y estructura sin cambiar geometrías',()=>{
   for(const modify of [(c:Coverage)=>{c.features[0].properties.ubigeo='999999';},(c:Coverage)=>{c.features[0].properties.nombprov='JAUJA';},(c:Coverage)=>{c.features[0].properties.nombdep='OTRO';},(c:Coverage)=>{c.features[0].geometry.coordinates=[];}]){
-    const c=readCoverage(directory);modify(c);expect(()=>validateCoverage(c,coverageRelease.enabled)).toThrow();
+    const c=readCoverage(directory, coverageRelease);modify(c);expect(()=>validateCoverage(c,coverageRelease.enabled)).toThrow();
   }
 });
 const square = (x:number) => [[[x,0],[x+4,0],[x+4,4],[x,4],[x,0]]] as [number,number][][];
@@ -71,3 +72,6 @@ it('generación reproducible desde la política canónica, sin divergencia manua
   const script=resolve(__dirname,'../../scripts/prepare-coverage.cjs');const destination=join(__dirname,'generated/coverage.ts');
   execFileSync(process.execPath,[script]);const first=readFileSync(destination);execFileSync(process.execPath,[script]);expect(readFileSync(destination)).toEqual(first);expect(first).toEqual(readFileSync(join(root,'geodata/coverage.ts')));
 });
+
+it('producción no admite el manifiesto sintético sin referencia de prueba explícita',()=>{const service=new CoverageService();service.load(directory);expect(()=>service.assertDelivery({latitud:2,longitud:2})).toThrow(ServiceUnavailableException);});
+it('inicio conserva el cargador de producción por defecto',()=>{const service=new CoverageService();const load=jest.spyOn(service,'load').mockImplementation(()=>undefined);service.onModuleInit();expect(load).toHaveBeenCalledWith();});

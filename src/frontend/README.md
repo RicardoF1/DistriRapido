@@ -56,13 +56,17 @@ Las suites `login.spec.ts`, `users.spec.ts` y `orders.spec.ts` requieren servici
 
 ## Recursos de cobertura y distribución
 
-Vite importa el GeoJSON y manifiesto desde `../../geodata/coverage/v1/`, sin duplicarlos manualmente. La carga contrasta el manifiesto con `geodata/coverage-release.json` y verifica SHA-256 y estructura, y requiere Web Crypto en HTTPS o localhost; falla cerrada si no puede verificarlos. La publicación pública del recurso está pendiente de aclarar los permisos INEI.
+La referencia pública `geodata/coverage-release.json` fija versión, códigos y SHA-256. El navegador solicita `geodata/coverage/v1/coverage.geojson` y verifica integridad y estructura, y requiere Web Crypto en HTTPS o localhost; falla cerrada si no puede verificarlos. La publicación pública del recurso está pendiente de aclarar los permisos INEI.
 
 El Dockerfile compila con contexto raíz y copia selectivamente frontend, política, metadatos y paquete privado. `.dockerignore` excluye secretos, dependencias locales y archivos ajenos al build. Antes de construir, ejecutar `node scripts/provision-coverage.cjs` desde la raíz. La imagen resultante incorpora el GeoJSON: su publicación sigue bloqueada por permisos INEI no confirmados.
 
 ## Verificación de la fase backend
 
 La evidencia vigente separa pruebas HTTP con Prisma simulado, E2E con API simulada y comprobaciones de empaquetado de cualquier persistencia real: [informe 05](../../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md). No se ejecutaron altas contra PostgreSQL.
+
+## CI y recursos opcionales
+
+El setup de Vitest y los tests geométricos usan `test-fixtures/coverage-synthetic.json`, datos inventados y versionables. La referencia de hashes sintéticos solo se sustituye mediante mocks dentro de pruebas. `coverage-assets.ts` permite compilar un clon limpio: no emite cobertura si falta el paquete privado y rechaza bytes corruptos si existe. En desarrollo sirve el recurso privado verificado; en build lo emite en `dist/geodata/coverage/v1/`. No utiliza fixtures de prueba para operar la aplicación.
 
 ## Siguiente documento / Siguiente trabajo recomendado
 

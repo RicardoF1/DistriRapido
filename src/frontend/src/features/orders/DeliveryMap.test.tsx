@@ -8,13 +8,13 @@ async function ready() { await waitFor(() => expect(screen.getByRole('button', {
 it('sugerencia centra mapa; dragend fuera de cobertura invalida selección', async () => {
   const markerSpy = vi.spyOn(L, 'marker'); const viewSpy = vi.spyOn(L.Map.prototype, 'setView');
   const onChange = vi.fn();
-  render(<DeliveryMap disabled={false} onChange={onChange} point={{ latitud: -12.07, longitud: -75.21 }} />);
+  render(<DeliveryMap disabled={false} onChange={onChange} point={{ latitud: 1, longitud: 1 }} />);
   await ready();
   const marker = markerSpy.mock.results.at(-1)!.value as L.Marker;
-  expect(marker.getLatLng()).toMatchObject({ lat: -12.07, lng: -75.21 });
-  expect(viewSpy).toHaveBeenCalledWith([-12.07, -75.21], 17); expect(onChange).not.toHaveBeenCalled();
-  marker.setLatLng([-11.775, -75.5]); marker.fire('drag'); expect(onChange).not.toHaveBeenCalled();
-  act(() => { marker.fire('dragend'); }); expect(onChange).toHaveBeenCalledExactlyOnceWith({ latitud: -11.775, longitud: -75.5 });
+  expect(marker.getLatLng()).toMatchObject({ lat: 1, lng: 1 });
+  expect(viewSpy).toHaveBeenCalledWith([1, 1], 17); expect(onChange).not.toHaveBeenCalled();
+  marker.setLatLng([20, 40]); marker.fire('drag'); expect(onChange).not.toHaveBeenCalled();
+  act(() => { marker.fire('dragend'); }); expect(onChange).toHaveBeenCalledExactlyOnceWith({ latitud: 20, longitud: 40 });
   expect(screen.getByText(/Ubicación fuera de cobertura/)).toBeVisible();
   expect(marker.getElement()).toHaveClass('delivery-marker-outside');
   markerSpy.mockRestore(); viewSpy.mockRestore();
@@ -31,7 +31,7 @@ it('StrictMode conserva mapa; teclado selecciona centro y disabled impide cambio
 });
 it('dibuja cinco distritos y Ver cobertura reajusta vista sin reiniciar marcador', async () => {
   const fit = vi.spyOn(L.Map.prototype, 'fitBounds'); const onChange = vi.fn();
-  render(<DeliveryMap onChange={onChange} disabled={false} point={{ latitud: -12.065, longitud: -75.204 }} />);
+  render(<DeliveryMap onChange={onChange} disabled={false} point={{ latitud: 2, longitud: 2 }} />);
   await ready(); const map = screen.getByRole('region');
   expect(screen.getByRole('list', { name: 'Distritos autorizados' }).children).toHaveLength(5);
   const marker = map.querySelector('.delivery-marker');
@@ -44,13 +44,13 @@ it('dibuja cinco distritos y Ver cobertura reajusta vista sin reiniciar marcador
 
 it('volver a elegir la misma sugerencia centra y acerca incluso después de Ver cobertura', async () => {
   const setView = vi.spyOn(L.Map.prototype, 'setView');
-  const point = { latitud: -12.07, longitud: -75.21 };
+  const point = { latitud: 1, longitud: 1 };
   const view = render(<DeliveryMap disabled={false} onChange={vi.fn()} point={point} focusRevision={1} confirmed />);
   await ready();
   fireEvent.click(screen.getByRole('button', { name: 'Ver cobertura' }));
   setView.mockClear();
   view.rerender(<DeliveryMap disabled={false} onChange={vi.fn()} point={{ ...point }} focusRevision={2} confirmed />);
-  expect(setView).toHaveBeenCalledWith([-12.07, -75.21], 17);
+  expect(setView).toHaveBeenCalledWith([1, 1], 17);
   expect(screen.getByRole('region').querySelectorAll('.delivery-marker')).toHaveLength(1);
   view.rerender(<DeliveryMap disabled={false} onChange={vi.fn()} point={point} focusRevision={2} confirmed={false} />);
   expect(screen.getByRole('region').querySelector('.delivery-marker')).toHaveClass('delivery-marker-unconfirmed');
