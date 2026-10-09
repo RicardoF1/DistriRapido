@@ -42,7 +42,7 @@ export function AccessPage() {
         <nav className="admin-shortcuts" aria-label="Accesos rápidos">{adminShortcuts.map(item => <Link className="admin-shortcut" aria-label={item.title} to={item.to} key={item.to}>
           <span className="admin-shortcut-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{item.icon}</svg></span>
           <h2>{item.title}</h2><p>{item.description}</p><span className="admin-shortcut-action" aria-hidden="true">Abrir módulo <span>→</span></span>
-        </Link>)}</nav>
+        </Link>)}</nav><Link className="button button-primary" to="/vehiculos">Gestionar vehículos</Link>
       </> : <>
       <p>Has iniciado sesión correctamente.</p><dl><dt>Cuenta</dt><dd>{user.email}</dd><dt>Rol</dt><dd>{session?.user.rol.nombre}</dd></dl>
       <div className="access-actions">

@@ -62,7 +62,7 @@ export function ProtectedRoute() {
 
   if (
     role === 'Administrador' &&
-    administrationRoute
+    (administrationRoute || location.pathname === '/vehiculos')
   ) {
     return <Outlet />;
   }

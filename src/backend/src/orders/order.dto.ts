@@ -1,6 +1,7 @@
 import { Type, Transform } from 'class-transformer';
 import { IsDefined, IsIn, IsISO8601, IsNumber, IsObject, IsOptional, IsString, Matches, Max, MaxLength, Min, MinLength, ValidateBy, ValidateNested } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ORDER_STATES } from './order-status';
 const trim = ({ value }: { value: unknown }) => typeof value === 'string' ? value.trim() : value;
 function DecimalScale(scale: number) {
   return ValidateBy({ name: 'decimalScale', validator: {
@@ -44,4 +45,11 @@ export class RegisteredOrderDto {
   @ApiProperty({ enum: PRODUCT_TYPES }) tipo_producto!: string;
   @ApiProperty({ enum: ['PENDIENTE'], readOnly: true }) estado!: string;
   @ApiProperty({ format: 'date-time', readOnly: true }) creado_en!: Date;
+}
+
+export class UpdateOrderStatusDto {
+  @ApiProperty({ enum: ORDER_STATES })
+  @IsDefined()
+  @IsIn(ORDER_STATES)
+  estado!: string;
 }

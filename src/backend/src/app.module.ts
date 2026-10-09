@@ -10,13 +10,13 @@ import { OrdersModule } from './orders/orders.module';
 import { DriversModule } from './drivers/drivers.module';
 import { AvailabilityModule } from './availability/availability.module';
 import { AdminModule } from './admin/admin.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env', '../.env'], validate: validateEnvironment }),
-    ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]), AuthModule, UsersModule, RolesModule, OrdersModule, AdminModule, DriversModule, AvailabilityModule,
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]), AuthModule, UsersModule, RolesModule, OrdersModule, AdminModule, DriversModule, AvailabilityModule, VehiclesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}
-

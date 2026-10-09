@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { isUUID } from 'class-validator';
 import { OrderQueryDto } from './order-query.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './order.dto';
+import { isAllowedOrderTransition, ORDER_STATES } from './order-status';
 import { CoverageService } from '../coverage/coverage.service';
 @Injectable()
 export class OrdersService {
@@ -28,6 +29,15 @@ export class OrdersService {
     const pedido = await this.prisma.pedido.findUnique({ where: { pedido_id: id }, include: { cliente: true } });
     if (!pedido) throw new NotFoundException('Pedido no encontrado.');
     return pedido;
+  }
+  async updateStatus(id: string, nextState: string) {
+    if (!ORDER_STATES.includes(nextState as typeof ORDER_STATES[number])) throw new BadRequestException('Estado de pedido no permitido.');
+    const current = await this.prisma.pedido.findUnique({ where: { pedido_id: id }, select: { estado: true } });
+    if (!current) throw new NotFoundException('Pedido no encontrado.');
+    if (!isAllowedOrderTransition(current.estado, nextState as typeof ORDER_STATES[number])) {
+      throw new ConflictException(`No se permite la transición de ${current.estado} a ${nextState}.`);
+    }
+    return this.prisma.pedido.update({ where: { pedido_id: id }, data: { estado: nextState }, include: { cliente: true } });
   }
   create(dto: CreateOrderDto) {
     const inicio = new Date(dto.ventana_inicio); const fin = new Date(dto.ventana_fin);

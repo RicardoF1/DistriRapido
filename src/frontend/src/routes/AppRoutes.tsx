@@ -13,6 +13,7 @@ import { OrderRegistrationPage } from '../pages/OrderRegistrationPage';
 import { OrderLayout } from '../layouts/OrderLayout';
 import { OrdersPage } from '../pages/OrdersPage';
 import { OrderDetailPage } from '../pages/OrderDetailPage';
+import { VehiclesPage } from '../pages/VehiclesPage';
 import { DriversLayout } from '../layouts/DriversLayout';
 import { DriversPage } from '../pages/DriversPage';
 import { AvailabilityLayout } from '../layouts/AvailabilityLayout';
@@ -44,6 +45,10 @@ export function AppRoutes() {
           <Route
             path="/usuarios/:id/editar"
             element={<UserEditorPage />}
+          />
+          <Route
+            path="/vehiculos"
+            element={<VehiclesPage />}
           />
         </Route>
 

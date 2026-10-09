@@ -63,6 +63,22 @@ model Pedido {
   @@map("pedidos")
 }
 
+model Vehiculo {
+  vehiculo_id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  placa                    String   @unique @db.VarChar(15)
+  tipo                     String   @db.VarChar(30)
+  capacidad_carga_kg       Decimal  @db.Decimal(10, 2)
+  capacidad_volumen_m3     Decimal? @db.Decimal(10, 3)
+  consumo_km_l             Decimal  @db.Decimal(10, 3)
+  factor_emision_kg_co2_km Decimal  @db.Decimal(10, 5)
+  anio_fabricacion         Int      @db.SmallInt
+  estado                   String   @default("DISPONIBLE") @db.VarChar(20)
+
+  @@index([estado], map: "idx_vehiculos_estado")
+  @@index([tipo], map: "idx_vehiculos_tipo")
+  @@map("vehiculos")
+}
+
 // HGR-26 / US-008 / RF-006:
 // Gestión administrativa de conductores.
 model Conductor {
@@ -92,7 +108,6 @@ model DisponibilidadConductor {
   creado_en         DateTime  @default(now()) @db.Timestamptz(6)
   actualizado_en    DateTime  @updatedAt @db.Timestamptz(6)
   conductor         Conductor @relation(fields: [conductor_id], references: [conductor_id], onDelete: Restrict)
-
   @@unique([conductor_id, inicio, fin], map: "uq_disponibilidad_conductor_intervalo")
   @@index([conductor_id, inicio, fin], map: "idx_disponibilidad_conductor_intervalo")
   @@index([estado], map: "idx_disponibilidad_conductor_estado")

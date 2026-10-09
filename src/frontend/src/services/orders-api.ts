@@ -7,5 +7,6 @@ export const ordersApi = {
     return request<OrderPage>(`/orders?${params}`, { signal });
   },
   get: (id: string, signal?: AbortSignal) => request<OrderRead>(`/orders/${encodeURIComponent(id)}`, { signal }),
+  updateStatus: (id: string, estado: string) => request<OrderRead>(`/orders/${encodeURIComponent(id)}/status`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ estado }) }),
   create: (values: OrderValues) => request<RegisteredOrder>('/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(values) }),
 };
