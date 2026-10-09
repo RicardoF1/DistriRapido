@@ -271,3 +271,12 @@ th { background: var(--color-surface-low); white-space: nowrap; }
 
 .admin-summary-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; }
 .admin-metric dd.admin-metric-value-muted { font-size: 1rem; color: var(--color-text-muted); overflow-wrap: anywhere; }
+
+/* US-008: scoped driver forms; no vehicle or availability features. */
+.driver-form fieldset { border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: var(--space-lg); margin: 0 0 var(--space-lg); min-width: 0; }
+.driver-fields { display: grid; gap: var(--space-lg); grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.driver-filters, .driver-actions { display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: end; margin: var(--space-lg) 0; }
+.driver-filters label { display: flex; flex-direction: column; gap: var(--space-xs); max-width: 100%; }
+.driver-detail { overflow-wrap: anywhere; }
+.driver-detail dt { font-weight: 600; }
+.driver-detail dd { margin: 0 0 var(--space-md); }

@@ -10,6 +10,10 @@ export async function request<T>(path: string, options: RequestInit): Promise<T>
   try { response = await fetch(`${baseUrl}${path}`, { ...options, credentials: 'include', cache: 'no-store' }); }
   catch { throw new ApiError('No se pudo conectar al servidor. Inténtalo de nuevo.', 0); }
   if (!response.ok) {
+    if (/^\/drivers(?:\?|\/|$)/.test(path)) {
+      const messages:Record<number,string>={400:'Revisa los datos obligatorios, la experiencia y la cuenta vinculada; debe tener rol de conductor.',403:'No tienes permisos para gestionar conductores.',404:'Conductor no encontrado.',409:'El DNI o la cuenta ya pertenece a otro conductor.',503:'Gestión de conductores pendiente de habilitación: falta aplicar la migración autorizada.'};
+      if(messages[response.status])throw new ApiError(messages[response.status],response.status);
+    }
     const orderRead = /^\/orders(?:\?|\/)/.test(path);
     if (response.status === 401) throw new ApiError('Credenciales incorrectas o usuario no habilitado.', 401);
     if (response.status === 403) throw new ApiError(orderRead ? 'No tienes permisos para consultar pedidos.' : path === '/orders' ? 'No tienes permisos para registrar pedidos.' : 'No tienes permisos para administrar usuarios y roles.', 403);

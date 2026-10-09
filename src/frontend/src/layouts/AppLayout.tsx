@@ -26,7 +26,7 @@ export function AppLayout({ children, title, navigationLabel = 'Área autenticad
       <nav id="app-navigation" ref={navigation} className="app-navigation" aria-label={navigationLabel} onClick={() => setOpen(false)}>
         <NavLink to={accessPath(role)}>Acceso</NavLink>
         {role === 'Administrador' && <NavLink to="/usuarios">Usuarios</NavLink>}
-        {operational && <><NavLink to="/pedidos" end>Consultar pedidos</NavLink><NavLink to="/pedidos/nuevo">Registrar pedido</NavLink></>}
+        {operational && <><NavLink to="/conductores">Conductores</NavLink><NavLink to="/pedidos" end>Consultar pedidos</NavLink><NavLink to="/pedidos/nuevo">Registrar pedido</NavLink></>}
       </nav>
       <p className="sidebar-note">Huancayo · Valle del Mantaro</p>
     </aside>

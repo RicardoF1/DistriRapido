@@ -23,6 +23,7 @@ model Usuario {
   password_hash String   @db.VarChar(255)
   estado        String   @default("ACTIVO") @db.VarChar(20)
   creado_en     DateTime @default(now()) @db.Timestamptz(6)
+  conductor     Conductor?
   rol           Rol      @relation(fields: [rol_id], references: [rol_id], onDelete: Restrict)
 
   @@index([rol_id], map: "idx_usuarios_rol_id")
@@ -58,4 +59,19 @@ model Pedido {
   cliente Cliente @relation(fields: [cliente_id], references: [cliente_id], onDelete: Restrict)
   @@index([cliente_id], map: "idx_pedidos_cliente")
   @@map("pedidos")
+}
+
+// HGR-26 / US-008 / RF-006: provisional administrative scope, no US-009 schedule.
+model Conductor {
+ conductor_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+ usuario_id String? @unique @db.Uuid
+ nombre_completo String @db.VarChar(150)
+ dni String @unique @db.VarChar(20)
+ licencia_categoria String @db.VarChar(20)
+ anios_experiencia Int @default(0) @db.SmallInt
+ telefono String @db.VarChar(30)
+ estado String @default("ACTIVO") @db.VarChar(20)
+ usuario Usuario? @relation(fields: [usuario_id], references: [usuario_id], onDelete: Restrict)
+ @@index([estado], map: "idx_conductores_estado")
+ @@map("conductores")
 }
