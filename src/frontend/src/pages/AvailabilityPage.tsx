@@ -51,6 +51,12 @@ export function AvailabilityPage() {
     window.location.pathname.endsWith('/editar');
 
   useEffect(() => {
+    if (creating || id) {
+      setNotice('');
+    }
+  }, [creating, id]);
+
+  useEffect(() => {
     const controller = new AbortController();
 
     setLoading(true);
@@ -493,3 +499,4 @@ export function AvailabilityPage() {
     </section>
   );
 }
+
