@@ -4,7 +4,8 @@ dist/
 .env.local
 .env.*
 !.env.example
-coverage/
+/src/frontend/coverage/
+/src/backend/coverage/
 *.log
 .local/
 *.tsbuildinfo
@@ -19,3 +20,7 @@ LEVANTAR.md
 *~
 .vscode/
 .idea/
+
+# Private administrative resources: publication permission is unconfirmed.
+/geodata/coverage/v1/
+/src/backend/src/coverage/generated/

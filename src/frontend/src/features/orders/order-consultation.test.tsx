@@ -12,7 +12,7 @@ import type { OrderRead } from '../../types/orders';
 vi.mock('../../services/orders-api', () => ({ ordersApi: { list: vi.fn(), get: vi.fn() } }));
 vi.mock('../../services/api', async () => ({ ...await vi.importActual<typeof import('../../services/api')>('../../services/api'), authApi: { me: vi.fn(), logout: vi.fn() } }));
 const id = '10000000-0000-4000-8000-000000000001';
-const order: OrderRead = { pedido_id: id, cliente_id: id, peso_kg: '2.5', volumen_m3: null, descripcion_carga: 'Caja', estado: 'PENDIENTE', prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO', creado_en: '2026-10-01T12:00:00Z', ventana_inicio: '2026-10-02T14:00:00Z', ventana_fin: '2026-10-02T16:00:00Z', cliente: { cliente_id: id, nombre: 'Comercial Mantaro', direccion: 'Av. Giraldez', referencia: 'Puerta azul', telefono: null, email: null, estado: 'ACTIVO', latitud: '-12.065', longitud: '-75.204' } };
+const order: OrderRead = { pedido_id: id, cliente_id: id, peso_kg: '2.5', volumen_m3: null, descripcion_carga: 'Caja', estado: 'PENDIENTE', prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO', creado_en: '2026-10-01T12:00:00Z', ventana_inicio: '2026-10-02T14:00:00Z', ventana_fin: '2026-10-02T16:00:00Z', cliente: { cliente_id: id, nombre: 'Comercial Mantaro', direccion: 'Av. Giraldez', referencia: 'Puerta azul', telefono: null, email: null, estado: 'ACTIVO', latitud: '2', longitud: '2' } };
 const page = { items: [order], total: 1, page: 1, pageSize: 20 };
 function setup(path = '/pedidos') { return render(<MemoryRouter initialEntries={[path]}><AuthProvider><AppRoutes /></AuthProvider></MemoryRouter>); }
 beforeEach(() => {

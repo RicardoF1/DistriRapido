@@ -7,6 +7,8 @@ import { validate } from 'class-validator';
 import request from 'supertest';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
+import { CoverageService } from '../coverage/coverage.service';
+const coverage = { assertDelivery: (point: { latitud: number; longitud: number }) => ({ latitud: point.latitud, longitud: point.longitud }) } as CoverageService;
 import { OrderQueryDto } from './order-query.dto';
 import { OrderConsultationGuard } from './order-consultation.guard';
 import { OrderRegistrationGuard } from './order-registration.guard';
@@ -23,7 +25,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   prisma.pedido.findMany.mockResolvedValue([order]); prisma.pedido.count.mockResolvedValue(1); prisma.pedido.findUnique.mockResolvedValue(order);
   prisma.$transaction.mockImplementation((operations: Promise<unknown>[]) => Promise.all(operations));
-  service = new OrdersService(prisma as unknown as PrismaService);
+  service = new OrdersService(prisma as unknown as PrismaService, coverage);
 });
 describe('US-005 consultas Prisma', () => {
   it.each(['Mantaro', 'Giraldez', id])('busca cliente/dirección/UUID sin N+1: %s', async search => {
@@ -59,7 +61,7 @@ describe('US-005 consultas Prisma', () => {
 describe('US-005 HTTP con Prisma simulado', () => {
   let app: INestApplication;
   beforeAll(async () => {
-    const module = await Test.createTestingModule({ controllers: [OrdersController], providers: [OrdersService, JwtAuthGuard, RequestOriginGuard, OrderConsultationGuard, OrderRegistrationGuard,
+    const module = await Test.createTestingModule({ controllers: [OrdersController], providers: [{ provide: CoverageService, useValue: coverage }, OrdersService, JwtAuthGuard, RequestOriginGuard, OrderConsultationGuard, OrderRegistrationGuard,
       { provide: PrismaService, useValue: prisma }, { provide: ConfigService, useValue: { getOrThrow: () => 'http://localhost:5173' } },
       { provide: AuthService, useValue: { authenticate: async (token: string) => { if (token === 'expired') throw new UnauthorizedException(); return { rol: { nombre: token } }; } } },
     ] }).compile();

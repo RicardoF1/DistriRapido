@@ -5,7 +5,7 @@ test('US-003: Administrador crea y edita cuenta; F5 y logout mantienen protecci�
   if (!email || !password) throw new Error('Configura una cuenta administradora exclusiva de pruebas.');
   const accountEmail = `e2e-${randomUUID()}@example.com`; const editedEmail = `edited-${accountEmail}`;
   await page.goto('/login'); await page.getByLabel('Correo electrónico').fill(email); await page.getByLabel('Contraseña', { exact: true }).fill(password);
-  await page.getByRole('button', { name: 'Iniciar sesión' }).click(); await expect(page.getByRole('heading', { name: 'Acceso permitido' })).toBeVisible();
+  await page.getByRole('button', { name: 'Iniciar sesión' }).click(); await expect(page.getByRole('heading', { name: /^(Panel de administración|Acceso permitido)$/ })).toBeVisible();
   await page.getByRole('link', { name: 'Usuarios y roles' }).click(); await expect(page.getByRole('heading', { name: 'Usuarios', exact: true })).toBeVisible();
   await page.getByRole('link', { name: 'Crear usuario' }).click();
   await page.getByRole('button', { name: 'Crear usuario' }).click(); await expect(page.getByText('Introduce un correo electrónico válido.')).toBeVisible();

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { BrandLogo } from '../components/BrandLogo';
 export function AuthLayout({ children }: { children: ReactNode }) {
-  return <main className="auth-layout" id="main-content">
+  return <div className="login-background"><main className="auth-layout" id="main-content">
     <header className="brand-header">
       <BrandLogo />
       <h1>EcoRuta Huancayo</h1>
@@ -10,5 +10,5 @@ export function AuthLayout({ children }: { children: ReactNode }) {
     </header>
     <section className="auth-card" aria-labelledby="login-title">{children}</section>
     <footer className="auth-footer">Huancayo GreenRoute Logistics</footer>
-  </main>;
+  </main></div>;
 }

@@ -10,16 +10,22 @@ import { AppModule } from '../src/app.module';
 import { configureApp } from '../src/common/configure-app';
 import { ROLE_NAMES } from '../src/roles/roles';
 import { OrdersService } from '../src/orders/orders.service';
+import { CoverageService } from '../src/coverage/coverage.service';
+import { synthetic, syntheticPackage } from './synthetic-coverage';
+// Test-only geometry; production retains the pinned private release and fail-closed loader.
+class IntegrationCoverageService extends CoverageService {
+  override onModuleInit() { this.load(syntheticPackage(), synthetic.release); }
+}
 describe('US-004 HTTP + PostgreSQL', () => {
   let app: INestApplication; let prisma: PrismaClient;
   const agents: Record<string, ReturnType<typeof request.agent>> = {};
   const users: string[] = []; const orders: string[] = []; const clients: string[] = [];
-  const valid = { cliente: { nombre: 'Integración US-004', direccion: 'Destino prueba', latitud: -12.065, longitud: -75.204 }, peso_kg: 5.25, volumen_m3: 0.015, ventana_inicio: '2026-10-02T09:00:00-05:00', ventana_fin: '2026-10-02T10:00:00-05:00', prioridad: 'EXPRESS', tipo_producto: 'PERECEDERO' };
+  const valid = { cliente: { nombre: 'Integración US-004', direccion: 'Destino prueba', latitud: 2, longitud: 2 }, peso_kg: 5.25, volumen_m3: 0.015, ventana_inicio: '2026-10-02T09:00:00-05:00', ventana_fin: '2026-10-02T10:00:00-05:00', prioridad: 'EXPRESS', tipo_producto: 'PERECEDERO' };
   beforeAll(async () => {
     const url = process.env.TEST_DATABASE_URL;
     if (!url || (!new URL(url).pathname.endsWith('_test') && !/^distrirapido_[a-z0-9_]+_test$/.test(new URL(url).searchParams.get('schema') ?? ''))) throw new Error('Se requiere base o esquema aislado de pruebas.');
     process.env.DATABASE_URL = url; prisma = new PrismaClient();
-    const module = await Test.createTestingModule({ imports: [AppModule] }).compile(); app = module.createNestApplication(); configureApp(app, app.get(ConfigService).getOrThrow<string>('FRONTEND_ORIGIN')); await app.init();
+    const module = await Test.createTestingModule({ imports: [AppModule] }).overrideProvider(CoverageService).useClass(IntegrationCoverageService).compile(); app = module.createNestApplication(); configureApp(app, app.get(ConfigService).getOrThrow<string>('FRONTEND_ORIGIN')); await app.init();
     for (const nombre of Object.values(ROLE_NAMES)) {
       const role = await prisma.rol.upsert({ where: { nombre }, update: {}, create: { nombre, descripcion: 'Prueba aislada' } });
       const password = randomBytes(24).toString('hex'); const email = `us004-${randomUUID()}@example.com`;
@@ -47,7 +53,7 @@ describe('US-004 HTTP + PostgreSQL', () => {
     orders.push(response.body.pedido_id); clients.push(response.body.cliente_id);
     const stored = await prisma.pedido.findUniqueOrThrow({ where: { pedido_id: response.body.pedido_id }, include: { cliente: true } });
     expect(stored.volumen_m3).toBeNull(); expect(response.body.volumen_m3).toBeNull(); expect(stored.descripcion_carga).toBe('Costal de ropa'); expect(stored.cliente.referencia).toBe('Puerta azul');
-    expect(stored.cliente.latitud.toString()).toBe('-12.065'); expect(stored.cliente.longitud.toString()).toBe('-75.204');
+    expect(stored.cliente.latitud.toString()).toBe('2'); expect(stored.cliente.longitud.toString()).toBe('2');
   });
   it.each([
     { cliente: { ...valid.cliente, nombre: '' } }, { cliente: { ...valid.cliente, direccion: ' ' } }, { cliente: { ...valid.cliente, latitud: 90.000001 } }, { cliente: { ...valid.cliente, longitud: -180.000001 } },

@@ -1,7 +1,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 export default tseslint.config(
-  { ignores: ['dist/**', 'coverage/**', 'node_modules/**', '.local/**'] },
+  { ignores: ['dist/**', 'coverage/**', 'node_modules/**', '.local/**', 'src/coverage/generated/**'] },
   js.configs.recommended, ...tseslint.configs.recommended,
-  { files: ['**/*.cjs'], languageOptions: { globals: { module: 'readonly' } } },
+  { files: ['**/*.cjs'], rules: { '@typescript-eslint/no-require-imports': 'off' }, languageOptions: { globals: { module: 'readonly', require: 'readonly', __dirname: 'readonly', console: 'readonly', process: 'readonly' } } },
 );

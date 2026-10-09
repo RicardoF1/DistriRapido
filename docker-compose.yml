@@ -15,7 +15,9 @@ services:
       timeout: 5s
       retries: 10
   backend:
-    build: ./src/backend
+    build:
+      context: .
+      dockerfile: src/backend/Dockerfile
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@postgres:5432/${POSTGRES_DB:?}?schema=public
       JWT_SECRET: ${JWT_SECRET:?Configura JWT_SECRET}
@@ -27,10 +29,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+    command: ["node", "dist/main.js"]
   frontend:
     build:
-      context: ./src/frontend
+      context: .
+      dockerfile: src/frontend/Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
     ports:

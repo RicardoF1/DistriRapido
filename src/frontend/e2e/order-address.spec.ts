@@ -13,7 +13,7 @@ test('US-004 sugerencia, arrastre y dirección inversa en Leaflet', async ({ pag
   const address = page.getByLabel('Dirección de entrega');
   await address.fill('Av'); await page.waitForTimeout(800); expect(searches).toBe(0);
   await address.fill('Av. Giráldez');
-  const suggestion = page.getByRole('button', { name: 'Av. Giráldez, Huancayo' });
+  const suggestion = page.getByRole('button', { name: /^Av. Giráldez, Huancayo/ });
   await expect(suggestion).toBeVisible(); await suggestion.focus(); await page.keyboard.press('Enter');
   await expect(address).toHaveValue('Av. Giráldez, Huancayo');
   await expect(page.getByText('Ubicación confirmada.', { exact: true })).toBeVisible();
