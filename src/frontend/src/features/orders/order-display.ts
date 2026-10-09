@@ -5,4 +5,4 @@ export function formatOrderDate(value: string) {
   const parts = Object.fromEntries(lima.formatToParts(date).map(part => [part.type, part.value]));
   return `${parts.day}/${parts.month}/${parts.year} ${parts.hour}:${parts.minute} ${parts.dayPeriod}`;
 }
-export const orderLabel = (value: string) => ({ PENDIENTE: 'Pendiente', EXPRESS: 'Express', ESTANDAR: 'Estándar', ECONOMICO: 'Económico', PERECEDERO: 'Perecedero', NO_PERECEDERO: 'No perecedero' })[value] ?? value;
+export const orderLabel = (value: string) => ({ PENDIENTE: 'Pendiente', EN_PREPARACION: 'En preparación', EN_RUTA: 'En ruta', ENTREGADO: 'Entregado', CANCELADO: 'Cancelado', EXPRESS: 'Express', ESTANDAR: 'Estándar', ECONOMICO: 'Económico', PERECEDERO: 'Perecedero', NO_PERECEDERO: 'No perecedero' })[value] ?? value;

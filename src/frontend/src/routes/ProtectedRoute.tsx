@@ -11,7 +11,7 @@ export function ProtectedRoute() {
   if (!session) return <Navigate to="/login" replace />;
   const allowed = accessPath(session.user.rol.nombre);
   if ((location.pathname === '/pedidos' || location.pathname.startsWith('/pedidos/')) && ['Administrador', 'Operador / Técnico'].includes(session.user.rol.nombre)) return <Outlet />;
-  if (session.user.rol.nombre === 'Administrador' && (location.pathname === '/usuarios' || location.pathname.startsWith('/usuarios/'))) return <Outlet />;
+  if (session.user.rol.nombre === 'Administrador' && (location.pathname === '/usuarios' || location.pathname.startsWith('/usuarios/') || location.pathname === '/vehiculos')) return <Outlet />;
   if (location.pathname !== allowed) return <Navigate to={allowed} replace />;
   return <Outlet />;
 }
