@@ -1,0 +1,7 @@
+import {render,screen,fireEvent,waitFor} from '@testing-library/react';
+import {it,expect,vi} from 'vitest';
+import {DriverForm} from './DriverForm';
+const initial={nombre_completo:'Fixture',dni:'fixture',licencia_categoria:'fixture',telefono:'fixture',anios_experiencia:0,usuario_id:null,estado:'ACTIVO' as const};
+it('guarda ficha sin cuenta, incluyendo estado administrativo',async()=>{const save=vi.fn().mockResolvedValue(undefined);render(<DriverForm initial={initial} onSave={save}/>);fireEvent.change(screen.getByLabelText('Estado administrativo'),{target:{value:'INACTIVO'}});fireEvent.click(screen.getByRole('button',{name:'Guardar conductor'}));await waitFor(()=>expect(save).toHaveBeenCalledWith({...initial,estado:'INACTIVO'}));});
+it('error conserva campos y permite reintentar',async()=>{const save=vi.fn().mockRejectedValue(new Error('DNI duplicado'));render(<DriverForm initial={initial} onSave={save}/>);fireEvent.click(screen.getByRole('button',{name:'Guardar conductor'}));expect(await screen.findByRole('alert')).toHaveTextContent('DNI duplicado');expect(screen.getByLabelText('Nombre completo')).toHaveValue('Fixture');expect(screen.getByRole('button',{name:'Guardar conductor'})).toBeEnabled();});
+it('rechaza UUID inválido antes de llamar a la API',async()=>{const save=vi.fn();render(<DriverForm initial={{...initial,usuario_id:'bad'}} onSave={save}/>);fireEvent.click(screen.getByRole('button',{name:'Guardar conductor'}));expect(await screen.findByRole('alert')).toHaveTextContent('UUID');expect(save).not.toHaveBeenCalled();});

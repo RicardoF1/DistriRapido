@@ -23,6 +23,7 @@ model Usuario {
   password_hash String   @db.VarChar(255)
   estado        String   @default("ACTIVO") @db.VarChar(20)
   creado_en     DateTime @default(now()) @db.Timestamptz(6)
+  conductor     Conductor?
   rol           Rol      @relation(fields: [rol_id], references: [rol_id], onDelete: Restrict)
 
   @@index([rol_id], map: "idx_usuarios_rol_id")
@@ -30,32 +31,34 @@ model Usuario {
 }
 
 model Cliente {
-  cliente_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  nombre String @db.VarChar(150)
-  telefono String? @db.VarChar(30)
-  email String? @db.VarChar(255)
-  direccion String @db.VarChar(255)
+  cliente_id String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nombre     String  @db.VarChar(150)
+  telefono   String? @db.VarChar(30)
+  email      String? @db.VarChar(255)
+  direccion  String  @db.VarChar(255)
   referencia String? @db.VarChar(255)
-  latitud Decimal @db.Decimal(9, 6)
-  longitud Decimal @db.Decimal(9, 6)
-  estado String @default("ACTIVO") @db.VarChar(20)
-  pedidos Pedido[]
+  latitud    Decimal @db.Decimal(9, 6)
+  longitud   Decimal @db.Decimal(9, 6)
+  estado     String  @default("ACTIVO") @db.VarChar(20)
+  pedidos    Pedido[]
+
   @@map("clientes")
 }
 
 model Pedido {
-  pedido_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  cliente_id String @db.Uuid
-  peso_kg Decimal @db.Decimal(10, 2)
-  volumen_m3 Decimal? @db.Decimal(10, 3)
-  descripcion_carga String? @db.VarChar(255)
-  ventana_inicio DateTime @db.Timestamptz(6)
-  ventana_fin DateTime @db.Timestamptz(6)
-  prioridad String @db.VarChar(20)
-  tipo_producto String @db.VarChar(30)
-  estado String @default("PENDIENTE") @db.VarChar(20)
-  creado_en DateTime @default(now()) @db.Timestamptz(6)
-  cliente Cliente @relation(fields: [cliente_id], references: [cliente_id], onDelete: Restrict)
+  pedido_id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cliente_id        String   @db.Uuid
+  peso_kg           Decimal  @db.Decimal(10, 2)
+  volumen_m3        Decimal? @db.Decimal(10, 3)
+  descripcion_carga String?  @db.VarChar(255)
+  ventana_inicio    DateTime @db.Timestamptz(6)
+  ventana_fin       DateTime @db.Timestamptz(6)
+  prioridad         String   @db.VarChar(20)
+  tipo_producto     String   @db.VarChar(30)
+  estado            String   @default("PENDIENTE") @db.VarChar(20)
+  creado_en         DateTime @default(now()) @db.Timestamptz(6)
+  cliente           Cliente  @relation(fields: [cliente_id], references: [cliente_id], onDelete: Restrict)
+
   @@index([cliente_id], map: "idx_pedidos_cliente")
   @@map("pedidos")
 }
@@ -74,4 +77,39 @@ model Vehiculo {
   @@index([estado], map: "idx_vehiculos_estado")
   @@index([tipo], map: "idx_vehiculos_tipo")
   @@map("vehiculos")
+}
+
+// HGR-26 / US-008 / RF-006:
+// Gestión administrativa de conductores.
+model Conductor {
+  conductor_id       String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id         String?                   @unique @db.Uuid
+  nombre_completo    String                    @db.VarChar(150)
+  dni                String                    @unique @db.VarChar(20)
+  licencia_categoria String                    @db.VarChar(20)
+  anios_experiencia  Int                       @default(0) @db.SmallInt
+  telefono           String                    @db.VarChar(30)
+  estado             String                    @default("ACTIVO") @db.VarChar(20)
+  usuario            Usuario?                  @relation(fields: [usuario_id], references: [usuario_id], onDelete: Restrict)
+  disponibilidades   DisponibilidadConductor[]
+
+  @@index([estado], map: "idx_conductores_estado")
+  @@map("conductores")
+}
+
+// HGR-27 / US-009 / RF-007:
+// Disponibilidad operativa de conductores por intervalo de fecha y hora.
+model DisponibilidadConductor {
+  disponibilidad_id String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conductor_id      String    @db.Uuid
+  inicio            DateTime  @db.Timestamptz(6)
+  fin               DateTime  @db.Timestamptz(6)
+  estado            String    @default("DISPONIBLE") @db.VarChar(20)
+  creado_en         DateTime  @default(now()) @db.Timestamptz(6)
+  actualizado_en    DateTime  @updatedAt @db.Timestamptz(6)
+  conductor         Conductor @relation(fields: [conductor_id], references: [conductor_id], onDelete: Restrict)
+  @@unique([conductor_id, inicio, fin], map: "uq_disponibilidad_conductor_intervalo")
+  @@index([conductor_id, inicio, fin], map: "idx_disponibilidad_conductor_intervalo")
+  @@index([estado], map: "idx_disponibilidad_conductor_estado")
+  @@map("disponibilidades_conductores")
 }
