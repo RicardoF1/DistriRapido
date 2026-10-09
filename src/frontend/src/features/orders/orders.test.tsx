@@ -26,10 +26,12 @@ async function fill() {
   await userEvent.click(screen.getByRole('button', { name: 'Seleccionar destino de prueba' }));
   await userEvent.selectOptions(screen.getByLabelText('Prioridad'), 'ESTANDAR'); await userEvent.selectOptions(screen.getByLabelText('Tipo de producto'), 'NO_PERECEDERO');
 }
-beforeEach(() => { vi.resetAllMocks(); vi.mocked(geocoding.search).mockResolvedValue([]); vi.mocked(geocoding.reverse).mockRejectedValue(new Error('offline')); vi.mocked(authApi.logout).mockResolvedValue(undefined); vi.mocked(ordersApi.create).mockResolvedValue(result); });
+beforeEach(() => { vi.resetAllMocks(); vi.mocked(geocoding.search).mockResolvedValue([]); vi.mocked(geocoding.reverse).mockResolvedValue('Destino prueba'); vi.mocked(authApi.logout).mockResolvedValue(undefined); vi.mocked(ordersApi.create).mockResolvedValue(result); });
 describe('US-004 Registrar pedido', () => {
   it('busca con debounce, selecciona coordenadas y exige reconfirmar tras editar', async () => {
     setup(); await fill();
+    // Ignore searches initiated while preparing the other form fields.
+    vi.mocked(geocoding.search).mockClear();
     vi.mocked(geocoding.search).mockResolvedValue([{ address: 'Av. Giráldez, Huancayo', latitud: -12.07, longitud: -75.21 }]);
     fireEvent.change(screen.getByLabelText(labels.direccion), { target: { value: 'Av. Giráldez' } });
     expect(geocoding.search).not.toHaveBeenCalled();
@@ -44,10 +46,14 @@ describe('US-004 Registrar pedido', () => {
     expect(ordersApi.create).toHaveBeenCalledWith(expect.objectContaining({ cliente: expect.objectContaining({ latitud: -12.07, longitud: -75.21, direccion: 'Av. Giráldez, Huancayo' }) }));
   });
   it('selección manual consulta dirección inversa y conserva datos ante fallo', async () => {
+    vi.mocked(geocoding.reverse).mockRejectedValue(new Error('offline'));
     setup(); await fill();
     expect(geocoding.reverse).toHaveBeenCalledWith({ latitud: -12.065, longitud: -75.204 }, expect.any(AbortSignal));
     expect(await screen.findByText(/No se pudo obtener la dirección/)).toBeVisible();
     expect(screen.getByLabelText(labels.direccion)).toHaveValue('Destino prueba');
+    expect(screen.queryByText('Ubicación confirmada.')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
+    expect(ordersApi.create).not.toHaveBeenCalled();
     vi.mocked(geocoding.reverse).mockResolvedValue('Calle nueva, Huancayo');
     await userEvent.click(screen.getByRole('button', { name: 'Seleccionar destino de prueba' }));
     await waitFor(() => expect(screen.getByLabelText(labels.direccion)).toHaveValue('Calle nueva, Huancayo'));

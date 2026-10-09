@@ -7,11 +7,12 @@ import { validateEnvironment } from './common/environment';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { OrdersModule } from './orders/orders.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env', '../.env'], validate: validateEnvironment }),
-    ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]), AuthModule, UsersModule, RolesModule, OrdersModule,
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]), AuthModule, UsersModule, RolesModule, OrdersModule, AdminModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

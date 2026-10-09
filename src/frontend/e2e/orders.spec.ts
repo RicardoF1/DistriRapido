@@ -7,7 +7,7 @@ for (const role of ['admin', 'operator'] as const) {
     const password = role === 'admin' ? process.env.E2E_LOGIN_PASSWORD : process.env.E2E_OPERATOR_PASSWORD;
     if (!email || !password) throw new Error('Configura cuentas exclusivas E2E.');
     await page.goto('/login'); await page.getByLabel('Correo electrónico').fill(email); await page.getByLabel('Contraseña', { exact: true }).fill(password); await page.getByRole('button', { name: 'Iniciar sesión' }).click();
-    await expect(page.getByRole('heading', { name: 'Acceso permitido' })).toBeVisible(); await page.getByRole('link', { name: 'Registrar pedido', exact: true }).click();
+    await expect(page.getByRole('heading', { name: /^(Panel de administración|Acceso permitido)$/ })).toBeVisible(); await page.getByRole('link', { name: 'Registrar pedido', exact: true }).click();
     await page.getByRole('button', { name: 'Registrar pedido', exact: true }).click(); await expect(page.getByText('Selecciona una prioridad permitida.')).toBeVisible();
     await page.getByLabel('Nombre del cliente').fill('Cliente E2E US-004'); await page.getByLabel('Dirección de entrega').fill('Destino E2E');
     await expect(page.getByLabel('Latitud', { exact: true })).toHaveCount(0); await expect(page.getByLabel('Longitud', { exact: true })).toHaveCount(0);

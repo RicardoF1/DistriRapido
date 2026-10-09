@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Header, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiCookieAuth, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiCookieAuth, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiServiceUnavailableResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { OrderConsultationGuard } from './order-consultation.guard';
 import { OrderQueryDto, OrderReadDto, OrderPageDto } from './order-query.dto';
 import { SkipThrottle } from '@nestjs/throttler';
@@ -20,6 +20,7 @@ export class OrdersController {
   @Get(':id') @UseGuards(OrderConsultationGuard) @Header('Cache-Control', 'no-store') @ApiOkResponse({ type: OrderReadDto }) @ApiBadRequestResponse() @ApiNotFoundResponse()
   get(@Param('id', ParseUUIDPipe) id: string) { return this.orders.get(id); }
   @Post() @UseGuards(OrderRegistrationGuard) @Header('Cache-Control', 'no-store') @ApiCreatedResponse({ type: RegisteredOrderDto })
-  @ApiBadRequestResponse({ description: 'Campos obligatorios, formatos, precisión/rangos, enumeraciones o ventana de entrega inválidos; atributos no permitidos.' })
+  @ApiBadRequestResponse({ description: 'Campos obligatorios, formatos, precisión/rangos o punto fuera de cobertura, enumeraciones o ventana de entrega inválidos; atributos no permitidos.' })
+  @ApiServiceUnavailableResponse({ description: 'Cobertura ausente, corrupta o incompatible; no se inicia transacción.' })
   create(@Body() dto: CreateOrderDto) { return this.orders.create(dto); }
 }

@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "enabled": {
+    "120101": "HUANCAYO",
+    "120107": "CHILCA",
+    "120114": "EL TAMBO",
+    "120119": "HUANCAN",
+    "120125": "PILCOMAYO"
+  },
+  "files_sha256": {
+    "120101.geojson": "7742d1e33a8c6f2f36f83918a390b63b3a2c0d9108e65da8a8ff96b1b76f7607",
+    "120107.geojson": "40b652d1d63af5030c38d0830235ad2e8e1ef4b0610339f65d2641c2593fe05d",
+    "120114.geojson": "1c7f4ac2664e3b939377210ffbce724eb9ff6abfff0b4ace18654ce81e10d939",
+    "120119.geojson": "5350fe0d04094b7ab02831e36b37b4c96236bd35376ea1f7e9164f61bf0cb67b",
+    "120125.geojson": "976c14c3a298f8e6636969dda6fd05640c82ddc6c8538bfd6a34a5829a2b8aa5",
+    "coverage.geojson": "ac5f8b3366d5e028e5acf51e74dfcea18ab0a8db1edbcf1cc6236c9634afd33b",
+    "test-points.json": "7e0fc1a71c52b092d6398c21f1bb85cd95f878a3c209c976070307b6d4a77fc3",
+    "validation.json": "bcb08e1f7e8f1a7f0bd78ec1d3307dbd404be4e82ea583c49e230acde8053574"
+  },
+  "redistribution": {
+    "status": "unconfirmed",
+    "publicReleaseAllowed": false,
+    "source": "https://ide.inei.gob.pe/"
+  }
+}

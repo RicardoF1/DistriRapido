@@ -32,3 +32,8 @@ describe('Contrato de API', () => {
     expect(json).not.toHaveBeenCalled();
   });
 });
+
+it('registro HTTP 503 informa cobertura no disponible sin fingir éxito', async () => {
+  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:503}));
+  try { await expect(request('/orders',{method:'POST'})).rejects.toEqual(new ApiError('La cobertura geográfica no está disponible o no pudo verificarse. No se puede registrar el pedido.',503)); } finally { vi.unstubAllGlobals(); }
+});

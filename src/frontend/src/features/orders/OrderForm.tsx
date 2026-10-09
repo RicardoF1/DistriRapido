@@ -5,6 +5,7 @@ import { LoadingButton } from '../../components/ui/LoadingButton';
 import { DeliveryMap } from './DeliveryMap';
 import { useDeliveryAddress } from './useDeliveryAddress';
 import { to24Hour, isStoreHour, is12HourDraft } from './store-hours';
+import { districtAt } from '../../services/coverage';
 const initial = { nombre: '', direccion: '', referencia: '', descripcion_carga: '', ubicacion: '', peso_kg: '', volumen_m3: '', fecha_inicio: '', hora_inicio: '', fecha_fin: '', hora_fin: '', periodo_inicio: 'AM', periodo_fin: 'AM', prioridad: '', tipo_producto: '' };
 type Field = keyof typeof initial;
 function decimal(value: string, scale: number, min: number, max: number) {
@@ -34,6 +35,7 @@ export function OrderForm({ onSave }: { onSave: (values: OrderValues) => Promise
     const next: Partial<Record<Field, string>> = {};
     for (const [field, label, max] of textFields) if (!values[field].trim() || values[field].trim().length > max) next[field] = `${label}: obligatorio, máximo ${max} caracteres.`;
     if (!location.confirmed || !point || !Number.isFinite(point.latitud) || !Number.isFinite(point.longitud) || Math.abs(point.latitud) > 90 || Math.abs(point.longitud) > 180) next.ubicacion = 'Selecciona un punto de entrega válido en el mapa.';
+    if (!location.coverage || (point && !districtAt(location.coverage, point))) next.ubicacion = location.coverageError || 'Selecciona un destino dentro de la cobertura autorizada.';
     if (values.descripcion_carga.trim().length > 255) next.descripcion_carga = 'Descripción: máximo 255 caracteres.';
     if (!decimal(values.peso_kg, 2, 0.01, 99999999.99)) next.peso_kg = 'Peso: mayor que cero, hasta 8 enteros y 2 decimales.';
     if (values.volumen_m3.trim() && !decimal(values.volumen_m3, 3, 0.001, 9999999.999)) next.volumen_m3 = 'Volumen: mayor que cero, hasta 7 enteros y 3 decimales.';
@@ -63,31 +65,36 @@ export function OrderForm({ onSave }: { onSave: (values: OrderValues) => Promise
   const fieldError = (field: Field) => errors[field] && <p className="field-error" id={`order-${field}-error`}>{errors[field]}</p>;
   if (registered) return <div role="status"><h2>Pedido registrado correctamente</h2><p>Código: {registered.pedido_id}</p><p>Estado: Pendiente</p><button className="button button-primary" onClick={() => { setRegistered(null); setErrors({}); }}>Registrar otro pedido</button></div>;
   return <form className="login-form order-form" aria-label="Registrar pedido" noValidate onSubmit={submit}>
-    <fieldset disabled={loading}><legend>Cliente</legend>
-      <div className="form-field"><label htmlFor="order-nombre">Nombre del cliente</label><input {...attributes('nombre')} maxLength={150} onChange={event => change('nombre', event.target.value)} />{fieldError('nombre')}</div>
-    </fieldset>
-    <fieldset disabled={loading}><legend>Ubicación de entrega</legend>
-      <div className="form-field"><label htmlFor="order-direccion">Dirección de entrega</label><input {...attributes('direccion')} maxLength={255} autoComplete="off" onChange={event => location.edit(event.target.value)} />{fieldError('direccion')}<p role="status">{location.status}</p>{location.suggestions.length > 0 && <ul className="address-suggestions" aria-label="Sugerencias de dirección">{location.suggestions.map((item, index) => <li key={index}><button type="button" onClick={() => { location.choose(item); change('ubicacion', 'seleccionada'); }}>{item.address}</button></li>)}</ul>}<small>Direcciones: <a href="https://photon.komoot.io">Photon</a> / <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a></small></div>
+    <div className="order-details">
+      <div className="order-details-column">
+        <fieldset disabled={loading}><legend>Cliente</legend>
+          <div className="form-field"><label htmlFor="order-nombre">Nombre del cliente</label><input {...attributes('nombre')} maxLength={150} onChange={event => change('nombre', event.target.value)} />{fieldError('nombre')}</div>
+        </fieldset>
+        <fieldset disabled={loading}><legend>Información de la carga</legend>
+          <div className="form-field"><label htmlFor="order-descripcion_carga">Descripción de carga</label><input {...attributes('descripcion_carga')} maxLength={255} onChange={event => change('descripcion_carga', event.target.value)} />{fieldError('descripcion_carga')}</div>
+          {numericFields.map(([field, label]) => <div className="form-field" key={field}><label htmlFor={`order-${field}`}>{label}{field === 'volumen_m3' && ' — opcional'}</label><input {...attributes(field)} aria-describedby={field === 'volumen_m3' ? `order-volume-help${errors[field] ? ' order-volumen_m3-error' : ''}` : attributes(field)['aria-describedby']} inputMode="decimal" autoComplete="off" onChange={event => change(field, event.target.value)} />{fieldError(field)}</div>)}
+          <p id="order-volume-help">Opcional. Complete este campo solo si conoce el volumen aproximado de la carga.</p>
+        </fieldset>
+      </div>
+      <fieldset disabled={loading}><legend>Entrega</legend>
+        <p id="store-hours-help" className="delivery-hours-note"><strong>Atención: 7:00 AM–1:00 PM y 2:00 PM–8:00 PM.</strong> Almuerzo: 1:00 PM–2:00 PM. Usa formato de 12 horas y AM/PM. La entrega puede realizarse entre el inicio y fin de la ventana, en America/Lima (UTC−05:00).</p>
+        {(['inicio', 'fin'] as const).map(edge => <fieldset className="delivery-window" key={edge}><legend>{edge === 'inicio' ? 'Inicio de ventana de entrega' : 'Fin de ventana de entrega'}</legend>
+          <div className="delivery-window-inputs">{(['fecha', 'hora'] as const).map(part => {
+            const field = `${part}_${edge}` as const;
+            return <div className="form-field" key={field}><label htmlFor={`order-${field}`}>{part === 'fecha' ? 'Fecha' : 'Hora'} de {edge}</label><div className={part === 'hora' ? 'delivery-time-entry' : undefined}><div className="delivery-input"><input {...attributes(field)} type={part === 'fecha' ? 'date' : 'text'} min={part === 'fecha' && edge === 'fin' ? values.fecha_inicio : undefined} placeholder={part === 'hora' ? 'hh:mm' : undefined} aria-describedby={part === 'hora' ? `store-hours-help${errors[field] ? ` order-${field}-error` : ''}` : attributes(field)['aria-describedby']} maxLength={part === 'hora' ? 5 : undefined} onChange={event => part === 'hora' ? changeTime(field as 'hora_inicio' | 'hora_fin', event.target.value) : change(field, event.target.value)} />{part === 'hora' && <span className="delivery-clock" aria-hidden="true">◷</span>}</div>{part === 'hora' && <select aria-label={`AM/PM de ${edge}`} value={values[`periodo_${edge}`]} onChange={event => change(`periodo_${edge}`, event.target.value)}><option value="AM">AM</option><option value="PM">PM</option></select>}</div>{fieldError(field)}</div>;
+          })}</div>
+        </fieldset>)}
+        <div className="form-field"><label htmlFor="order-prioridad">Prioridad</label><select {...attributes('prioridad')} onChange={event => change('prioridad', event.target.value)}><option value="">Selecciona una prioridad</option>{ORDER_PRIORITIES.map(item => <option key={item} value={item}>{item === 'ESTANDAR' ? 'Estándar' : item === 'ECONOMICO' ? 'Económico' : 'Express'}</option>)}</select>{fieldError('prioridad')}</div>
+        <div className="form-field"><label htmlFor="order-tipo_producto">Tipo de producto</label><select {...attributes('tipo_producto')} onChange={event => change('tipo_producto', event.target.value)}><option value="">Selecciona un tipo</option>{PRODUCT_TYPES.map(item => <option key={item} value={item}>{item === 'PERECEDERO' ? 'Perecedero' : 'No perecedero'}</option>)}</select>{fieldError('tipo_producto')}</div>
+      </fieldset>
+    </div>
+    <fieldset className="delivery-location" disabled={loading}><legend>Ubicación de entrega</legend>
+      <p className="coverage-intro">Cobertura administrativa: Huancayo, El Tambo, Chilca, Pilcomayo y Huancán.</p>
+      <div className="form-field"><label htmlFor="order-direccion">Dirección de entrega</label><input {...attributes('direccion')} maxLength={255} autoComplete="off" onChange={event => location.edit(event.target.value)} />{fieldError('direccion')}<p role="status">{location.status}</p>{location.suggestions.length > 0 && <ul className="address-suggestions" aria-label="Sugerencias de dirección">{location.suggestions.map((item, index) => <li key={index}><button type="button" onClick={() => { location.choose(item); change('ubicacion', 'seleccionada'); }}><span>{item.address}</span>{item.district && <small>{item.district} · Huancayo · Junín · Perú</small>}</button></li>)}</ul>}<small>Direcciones: <a href="https://photon.komoot.io">Photon</a> / <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a></small></div>
+      <p className={`location-confirmation ${location.confirmed ? 'is-confirmed' : ''}`} role="status">{location.confirmed ? 'Ubicación confirmada.' : 'Ubicación no confirmada. Selecciona una sugerencia o confirma el punto en el mapa.'}</p>
       <div className="form-field"><label htmlFor="order-referencia">Referencia (opcional)</label><input {...attributes('referencia')} maxLength={255} onChange={event => change('referencia', event.target.value)} /></div>
-      <DeliveryMap disabled={loading} point={point} onChange={selected => { void location.move(selected); change('ubicacion', 'seleccionada'); }} /><p role="status">{location.confirmed ? 'Ubicación confirmada.' : 'Ubicación no confirmada. Selecciona una sugerencia o confirma el punto en el mapa.'}</p>{fieldError('ubicacion')}
+      <DeliveryMap disabled={loading} point={point} focusRevision={location.focusRevision} confirmed={location.confirmed} onChange={selected => { void location.move(selected); change('ubicacion', 'seleccionada'); }} />{fieldError('ubicacion')}
     </fieldset>
-    <fieldset disabled={loading}><legend>Información de la carga</legend>
-      <div className="form-field"><label htmlFor="order-descripcion_carga">Descripción de carga</label><input {...attributes('descripcion_carga')} maxLength={255} onChange={event => change('descripcion_carga', event.target.value)} />{fieldError('descripcion_carga')}</div>
-      {numericFields.map(([field, label]) => <div className="form-field" key={field}><label htmlFor={`order-${field}`}>{label}{field === 'volumen_m3' && ' — opcional'}</label><input {...attributes(field)} aria-describedby={field === 'volumen_m3' ? `order-volume-help${errors[field] ? ' order-volumen_m3-error' : ''}` : attributes(field)['aria-describedby']} inputMode="decimal" autoComplete="off" onChange={event => change(field, event.target.value)} />{fieldError(field)}</div>)}
-      <p id="order-volume-help">Opcional. Complete este campo solo si conoce el volumen aproximado de la carga.</p>
-    </fieldset>
-    <fieldset disabled={loading}><legend>Entrega</legend>
-      <p id="store-hours-help" className="access-note">Atención: 7:00 AM–1:00 PM y 2:00 PM–8:00 PM. Almuerzo: 1:00 PM–2:00 PM. Escribe la hora en formato de 12 horas y elige AM o PM.</p>
-      <p className="access-note">La entrega puede realizarse desde el inicio hasta el fin de la ventana. Horario de entrega: America/Lima (UTC−05:00).</p>
-      {(['inicio', 'fin'] as const).map(edge => <fieldset className="delivery-window" key={edge}><legend>{edge === 'inicio' ? 'Inicio de ventana de entrega' : 'Fin de ventana de entrega'}</legend>
-        <div className="delivery-window-inputs">{(['fecha', 'hora'] as const).map(part => {
-          const field = `${part}_${edge}` as const;
-          return <div className="form-field" key={field}><label htmlFor={`order-${field}`}>{part === 'fecha' ? 'Fecha' : 'Hora'} de {edge}</label><div className={part === 'hora' ? 'delivery-time-entry' : undefined}><div className="delivery-input"><input {...attributes(field)} type={part === 'fecha' ? 'date' : 'text'} min={part === 'fecha' && edge === 'fin' ? values.fecha_inicio : undefined} placeholder={part === 'hora' ? 'hh:mm' : undefined} aria-describedby={part === 'hora' ? `store-hours-help${errors[field] ? ` order-${field}-error` : ''}` : attributes(field)['aria-describedby']} maxLength={part === 'hora' ? 5 : undefined} onChange={event => part === 'hora' ? changeTime(field as 'hora_inicio' | 'hora_fin', event.target.value) : change(field, event.target.value)} />{part === 'hora' && <span className="delivery-clock" aria-hidden="true">◷</span>}</div>{part === 'hora' && <select aria-label={`AM/PM de ${edge}`} value={values[`periodo_${edge}`]} onChange={event => change(`periodo_${edge}`, event.target.value)}><option value="AM">AM</option><option value="PM">PM</option></select>}</div>{fieldError(field)}</div>;
-        })}</div>
-      </fieldset>)}
-      <div className="form-field"><label htmlFor="order-prioridad">Prioridad</label><select {...attributes('prioridad')} onChange={event => change('prioridad', event.target.value)}><option value="">Selecciona una prioridad</option>{ORDER_PRIORITIES.map(item => <option key={item} value={item}>{item === 'ESTANDAR' ? 'Estándar' : item === 'ECONOMICO' ? 'Económico' : 'Express'}</option>)}</select>{fieldError('prioridad')}</div>
-      <div className="form-field"><label htmlFor="order-tipo_producto">Tipo de producto</label><select {...attributes('tipo_producto')} onChange={event => change('tipo_producto', event.target.value)}><option value="">Selecciona un tipo</option>{PRODUCT_TYPES.map(item => <option key={item} value={item}>{item === 'PERECEDERO' ? 'Perecedero' : 'No perecedero'}</option>)}</select>{fieldError('tipo_producto')}</div>
-    </fieldset>
-    {error && <ErrorMessage message={error} />}<LoadingButton type="submit" loading={loading} loadingLabel="Registrando pedido…">Registrar pedido</LoadingButton>
+    {error && <ErrorMessage message={error} />}<div className="order-submit"><LoadingButton type="submit" loading={loading} loadingLabel="Registrando pedido…">Registrar pedido</LoadingButton></div>
   </form>;
 }

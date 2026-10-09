@@ -17,6 +17,7 @@ export async function request<T>(path: string, options: RequestInit): Promise<T>
     if (path === '/orders' && response.status === 400) {
       throw new ApiError('No se pudo registrar el pedido. Revisa los campos obligatorios, coordenadas, peso, volumen y ventana de entrega.', 400);
     }
+    if (path === '/orders' && response.status === 503) throw new ApiError('La cobertura geográfica no está disponible o no pudo verificarse. No se puede registrar el pedido.', 503);
     if (response.status === 409) throw new ApiError('Ya existe un usuario con ese correo electrónico.', 409);
     if (response.status === 404) {
       if (orderRead) throw new ApiError('Pedido no encontrado.', 404);

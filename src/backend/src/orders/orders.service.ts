@@ -4,9 +4,10 @@ import { isUUID } from 'class-validator';
 import { OrderQueryDto } from './order-query.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './order.dto';
+import { CoverageService } from '../coverage/coverage.service';
 @Injectable()
 export class OrdersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly coverage: CoverageService) {}
   async list(query: OrderQueryDto) {
     const { page, pageSize, search, estado, prioridad, tipo_producto } = query;
     const where: Prisma.PedidoWhereInput = {
@@ -37,8 +38,9 @@ export class OrdersService {
       return (minute >= 420 && (isEnd ? minute <= 780 : minute < 780)) || (minute >= 840 && (isEnd ? minute <= 1200 : minute < 1200));
     };
     if (!withinHours(inicio, false) || !withinHours(fin, true)) throw new BadRequestException('La ventana debe comenzar y terminar dentro del horario de atención: 7:00 AM–1:00 PM y 2:00 PM–8:00 PM (America/Lima). El inicio debe ser anterior al cierre del turno.');
+    const point = this.coverage.assertDelivery(dto.cliente);
     return this.prisma.$transaction(async tx => {
-      const cliente = await tx.cliente.create({ data: dto.cliente, select: { cliente_id: true } });
+      const cliente = await tx.cliente.create({ data: { ...dto.cliente, ...point }, select: { cliente_id: true } });
       return tx.pedido.create({ data: { cliente_id: cliente.cliente_id, peso_kg: dto.peso_kg, volumen_m3: dto.volumen_m3 ?? null, descripcion_carga: dto.descripcion_carga ?? null, ventana_inicio: inicio, ventana_fin: fin, prioridad: dto.prioridad, tipo_producto: dto.tipo_producto } });
     });
   }

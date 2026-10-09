@@ -17,21 +17,23 @@ for (const role of ['Administrador', 'Operador / Técnico', 'Usuario Final / Con
       await route.fulfill({ status: role === 'Administrador' ? 200 : 403, headers, json: [{ ...user, rol_id: user.rol.rol_id, estado: 'ACTIVO', creado_en: new Date().toISOString() }] });
     });
     await page.goto('/login'); await page.getByLabel('Correo electrónico').fill(user.email); await page.getByLabel('Contraseña', { exact: true }).fill('frontend-test-only'); await page.getByRole('button', { name: 'Iniciar sesión' }).click();
-    await expect(page.getByRole('heading', { name: 'Acceso permitido' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: role === 'Administrador' ? 'Panel de administración' : 'Acceso permitido' })).toBeVisible();
     const allowed = role === 'Administrador' || role === 'Operador / Técnico';
     if (!allowed) {
-      await expect(page.getByRole('link', { name: 'Registrar pedido', exact: true })).toHaveCount(0);
-      await page.goto('/pedidos/nuevo'); await expect(page.getByRole('heading', { name: 'Acceso permitido' })).toBeVisible(); await expect(page.getByRole('form')).toHaveCount(0);
+      await expect(page.locator('main').getByRole('link', { name: 'Registrar pedido', exact: true })).toHaveCount(0);
+      await page.goto('/pedidos/nuevo'); await expect(page.getByRole('heading', { name: role === 'Administrador' ? 'Panel de administración' : 'Acceso permitido' })).toBeVisible(); await expect(page.getByRole('form')).toHaveCount(0);
       expect(userRequests).toBe(0);
     } else {
-      await expect(page.getByRole('link', { name: 'Registrar pedido', exact: true })).toBeVisible();
+      await expect(page.locator('main').getByRole('link', { name: 'Registrar pedido', exact: true })).toBeVisible();
       if (role === 'Administrador') {
         await page.getByRole('link', { name: 'Usuarios y roles' }).click(); await expect(page).toHaveURL(/\/usuarios$/); await expect(page.getByRole('table')).toBeVisible();
         const navigation = page.getByRole('navigation', { name: 'Administración' });
+        const menu = page.getByRole('button', { name: 'Abrir menú' });
+        if (await menu.isVisible()) await menu.click();
         await expect(navigation.getByRole('link', { name: 'Acceso', exact: true })).toBeVisible(); await expect(navigation.getByRole('link', { name: 'Usuarios', exact: true })).toBeVisible();
         await navigation.getByRole('link', { name: 'Registrar pedido', exact: true }).click();
       } else {
-        await expect(page.getByRole('link', { name: 'Usuarios y roles' })).toHaveCount(0); await page.getByRole('link', { name: 'Registrar pedido', exact: true }).click();
+        await expect(page.getByRole('link', { name: 'Usuarios y roles' })).toHaveCount(0); await page.locator('main').getByRole('link', { name: 'Registrar pedido', exact: true }).click();
         await expect(page.getByRole('link', { name: 'Usuarios', exact: true })).toHaveCount(0); expect(userRequests).toBe(0);
       }
       await expect(page).toHaveURL(/\/pedidos\/nuevo$/); await expect(page.getByRole('form', { name: 'Registrar pedido' })).toBeVisible();

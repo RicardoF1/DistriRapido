@@ -20,13 +20,13 @@ test('US-001 / US-002: login, F5, cierre explícito y rutas protegidas', async (
   await page.getByLabel('Contraseña', { exact: true }).fill(password);
   await page.getByRole('button', { name: /Iniciar sesión/ }).click();
   await expect(page).toHaveURL(/\/acceso\/administrador$/);
-  await expect(page.getByRole('heading', { name: 'Acceso permitido' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^(Panel de administración|Acceso permitido)$/ })).toBeVisible();
   await expect(page.getByText(email, { exact: true })).toBeVisible();
   const storage = await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }));
   expect(storage).toEqual({ local: 0, session: 0 });
   await page.reload();
   await expect(page).toHaveURL(/\/acceso\/administrador$/);
-  await expect(page.getByRole('heading', { name: 'Acceso permitido' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^(Panel de administración|Acceso permitido)$/ })).toBeVisible();
   const cookies = await context.cookies(`${apiUrl}/auth/me`);
   const session = cookies.find((cookie) => cookie.name === 'distrirapido_session_v2');
   expect(Boolean(session?.httpOnly)).toBe(true);

@@ -6,7 +6,7 @@ test('US-004 fecha/hora separadas conservan Lima incluso con navegador en otra z
   const user = { usuario_id: 'time-contract-user', email: 'time@example.com', rol: { rol_id: 'time-contract-role', nombre: 'Administrador' }, expiresAt: Date.now() + 900000 };
   await page.route('**/auth/me', route => route.fulfill({ status: 200, headers, json: user }));
   await page.route('https://tile.openstreetmap.org/**', route => route.fulfill({ status: 200, contentType: 'image/png', body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jL2cAAAAASUVORK5CYII=', 'base64') }));
-  await page.route('https://photon.komoot.io/**', route => route.fulfill({ status: 503, body: '' }));
+  await page.route('https://photon.komoot.io/**', route => route.fulfill({ headers: { 'Access-Control-Allow-Origin': '*' }, json: { features: [{ geometry: { type: 'Point', coordinates: [-75.21, -12.07] }, properties: { name: 'Destino fecha', city: 'Huancayo' } }] } }));
   let submissions = 0;
   await page.route('**/orders', async route => {
     if (route.request().method() === 'OPTIONS') { await route.fulfill({ status: 204, headers }); return; }

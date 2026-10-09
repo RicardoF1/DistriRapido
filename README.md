@@ -31,11 +31,11 @@ docs/        → documentación académica del proyecto
 
 Implementados infraestructura y login email/contraseña. Instrucciones completas, decisiones y verificación en [US-001.md](docs/03%20Implementación/evidencias-tecnicas/Sprint-1/US-001.md).
 
-Inicio local: copia `.env.example` a `.env`, configura secretos propios y ejecuta `docker compose up -d postgres`. Sigue después los README de backend y frontend. Para el conjunto en contenedores: `docker compose up --build -d`.
+Inicio local: copia `.env.example` a `.env`, configura secretos propios y ejecuta `docker compose up -d postgres`. Sigue después los README de backend y frontend. Para el conjunto en contenedores, aprovisiona primero la cobertura privada y sigue el procedimiento explícito de migraciones documentado más abajo; el arranque habitual ya no aplica migraciones automáticamente.
 
 ## Incremento US-002
 
-Persistencia mediante cookie HttpOnly, restauración con `/auth/me` y cierre explícito mediante `/auth/logout`. PostgreSQL de DistriRapido conserva el puerto configurado 5433. Decisiones, pruebas y pasos manuales en [US-002.md](docs/03%20Implementación/evidencias-tecnicas/Sprint-1/US-002.md). `start:dev` observa los cambios en `backend/src` y reinicia el backend automáticamente; los cambios en `.env` requieren reinicio manual.
+Persistencia mediante cookie HttpOnly, restauración con `/auth/me` y cierre explícito mediante `/auth/logout`. PostgreSQL de DistriRapido conserva el puerto configurado 5433. Decisiones, pruebas y pasos manuales en [US-002.md](docs/03%20Implementación/evidencias-tecnicas/Sprint-1/US-002.md). `start:dev` observa los cambios en `src/backend/src` y reinicia el backend automáticamente; los cambios en `.env` requieren reinicio manual.
 
 ## Incremento US-003
 
@@ -56,3 +56,52 @@ Estado del Sprint 1: US-001 a US-005 completadas según confirmación del equipo
 - [04 Retrospectiva del Sprint V_1_0_0](./docs/03%20Implementación/04%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
 
 US-005 incorpora GET /orders y GET /orders/:id, búsqueda, filtros, paginación y detalle de solo lectura. Edición y eliminación de pedidos no forman parte de este incremento.
+
+## Mejoras posteriores al cierre del Sprint 1
+
+La línea base del cierre permanece en los informes anteriores. Las mejoras siguientes son posteriores, refinan US-001 a US-005 y no representan inicio de Sprint 2:
+
+- `AppLayout` compartido: sidebar en escritorio desde 1024 px y menú plegable en tablet/móvil; abrir/cerrar el menú conserva formularios y mapa montados.
+- Login con la imagen decorativa proporcionada por el usuario, fondo `cover`, sin capa blanquecina añadida; marca EcoRuta Huancayo a la izquierda y tarjeta de acceso a la derecha en escritorio, apiladas en pantallas pequeñas.
+- Panel de administración con bienvenida y tres accesos rápidos reales: usuarios/roles, registro y consulta. Incluye «Resumen general» con conteos reales y distribución por estados almacenados mediante GET /admin/summary, exclusivo del Administrador. Los otros roles conservan sus opciones autorizadas.
+- Registro en un formulario único: cliente/carga y entrega en dos columnas de escritorio; ubicación debajo, a todo el ancho; mapa más alto, leyenda compacta y botón final destacado.
+- Leaflet/OpenStreetMap y Photon: cobertura administrativa v1.0.0 de Huancayo, El Tambo, Chilca, Pilcomayo y Huancán; filtrado por polígonos, sugerencia explícita, marcador magenta, centrado a zoom 17 y bloqueo del punto exterior o no confirmado.
+
+**El backend valida la cobertura antes de la transacción de creación.** Rechaza puntos exteriores o coordenadas inválidas con HTTP 400 y recursos ausentes/no verificables con HTTP 503, sin crear clientes ni pedidos. El incremento autorizado de indicadores añade un módulo de resumen en NestJS; no cambia Prisma, PostgreSQL, migraciones, autenticación ni los endpoints existentes.
+
+Documentación vigente:
+
+- [Mejoras posteriores al Sprint 1 V_1_1_0](docs/03%20Implementación/05%20Mejoras%20posteriores%20al%20Sprint%201%20V_1_1_0.md): arquitectura, requisitos y reglas complementarias, con trazabilidad.
+- [Verificación y preparación de entrega V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/01%20Verificación%20y%20entrega%20V_1_1_0.md): evidencia de la fase inicial; sus 54 archivos son un inventario histórico, no la selección final actual.
+- [Frontend](src/frontend/README.md), [geodata](geodata/README.md), [integración de cobertura](geodata/FRONTEND-INTEGRATION.md) y [sincronización del marcador](geodata/MARKER-SYNC.md).
+
+La fuente INEI es provisional: su portal etiqueta los límites como actualizados al 2023. El `last_change` interno de 2026 no demuestra vigencia administrativa a 2026. No se verificó una licencia explícita de redistribución del archivo; revisar ese permiso antes de incorporar los GeoJSON al repositorio público. RAR y GeoPackage fuente no se incluyen.
+
+Frontend y backend utilizan el paquete privado `geodata/coverage/v1/`, con metadatos aprobados en `geodata/coverage-release.json` y política única en `geodata/coverage.ts`. Docker usa contexto raíz y copias selectivas con `.dockerignore`; la disponibilidad del paquete se comprueba antes de construir. Las imágenes contienen derivados INEI y no están autorizadas para publicación.
+
+- [Resumen administrativo V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/02%20Resumen%20administrativo%20V_1_1_0.md).
+- [Reconciliación sobre main V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliación%20sobre%20main%20V_1_1_0.md): rutas vigentes, verificaciones e inventario final.
+
+## Validación backend y empaquetado privado
+
+Desde la raíz del repositorio:
+
+```sh
+node scripts/provision-coverage.cjs --source "/directorio/privado/autorizado/v1"
+node scripts/provision-coverage.cjs
+node scripts/check-geodata-publication.cjs
+```
+
+El aprovisionamiento compara versión, cinco UBIGEO y hashes; no sobrescribe recursos existentes diferentes. El paquete privado y los artefactos TypeScript generados están excluidos de Git. La comprobación del índice detecta recursos geográficos incluidos accidentalmente; ejecutarla nuevamente después de cualquier selección manual de archivos. No se equipara descarga gratuita con permiso de redistribución.
+
+El perfil de mantenimiento de `docker-compose.migrations.yml` sustituye el antiguo `prisma migrate deploy` automático. Solo para inicialización o actualización expresamente autorizada, con respaldo y revisión previa, ejecutar `docker compose -f docker-compose.yml -f docker-compose.migrations.yml --profile maintenance run --rm migrate` antes de arrancar la API. No se ejecutó esta operación sobre la base existente. Procedimiento completo, errores, pruebas y limitaciones: [Validación backend y empaquetado V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md).
+
+## Rama compartida para desarrollo
+
+La rama `feature/post-sprint1-ui-geocoverage` comparte código, documentación, configuración y pruebas; no distribuye los nueve recursos privados de `geodata/coverage/v1/` ni imágenes Docker con ellos. Cada integrante necesita obtener el paquete aprobado por un canal privado autorizado y ejecutar el procedimiento de aprovisionamiento anterior.
+
+Sin esos recursos, el frontend no puede compilar sus importaciones estáticas de cobertura y las pruebas geográficas no pueden ejecutarse completas. El backend puede compilar la política, pero responde HTTP 503 al registrar pedidos si no logra cargar/verificar el paquete. Login y consulta no dependen de la cobertura, siempre que se configure normalmente la API y su base. Esta entrega de código no autoriza redistribuir los datos INEI ni publicar imágenes que los contengan.
+
+## Siguiente documento / Siguiente trabajo recomendado
+
+Resolver y documentar los permisos de redistribución INEI antes de publicar datos o imágenes. Revisar la evidencia técnica 05 y verificar persistencia en una base exclusivamente de pruebas, sin utilizar los registros existentes.
