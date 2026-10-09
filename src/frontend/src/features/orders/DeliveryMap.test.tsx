@@ -20,14 +20,18 @@ it('sugerencia centra mapa; dragend fuera de cobertura invalida selección', asy
   markerSpy.mockRestore(); viewSpy.mockRestore();
 });
 it('StrictMode conserva mapa; teclado selecciona centro y disabled impide cambios', async () => {
+  const mapSpy = vi.spyOn(L, 'map');
   const onChange = vi.fn(); const view = render(<StrictMode><DeliveryMap onChange={onChange} disabled={false} /></StrictMode>);
   await ready(); const map = screen.getByRole('region', { name: 'Mapa de ubicación de entrega' });
+  // jsdom has no layout; explicitly position the real Leaflet instance before testing Enter.
+  const instance = mapSpy.mock.results.at(-1)!.value as L.Map;
+  act(() => { instance.setView([2, 2], 17, { animate: false }); });
   expect(onChange).not.toHaveBeenCalled(); fireEvent.keyDown(map, { key: 'Enter' });
   expect(onChange).toHaveBeenCalledTimes(1);
   expect(districtAt(await loadCoverage(), onChange.mock.calls[0][0])).not.toBeNull();
   expect(screen.getByText('Punto de entrega seleccionado.')).toBeVisible();
   view.rerender(<StrictMode><DeliveryMap onChange={onChange} disabled={true} /></StrictMode>);
-  expect(screen.getByRole('region')).toBe(map); fireEvent.keyDown(map, { key: 'Enter' }); expect(onChange).toHaveBeenCalledTimes(1);
+  expect(screen.getByRole('region')).toBe(map); fireEvent.keyDown(map, { key: 'Enter' }); expect(onChange).toHaveBeenCalledTimes(1); mapSpy.mockRestore();
 });
 it('dibuja cinco distritos y Ver cobertura reajusta vista sin reiniciar marcador', async () => {
   const fit = vi.spyOn(L.Map.prototype, 'fitBounds'); const onChange = vi.fn();

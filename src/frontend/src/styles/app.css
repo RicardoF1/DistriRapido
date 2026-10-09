@@ -250,7 +250,7 @@ th { background: var(--color-surface-low); white-space: nowrap; }
 
 /* Administrative aggregates: shortcuts retain their existing styling. */
 .admin-summary { margin: 1.8rem 0 2rem; }
-.admin-summary > h2 { font-size: 1.2rem; margin: 0 0 1rem; }
+.admin-summary-heading h2 { font-size: 1.2rem; margin: 0 0 1rem; }
 .admin-summary .admin-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; background: transparent; }
 .admin-metric { position: relative; padding: 1.3rem; border: 1px solid #dce8e2; border-radius: 16px; background: #fff; min-width: 0; }
 .admin-metric-icon { display: block; color: #16834d; margin-bottom: .8rem; }
@@ -268,3 +268,6 @@ th { background: var(--color-surface-low); white-space: nowrap; }
 .admin-summary-empty { color: #475569; }
 @media (max-width: 1023px) { .admin-summary .admin-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 767px) { .admin-summary .admin-metrics { grid-template-columns: 1fr; } .admin-metric { padding: 1rem; } }
+
+.admin-summary-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; }
+.admin-metric dd.admin-metric-value-muted { font-size: 1rem; color: var(--color-text-muted); overflow-wrap: anywhere; }

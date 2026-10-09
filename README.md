@@ -63,7 +63,7 @@ La línea base del cierre permanece en los informes anteriores. Las mejoras sigu
 
 - `AppLayout` compartido: sidebar en escritorio desde 1024 px y menú plegable en tablet/móvil; abrir/cerrar el menú conserva formularios y mapa montados.
 - Login con la imagen decorativa proporcionada por el usuario, fondo `cover`, sin capa blanquecina añadida; marca EcoRuta Huancayo a la izquierda y tarjeta de acceso a la derecha en escritorio, apiladas en pantallas pequeñas.
-- Panel de administración con bienvenida y tres accesos rápidos reales: usuarios/roles, registro y consulta. Incluye «Resumen general» con conteos reales y distribución por estados almacenados mediante GET /admin/summary, exclusivo del Administrador. Los otros roles conservan sus opciones autorizadas.
+- Panel de administración con bienvenida y tres accesos rápidos reales: usuarios/roles, registro y consulta. Incluye «Resumen general» con indicadores visibles durante carga/error, actualización manual y conteos reales y distribución por estados almacenados mediante GET /admin/summary, exclusivo del Administrador. Los otros roles conservan sus opciones autorizadas.
 - Registro en un formulario único: cliente/carga y entrega en dos columnas de escritorio; ubicación debajo, a todo el ancho; mapa más alto, leyenda compacta y botón final destacado.
 - Leaflet/OpenStreetMap y Photon: cobertura administrativa v1.0.0 de Huancayo, El Tambo, Chilca, Pilcomayo y Huancán; filtrado por polígonos, sugerencia explícita, marcador magenta, centrado a zoom 17 y bloqueo del punto exterior o no confirmado.
 

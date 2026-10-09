@@ -22,8 +22,8 @@ for (const width of [390, 768, 1366, 1440]) {
 test('carga, error sin ceros y reintento', async ({page,baseURL}) => {
   const headers=await identity(page,baseURL!);let calls=0;let release:()=>void=()=>{};const gate=new Promise<void>(resolve=>{release=resolve;});
   await page.route('**/admin/summary',async route=>{calls++;if(calls===1){await gate;await route.fulfill({status:500,headers,json:{message:'Error'}});}else await route.fulfill({headers,json:{totalOrders:0,pendingOrders:0,totalUsers:0,ordersByState:[]}});});
-  await page.goto('/acceso/administrador');await expect(page.getByText('Cargando indicadores…')).toBeVisible();expect(await page.locator('.admin-metric dd').count()).toBe(0);
-  release();await expect(page.getByRole('alert')).toContainText('No se pudo cargar');expect(await page.locator('.admin-metric dd').count()).toBe(0);
+  await page.goto('/acceso/administrador');await expect(page.getByText('Cargando indicadores…')).toBeVisible();await expect(page.locator('.admin-metric dd')).toHaveText(['—','—','—']);
+  release();await expect(page.getByRole('alert')).toContainText('No se pudo cargar');await expect(page.locator('.admin-metric dd')).toHaveText(['No disponible','No disponible','No disponible']);
   await page.getByRole('button',{name:'Reintentar resumen'}).click();await expect(page.locator('.admin-metric dd')).toHaveText(['0','0','0']);await expect(page.getByText('No hay pedidos registrados.')).toBeVisible();expect(calls).toBe(2);
 });
 for(const role of ['Operador / Técnico','Usuario Final / Conductor','Auditor Externo'])test('no solicita resumen para '+role,async({page,baseURL})=>{

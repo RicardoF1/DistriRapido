@@ -52,6 +52,15 @@ describe('Acceso según rol', () => {
     expect(screen.getAllByText(loginResponse.user.email)).toHaveLength(1);
     expect(authApi.me).toHaveBeenCalledTimes(1);
   });
+  it('el panel monta el resumen obtenido de la API antes de los accesos rápidos', async () => {
+    vi.mocked(adminApi.summary).mockResolvedValue({totalOrders:123,pendingOrders:20,totalUsers:4,ordersByState:[{state:'PENDIENTE',count:20},{state:'OTRO_ESTADO_EXISTENTE',count:103}]});
+    renderRoutes('/acceso/administrador');
+    await screen.findByText('Pedidos por estado');
+    expect(screen.getByText('Pedidos registrados').parentElement).toHaveTextContent('123');
+    expect(screen.getByText('Pedidos pendientes').parentElement).toHaveTextContent('20');
+    expect(screen.getByRole('navigation',{name:'Accesos rápidos'}).querySelectorAll('a')).toHaveLength(3);
+    expect(adminApi.summary).toHaveBeenCalledTimes(1);
+  });
   it('no muestra tarjetas administrativas si la respuesta de identidad difiere del rol vigente', async () => {
     renderRoutes('/acceso/operador', 'Operador / Técnico');
     await screen.findByRole('heading', { name: 'Acceso permitido' });
