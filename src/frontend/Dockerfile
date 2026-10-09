@@ -4,6 +4,7 @@ COPY src/frontend/package*.json ./
 RUN npm ci
 COPY src/frontend/index.html src/frontend/tsconfig.json src/frontend/vite.config.ts src/frontend/coverage-assets.ts ./
 COPY src/frontend/src ./src
+COPY test-fixtures/coverage-synthetic.json /app/test-fixtures/coverage-synthetic.json
 COPY geodata/coverage.ts geodata/coverage-release.json /app/geodata/
 COPY geodata/coverage/v1/ /app/geodata/coverage/v1/
 ARG VITE_API_URL=http://localhost:3000
@@ -14,3 +15,4 @@ FROM nginx:1.28-alpine
 COPY src/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/src/frontend/dist /usr/share/nginx/html
 EXPOSE 80
+

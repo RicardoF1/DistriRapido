@@ -35,3 +35,6 @@ src/backend/src/coverage/generated/**
 **/*.log
 **/*.tmp
 **/*.temp
+
+!test-fixtures/
+!test-fixtures/coverage-synthetic.json
