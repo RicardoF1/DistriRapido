@@ -1,4 +1,4 @@
-import type { Credentials, LoginResponse, SessionIdentity } from '../types/auth';
+﻿import type { Credentials, LoginResponse, SessionIdentity } from '../types/auth';
 
 export class ApiError extends Error {
   constructor(message: string, public readonly status: number) { super(message); }
@@ -14,6 +14,37 @@ export async function request<T>(path: string, options: RequestInit): Promise<T>
       const messages:Record<number,string>={400:'Revisa los datos obligatorios, la experiencia y la cuenta vinculada; debe tener rol de conductor.',403:'No tienes permisos para gestionar conductores.',404:'Conductor no encontrado.',409:'El DNI o la cuenta ya pertenece a otro conductor.',503:'Gestión de conductores pendiente de habilitación: falta aplicar la migración autorizada.'};
       if(messages[response.status])throw new ApiError(messages[response.status],response.status);
     }
+    if (/^\/availability(?:\?|\/|$)/.test(path)) {
+      let backendMessage = '';
+
+      try {
+        const payload = await response.clone().json() as {
+          message?: unknown;
+        };
+
+        if (typeof payload.message === 'string') {
+          backendMessage = payload.message;
+        }
+      } catch {
+        backendMessage = '';
+      }
+
+      const fallbackMessages: Record<number, string> = {
+        400: 'Revisa el conductor, el estado y el intervalo de disponibilidad.',
+        403: 'No tienes permisos para gestionar la disponibilidad operativa.',
+        404: 'Registro de disponibilidad o conductor no encontrado.',
+        409: 'La disponibilidad indicada presenta un conflicto con otro intervalo.',
+        503: 'La disponibilidad operativa no está habilitada. Verifica la migración de US-009.',
+      };
+
+      throw new ApiError(
+        backendMessage ||
+          fallbackMessages[response.status] ||
+          'No se pudo completar la operación de disponibilidad.',
+        response.status,
+      );
+    }
+
     const orderRead = /^\/orders(?:\?|\/)/.test(path);
     if (response.status === 401) throw new ApiError('Credenciales incorrectas o usuario no habilitado.', 401);
     if (response.status === 403) throw new ApiError(orderRead ? 'No tienes permisos para consultar pedidos.' : path === '/orders' ? 'No tienes permisos para registrar pedidos.' : 'No tienes permisos para administrar usuarios y roles.', 403);
@@ -43,3 +74,4 @@ export const authApi = {
   },
   logout() { return request<void>('/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }); },
 };
+
