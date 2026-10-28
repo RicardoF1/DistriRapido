@@ -9,6 +9,8 @@ it.each(['Administrador', 'Operador / Técnico', 'Usuario Final / Conductor', 'A
   const session = { expiresAt: Date.now() + 900000, user: { ...loginResponse.user, rol: { ...loginResponse.user.rol, nombre: role } } };
   render(<MemoryRouter><AuthContext.Provider value={{ session, acceptSession: vi.fn(), restoring: false, restoreError: '', retryRestore: vi.fn(), logout: vi.fn() }}><AppLayout title="Prueba"><input aria-label="Borrador" defaultValue="Conservar" /></AppLayout></AuthContext.Provider></MemoryRouter>);
   expect(screen.queryByRole('link', { name: 'Usuarios' }) !== null).toBe(role === 'Administrador');
+  expect(screen.queryByRole('link', { name: 'Vehículos' }) !== null).toBe(role === 'Administrador');
+  if (role === 'Administrador') expect(screen.getByRole('link', { name: 'Vehículos' })).toHaveAttribute('href', '/vehiculos');
   expect(screen.queryByRole('link', { name: 'Registrar pedido' }) !== null).toBe(['Administrador', 'Operador / Técnico'].includes(role));
   const draft = screen.getByLabelText('Borrador');
   await userEvent.click(screen.getByRole('button', { name: 'Abrir menú' }));
