@@ -123,7 +123,6 @@ Resolver y documentar los permisos de redistribución INEI antes de publicar dat
 ## Documentación técnica
 
 - [Indice documental](docs/README.md)
-- [Guia, auditoria y evidencias del Sprint 3](docs/documentacion-tecnica/README.md)
 <!-- SPRINT3-CIERRE -->
 ## Cierre del Sprint 3
 
