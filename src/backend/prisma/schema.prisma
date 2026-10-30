@@ -17,6 +17,8 @@ model Rol {
 }
 
 model Usuario {
+  planificaciones Planificacion[]
+  calculos EjecucionCalculo[]
   usuario_id    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   rol_id        String   @db.Uuid
   email         String   @unique @db.VarChar(255)
@@ -47,6 +49,7 @@ model Cliente {
 }
 
 model Pedido {
+  paradas_ruta      ParadaRuta[]
   pedido_id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cliente_id        String   @db.Uuid
   peso_kg           Decimal  @db.Decimal(10, 2)
@@ -64,7 +67,106 @@ model Pedido {
   @@map("pedidos")
 }
 
+// Incremento de cálculo secuencial y US-013. Sin asignaciones ni algoritmo genético.
+model Planificacion {
+  planificacion_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  creado_por String @db.Uuid
+  etiqueta String @db.VarChar(100)
+  current_version Int @default(1)
+  creado_en DateTime @default(now()) @db.Timestamptz(6)
+  versiones PlanificacionVersion[]
+  creador Usuario @relation(fields: [creado_por], references: [usuario_id], onDelete: Restrict)
+  @@map("planificaciones")
+}
+
+model PlanificacionVersion {
+  version_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  planificacion_id String @db.Uuid
+  numero Int
+  snapshot Json @db.JsonB
+  input_hash String @db.VarChar(64)
+  creado_en DateTime @default(now()) @db.Timestamptz(6)
+  planificacion Planificacion @relation(fields: [planificacion_id], references: [planificacion_id], onDelete: Restrict)
+  ejecuciones EjecucionCalculo[]
+  @@unique([planificacion_id, numero])
+  @@map("planificaciones_versiones")
+}
+
+model EjecucionCalculo {
+  ejecucion_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version_id String @db.Uuid
+  actor_id String @db.Uuid
+  idempotency_key String @db.VarChar(100)
+  request_hash String @db.VarChar(64)
+  estado String @default("EN_CURSO") @db.VarChar(20)
+  owner_token String @db.Uuid
+  vence_en DateTime @db.Timestamptz(6)
+  error_code String? @db.VarChar(40)
+  creado_en DateTime @default(now()) @db.Timestamptz(6)
+  finalizado_en DateTime? @db.Timestamptz(6)
+  version PlanificacionVersion @relation(fields: [version_id], references: [version_id], onDelete: Restrict)
+  alternativas AlternativaRuta[]
+  actor Usuario @relation(fields: [actor_id], references: [usuario_id], onDelete: Restrict)
+  @@unique([actor_id, idempotency_key])
+  @@index([estado, vence_en])
+  @@map("ejecuciones_calculo")
+}
+
+model AlternativaRuta {
+  alternativa_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ejecucion_id String @db.Uuid
+  numero Int @default(1)
+  metodo String @default("SECUENCIAL_OSRM") @db.VarChar(30)
+  ejecucion EjecucionCalculo @relation(fields: [ejecucion_id], references: [ejecucion_id], onDelete: Restrict)
+  rutas Ruta[]
+  @@unique([ejecucion_id, numero])
+  @@map("alternativas_ruta")
+}
+
+model Ruta {
+  ruta_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  alternativa_id String @db.Uuid
+  indice_recorrido Int @default(1)
+  current_version Int @default(1)
+  creado_en DateTime @default(now()) @db.Timestamptz(6)
+  alternativa AlternativaRuta @relation(fields: [alternativa_id], references: [alternativa_id], onDelete: Restrict)
+  versiones RutaVersion[]
+  @@unique([alternativa_id, indice_recorrido])
+  @@map("rutas")
+}
+
+model RutaVersion {
+  ruta_version_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ruta_id String @db.Uuid
+  numero Int @default(1)
+  vehiculo_id String @db.Uuid
+  distancia_m Decimal @db.Decimal(16, 3)
+  duracion_s Decimal @db.Decimal(16, 3)
+  resultado Json @db.JsonB
+  input_hash String @db.VarChar(64)
+  creado_en DateTime @default(now()) @db.Timestamptz(6)
+  ruta Ruta @relation(fields: [ruta_id], references: [ruta_id], onDelete: Restrict)
+  vehiculo Vehiculo @relation(fields: [vehiculo_id], references: [vehiculo_id], onDelete: Restrict)
+  paradas ParadaRuta[]
+  @@unique([ruta_id, numero])
+  @@map("rutas_versiones")
+}
+
+model ParadaRuta {
+  parada_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ruta_version_id String @db.Uuid
+  pedido_id String @db.Uuid
+  secuencia Int
+  datos Json @db.JsonB
+  ruta_version RutaVersion @relation(fields: [ruta_version_id], references: [ruta_version_id], onDelete: Restrict)
+  pedido Pedido @relation(fields: [pedido_id], references: [pedido_id], onDelete: Restrict)
+  @@unique([ruta_version_id, secuencia])
+  @@unique([ruta_version_id, pedido_id])
+  @@map("paradas_ruta")
+}
+
 model Vehiculo {
+  rutas_versiones RutaVersion[]
   vehiculo_id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   placa                    String   @unique @db.VarChar(15)
   tipo                     String   @db.VarChar(30)

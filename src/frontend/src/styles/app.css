@@ -385,3 +385,15 @@ th { background: var(--color-surface-low); white-space: nowrap; }
 .driver-account-panel dd, .driver-account-panel p { overflow-wrap: anywhere; }
 .driver-account-confirm { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid #c1d8e8; border-radius: 10px; background: #f2f7fc; }
 .driver-account-confirm input { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+.routing-panel { min-width: 0; overflow-wrap: anywhere; }
+.routing-panel fieldset { min-width: 0; margin-block: 20px; padding: 16px; border: 1px solid #c9ded4; border-radius: 12px; }
+.routing-check { display: flex; align-items: flex-start; gap: 12px; margin-block: 12px; }
+.routing-check input { flex: 0 0 20px; width: 20px; height: 20px; margin-top: 2px; }
+.routing-check small { display: block; }
+.routing-stops { padding-left: 24px; }
+.routing-stops li { padding: 12px; border-bottom: 1px solid #c9ded4; }
+.routing-stops input { max-width: 100%; }
+.route-map { height: 520px; width: 100%; margin-block: 20px; border-radius: 12px; }
+.route-stop-marker { display: grid; place-items: center; border: 3px solid white; border-radius: 50%; background: #b5237d; color: white; font-weight: 700; }
+.route-stop-marker.origin { background: #146449; }
+@media(max-width:767px) { .route-map { height: 420px; } .routing-panel fieldset { padding: 12px; } }

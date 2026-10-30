@@ -11,6 +11,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const detail = exception instanceof HttpException ? exception.getResponse() : null;
     const message = typeof detail === 'string' ? detail :
       detail && typeof detail === 'object' && 'message' in detail ? detail.message : 'No se pudo completar la solicitud.';
-    response.status(statusCode).json({ statusCode, message, path: request.path, timestamp: new Date().toISOString() });
+    const routing = /^\/(planning|routes)(\/|$)/.test(request.path) && detail && typeof detail === 'object' ? detail as { code?: unknown; execution_id?: unknown } : null;
+    response.status(statusCode).json({ statusCode, message, ...(typeof routing?.code === 'string' && /^ROUTING_\d{3}$/.test(routing.code) ? { code: routing.code } : {}), ...(typeof routing?.execution_id === 'string' && /^[0-9a-f-]{36}$/i.test(routing.execution_id) ? { execution_id: routing.execution_id } : {}), path: request.path, timestamp: new Date().toISOString() });
   }
 }

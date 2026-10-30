@@ -1,0 +1,26 @@
+import 'reflect-metadata';
+import { Test } from '@nestjs/testing';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ExecutionContext, INestApplication, UnauthorizedException } from '@nestjs/common';
+import request from 'supertest';
+import { PlanningModule } from './planning.module';
+import { PlanningService } from './planning.service';
+import { RoutesService } from '../routes/routes.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { CoverageService } from '../coverage/coverage.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { configureApp } from '../common/configure-app';
+const id = '00000000-0000-4000-8000-000000000001';
+const planning = { candidates: jest.fn(), prepare: jest.fn(), update: jest.fn(), get: jest.fn(), calculate: jest.fn(), execution: jest.fn() };
+const routes = { list: jest.fn(), get: jest.fn() };
+describe('Contratos HTTP de planificación/rutas', () => {
+  let app: INestApplication;
+  beforeAll(async () => { const module = await Test.createTestingModule({ imports: [ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true }), PlanningModule] }).overrideProvider(PrismaService).useValue({}).overrideProvider(CoverageService).useValue({}).overrideProvider(PlanningService).useValue(planning).overrideProvider(RoutesService).useValue(routes).overrideProvider(ConfigService).useValue({ getOrThrow: () => 'http://localhost:5173' }).overrideGuard(JwtAuthGuard).useValue({ canActivate(ctx: ExecutionContext) { const r = ctx.switchToHttp().getRequest(); if (!r.headers['x-role']) throw new UnauthorizedException(); r.user = { usuario_id: id, rol: { nombre: decodeURIComponent(r.headers['x-role']) } }; return true; } }).compile(); app = module.createNestApplication(); configureApp(app, 'http://localhost:5173'); await app.init(); });
+  afterAll(async () => { await app?.close(); });
+  beforeEach(() => { jest.resetAllMocks(); routes.list.mockResolvedValue({ items: [], total: 0, page: 1, pageSize: 20 }); routes.get.mockResolvedValue({ ruta_id: id }); planning.calculate.mockResolvedValue({ replay: false, estado: 'COMPLETADA' }); });
+  it.each(['Administrador', 'Operador / Técnico'])('permite consulta para %s sin calcular', async role => { await request(app.getHttpServer()).get('/routes').set('x-role', encodeURIComponent(role)).expect(200); expect(planning.calculate).not.toHaveBeenCalled(); });
+  it.each(['Usuario Final / Conductor', 'Auditor Externo'])('deniega GET y POST para %s', async role => { await request(app.getHttpServer()).get('/routes').set('x-role', encodeURIComponent(role)).expect(403); await request(app.getHttpServer()).post('/planning').set('x-role', encodeURIComponent(role)).send({}).expect(403); });
+  it('requiere sesión y UUID/paginación válidos', async () => { await request(app.getHttpServer()).get('/routes').expect(401); await request(app.getHttpServer()).get('/routes/no-uuid').set('x-role', 'Administrador').expect(400); await request(app.getHttpServer()).get('/routes?page=0').set('x-role', 'Administrador').expect(400); });
+  it('requiere confirmaciones e idempotencia, rechaza campos arbitrarios y origen externo', async () => { await request(app.getHttpServer()).post('/planning').set('x-role', 'Administrador').send({}).expect(400); await request(app.getHttpServer()).post(`/planning/${id}/calculations`).set('x-role', 'Administrador').send({ expected_version: 1 }).expect(400); await request(app.getHttpServer()).post(`/planning/${id}/calculations`).set('x-role', 'Administrador').set('Origin', 'https://evil.example').send({ expected_version: 1 }).expect(403); expect(planning.prepare).not.toHaveBeenCalled(); expect(planning.calculate).not.toHaveBeenCalled(); });
+  it('consulta detalle e historial sin mutar', async () => { await request(app.getHttpServer()).get(`/routes/${id}/versions/1`).set('x-role', 'Administrador').expect(200); expect(routes.get).toHaveBeenCalledWith(id, 1); expect(planning.prepare).not.toHaveBeenCalled(); });
+});

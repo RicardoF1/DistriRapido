@@ -1,0 +1,29 @@
+# Optional private routing service. No migration or graph download on startup.
+# Supply a verified pinned image and preprocessed MLD graph separately.
+services:
+  osrm:
+    image: ${OSRM_IMAGE:?Configura OSRM_IMAGE con version o digest verificado}
+    command: ["osrm-routed", "--algorithm", "mld", "/data/${OSRM_GRAPH_BASE:-huancayo}.osrm", "--max-viaroute-size", "32"]
+    volumes:
+      - type: bind
+        source: ${OSRM_DATA_DIR:?Configura carpeta privada del grafo MLD}
+        target: /data
+        read_only: true
+        bind:
+          create_host_path: false
+    ports:
+      - "127.0.0.1:5000:5000"
+    read_only: true
+    tmpfs: ["/tmp:size=64m"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    cpus: ${OSRM_CPUS:-2}
+    mem_limit: ${OSRM_MEMORY_LIMIT:-2g}
+    restart: "no"
+  backend:
+    environment:
+      OSRM_BASE_URL: http://osrm:5000
+      OSRM_ALLOWED_ORIGIN: http://osrm:5000
+    depends_on:
+      osrm:
+        condition: service_started

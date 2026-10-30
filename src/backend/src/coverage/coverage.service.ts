@@ -28,11 +28,14 @@ export class CoverageService {
     try { this.coverage = readCoverage(directory, approved); }
     catch { Logger.warn(COVERAGE_UNAVAILABLE, 'CoverageService'); }
   }
-  assertDelivery(point: DeliveryPoint): DeliveryPoint {
+  assertAvailable() {
     if (!this.coverage) throw new ServiceUnavailableException(COVERAGE_UNAVAILABLE);
+  }
+  assertDelivery(point: DeliveryPoint): DeliveryPoint {
+    this.assertAvailable();
     const normalized = normalizePoint(point);
     if (!normalized || point.latitud !== normalized.latitud || point.longitud !== normalized.longitud) throw new BadRequestException('Coordenadas inválidas: utiliza números finitos, rangos válidos y hasta seis decimales.');
-    if (!districtAt(this.coverage, normalized)) throw new BadRequestException(OUTSIDE_COVERAGE);
+    if (!districtAt(this.coverage!, normalized)) throw new BadRequestException(OUTSIDE_COVERAGE);
     return normalized;
   }
 }
