@@ -124,3 +124,12 @@ Resolver y documentar los permisos de redistribución INEI antes de publicar dat
 
 - [Indice documental](docs/README.md)
 - [Guia, auditoria y evidencias del Sprint 3](docs/documentacion-tecnica/README.md)
+<!-- SPRINT3-CIERRE -->
+## Cierre del Sprint 3
+
+- [Revisión del Sprint](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/01%20Revisión%20del%20Sprint%20V_1_0_0.md)
+- [Retrospectiva del Sprint](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
+- [Calidad de código](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/03%20Calidad%20de%20código%20V_1_0_0.md)
+- [OWASP](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/04%20OWASP%20V_1_0_0.md)
+- [WCAG](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/05%20WCAG%20V_1_0_0.md)
+- [Evidencia técnica](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/06%20Evidencia%20técnica%20de%20cierre%20del%20Sprint%203%20V_1_0_0.md)
