@@ -1,6 +1,6 @@
 # Documentación de DistriRapido
 
-- [Exposición y auditoría técnica](exposicion/README.md)
+- [Documentación y auditoría técnica](documentacion-tecnica/README.md)
 - [Documentos de inicio](01%20Inicio)
 - [Planificación académica](02%20Planificación)
 - [Implementación y evidencias originales](03%20Implementación)

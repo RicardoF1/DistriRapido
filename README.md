@@ -120,7 +120,7 @@ US-013 sigue pendiente de migración de rutas, OSRM privado con grafo real y val
 
 Resolver y documentar los permisos de redistribución INEI antes de publicar datos o imágenes. Revisar la evidencia técnica 05 y verificar persistencia en una base exclusivamente de pruebas, sin utilizar los registros existentes.
 
-## Documentacion para la exposicion
+## Documentación técnica
 
 - [Indice documental](docs/README.md)
-- [Guia, auditoria y evidencias del Sprint 3](docs/exposicion/README.md)
+- [Guia, auditoria y evidencias del Sprint 3](docs/documentacion-tecnica/README.md)

@@ -1,6 +1,6 @@
 # Auditoría e inventario documental
 
-Fecha: 30/10/2026. Se conserva la organización académica existente y se añade docs/exposicion como índice de lectura, evitando duplicar los nueve informes históricos. No se elimina ningún original.
+Fecha: 30/10/2026. Se conserva la organización académica existente y se añade docs/documentacion-tecnica como índice de lectura, evitando duplicar los nueve informes históricos. No se elimina ningún original.
 
 ## Inventario recuperado
 
@@ -64,11 +64,11 @@ Fecha: 30/10/2026. Se conserva la organización académica existente y se añade
 | `docs/03 Implementación/evidencias-tecnicas/Sprint-3/07 Habilitación local de credenciales V_1_1_0.md` | Local no rastreado |
 | `docs/03 Implementación/evidencias-tecnicas/Sprint-3/08 Entrega pública de avances V_1_1_0.md` | Local no rastreado |
 | `docs/03 Implementación/evidencias-tecnicas/Sprint-3/09 Corrección de auditoría de dependencias V_1_1_0.md` | Local no rastreado |
-| `docs/exposicion/arquitectura.md` | Local no rastreado |
-| `docs/exposicion/guia-demostracion.md` | Local no rastreado |
-| `docs/exposicion/pruebas.md` | Local no rastreado |
-| `docs/exposicion/README.md` | Local no rastreado |
-| `docs/exposicion/sprint-3.md` | Local no rastreado |
+| `docs/documentacion-tecnica/arquitectura.md` | Local no rastreado |
+| `docs/documentacion-tecnica/guia-validacion-funcional.md` | Local no rastreado |
+| `docs/documentacion-tecnica/pruebas.md` | Local no rastreado |
+| `docs/documentacion-tecnica/README.md` | Local no rastreado |
+| `docs/documentacion-tecnica/sprint-3.md` | Local no rastreado |
 | `docs/superpowers/plans/2026-10-29-driver-access.md` | Rastreado localmente; no equivale a publicación remota |
 | `docs/superpowers/plans/2026-10-29-driver-account-management.md` | Rastreado localmente; no equivale a publicación remota |
 | `docs/superpowers/plans/2026-10-29-driver-credentials-stage2.md` | Rastreado localmente; no equivale a publicación remota |
