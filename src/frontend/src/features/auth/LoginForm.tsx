@@ -5,12 +5,25 @@ import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { LoadingButton } from '../../components/ui/LoadingButton';
 import { PasswordField } from '../../components/ui/PasswordField';
 
+const EMAIL_DRAFT_KEY = 'ecoruta.login.email';
+function readEmailDraft() {
+  try { return sessionStorage.getItem(EMAIL_DRAFT_KEY)?.slice(0, 255) ?? ''; }
+  catch { return ''; }
+}
+
 export function LoginForm({ onSuccess }: { onSuccess: (response: LoginResponse) => void }) {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(readEmailDraft);
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
+  function updateEmail(value: string) {
+    setEmail(value);
+    try {
+      if (value) sessionStorage.setItem(EMAIL_DRAFT_KEY, value);
+      else sessionStorage.removeItem(EMAIL_DRAFT_KEY);
+    } catch { /* El formulario sigue funcionando si el navegador bloquea el almacenamiento. */ }
+  }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (loading) return;
@@ -34,7 +47,7 @@ export function LoginForm({ onSuccess }: { onSuccess: (response: LoginResponse) 
     {requestError && <ErrorMessage message={requestError} />}
     <div className="form-field">
       <label htmlFor="email">Correo electrónico</label>
-      <input id="email" name="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder="tu.correo@ejemplo.com" value={email} onChange={(event) => setEmail(event.target.value)} required maxLength={255} aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? 'email-error' : undefined} />
+      <input id="email" name="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder="tu.correo@ejemplo.com" value={email} onChange={(event) => updateEmail(event.target.value)} required maxLength={255} aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? 'email-error' : undefined} />
       {errors.email && <span id="email-error" className="field-error">{errors.email}</span>}
     </div>
     <PasswordField value={password} onChange={setPassword} error={errors.password} />
