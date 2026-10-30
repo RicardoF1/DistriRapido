@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { routingDatabaseError, sourceInput, sources } from '../planning/planning-data';
 import { makeHash, type PreparedSnapshot } from '../planning/planning-domain';
 import { RouteQueryDto } from './dto/route-query.dto';
+import { AssignRouteDto } from './dto/assign-route.dto';
 @Injectable()
 export class RoutesService {
   constructor(private readonly prisma: PrismaService) {}
@@ -37,4 +38,72 @@ export class RoutesService {
       return { ...route, current_warnings: warnings };
     } catch (cause) { routingDatabaseError(cause); }
   }
-}
+
+  async assign(id: string, dto: AssignRouteDto) {
+    try {
+      return await this.prisma.$transaction(async tx => {
+        await tx.$queryRaw`SELECT ruta_id FROM rutas WHERE ruta_id=${id}::uuid FOR UPDATE`;
+        const route = await tx.ruta.findUnique({
+          where: { ruta_id: id },
+          include: {
+            alternativa: { include: { ejecucion: { include: { version: true } } } },
+            versiones: { orderBy: { numero: 'desc' }, take: 1 },
+          },
+        });
+        if (!route) throw new NotFoundException('Ruta no encontrada.');
+        if (route.estado !== dto.expected_estado || route.estado !== 'GENERADA' || route.conductor_id !== null) {
+          throw new ConflictException('La ruta ya fue asignada o cambio de estado. Recarga antes de reintentar.');
+        }
+        const version = route.versiones[0];
+        if (!version) throw new ConflictException('La ruta no tiene una version disponible para asignar.');
+        const result = version.resultado as { confirmable?: boolean; inicio?: string; end?: string };
+        if (result.confirmable !== true || !result.inicio || !result.end) {
+          throw new ConflictException('Solo se puede asignar una ruta confirmable con jornada calculada.');
+        }
+        const snapshot = route.alternativa.ejecucion.version.snapshot as unknown as PreparedSnapshot;
+        if (!snapshot.drivers.some(driver => driver.conductor_id === dto.conductor_id)) {
+          throw new ConflictException('El conductor no pertenece a los candidatos validados de esta planificacion.');
+        }
+        const start = new Date(result.inicio);
+        const end = new Date(result.end);
+        const driver = await tx.conductor.findUnique({
+          where: { conductor_id: dto.conductor_id },
+          select: {
+            conductor_id: true,
+            estado: true,
+            usuario: { select: { estado: true, rol: { select: { nombre: true } } } },
+            disponibilidades: {
+              where: { estado: 'DISPONIBLE', inicio: { lte: start }, fin: { gte: end } },
+              take: 1,
+              select: { disponibilidad_id: true },
+            },
+          },
+        });
+        if (!driver) throw new NotFoundException('Conductor no encontrado.');
+        if (driver.estado !== 'ACTIVO' || driver.usuario?.estado !== 'ACTIVO' || driver.usuario.rol.nombre !== 'Usuario Final / Conductor') {
+          throw new ConflictException('El conductor debe estar activo y tener una cuenta activa con rol Conductor.');
+        }
+        if (!driver.disponibilidades.length) throw new ConflictException('El conductor no tiene disponibilidad para toda la jornada calculada.');
+        const busy = await tx.ruta.findFirst({
+          where: { conductor_id: dto.conductor_id, estado: { in: ['ASIGNADA', 'EN_CURSO'] }, ruta_id: { not: id } },
+          select: { ruta_id: true },
+        });
+        if (busy) throw new ConflictException('El conductor ya tiene otra ruta activa.');
+        const assignedAt = new Date();
+        const changed = await tx.ruta.updateMany({
+          where: { ruta_id: id, conductor_id: null, estado: 'GENERADA' },
+          data: { conductor_id: dto.conductor_id, estado: 'ASIGNADA', asignado_en: assignedAt },
+        });
+        if (changed.count !== 1) throw new ConflictException('La ruta cambio durante la asignacion. Recarga antes de reintentar.');
+        return tx.ruta.findUniqueOrThrow({
+          where: { ruta_id: id },
+          select: {
+            ruta_id: true, estado: true, asignado_en: true, current_version: true,
+            conductor: { select: { conductor_id: true, nombre_completo: true } },
+          },
+        });
+      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, timeout: 15000, maxWait: 3000 });
+    } catch (cause) {
+      routingDatabaseError(cause);
+    }
+  }}
