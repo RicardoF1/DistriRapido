@@ -41,7 +41,7 @@ it('dibuja cinco distritos y Ver cobertura reajusta vista sin reiniciar marcador
   expect(screen.getByRole('list', { name: 'Distritos autorizados' }).children).toHaveLength(5);
   const marker = map.querySelector('.delivery-marker');
   fireEvent.click(screen.getByRole('button', { name: 'Ver cobertura' }));
-  expect(fit).toHaveBeenCalledTimes(2); expect(map.querySelector('.delivery-marker')).toBe(marker);
+  await waitFor(() => expect(fit).toHaveBeenCalledTimes(2)); expect(map.querySelector('.delivery-marker')).toBe(marker);
   fireEvent.click(map, { clientX: 10, clientY: 10 }); fireEvent.click(map, { clientX: 20, clientY: 20 });
   expect(onChange).toHaveBeenCalledTimes(2); expect(map.querySelectorAll('.delivery-marker')).toHaveLength(1);
   fit.mockRestore();
