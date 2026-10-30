@@ -455,3 +455,7 @@ th { background: var(--color-surface-low); white-space: nowrap; }
 .routing-ok { color: #146449; font-size: .82rem; font-weight: 600; }
 .routing-alternative .button { margin-top: auto; }
 @media(max-width:767px) { .route-map { height: 380px; } .routing-panel fieldset { padding: 12px; } .map-card { padding: 12px; } .map-card-heading { flex-direction: column; } .map-metrics { width: 100%; } .map-chip { flex: 1 1 0; } .map-legend { font-size: .78rem; } .routing-alternatives { grid-template-columns: 1fr; } }
+.route-map { height: 520px; width: 100%; margin-block: 20px; border-radius: 12px; }
+.route-stop-marker { display: grid; place-items: center; border: 3px solid white; border-radius: 50%; background: #b5237d; color: white; font-weight: 700; }
+.route-stop-marker.origin { background: #146449; }
+@media(max-width:767px) { .route-map { height: 420px; } .routing-panel fieldset { padding: 12px; } }

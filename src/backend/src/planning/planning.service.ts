@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CoverageService } from '../coverage/coverage.service';
 import { OsrmAdapter } from '../routing/osrm.adapter';
 import { evaluateRoute, makeHash, routeCandidates, type PreparedSnapshot, type RouteCandidate } from './planning-domain';
+import { evaluateRoute, makeHash, type PreparedSnapshot } from './planning-domain';
 import { assertPoint, lockSnapshot, period, prepareSnapshot, routingDatabaseError, sourceInput, sources } from './planning-data';
 import { CalculatePlanningDto, PeriodDto, PreparePlanningDto, UpdatePlanningDto } from './dto/planning.dto';
 const remainingTime = (deadline: number) => { const remaining = Math.floor(deadline - Date.now()); if (remaining <= 0) throw new GatewayTimeoutException('El cálculo excedió su tiempo máximo total. No se publicó ningún recorrido.'); return remaining; };
@@ -31,6 +32,7 @@ const compactExecution = <T extends ExecutionState>(state: T) => ({
     }),
   })),
 });
+const publicExecution = { ejecucion_id: true, estado: true, error_code: true, creado_en: true, finalizado_en: true, alternativas: { select: { alternativa_id: true, metodo: true, rutas: { select: { ruta_id: true } } } } } as const;
 @Injectable()
 export class PlanningService implements OnModuleInit, OnModuleDestroy {
   private busy = false; private timer?: ReturnType<typeof setInterval>;
@@ -83,6 +85,17 @@ export class PlanningService implements OnModuleInit, OnModuleDestroy {
     if (!/^[a-zA-Z0-9_-]{8,100}$/.test(key ?? '')) throw new BadRequestException('Indica una clave de idempotencia válida.');
     const requestHash = makeHash(alternativas ? { id, dto, alternativas: true } : { id, dto });
     try { const old = await this.budgeted(deadline, tx => tx.ejecucionCalculo.findUnique({ where: { actor_id_idempotency_key: { actor_id: actor, idempotency_key: key } }, select: { ...executionResult, request_hash: true } })); if (old) { if (old.request_hash !== requestHash) throw new ConflictException('La clave de idempotencia ya corresponde a otra solicitud.'); const { request_hash, ...result } = old; void request_hash; return this.result(result, true, alternativas); } } catch (cause) { routingDatabaseError(cause); }
+  async calculate(id: string, dto: CalculatePlanningDto, actor: string, key: string) {
+    const deadline = Date.now() + (this.osrm.totalTimeoutMs ?? 20000);
+    const marker = actor + ':' + key; const hash = makeHash({ id, dto }); const pending = this.pending.get(marker);
+    if (pending) { if (pending.hash !== hash) throw new ConflictException('La clave de idempotencia ya corresponde a otra solicitud.'); const executionId = await pending.registered; if (!executionId) throw new ConflictException('La solicitud anterior no pudo iniciar. Revisa sus datos.'); const state = await this.budgeted(deadline, tx => tx.ejecucionCalculo.findFirst({ where: { ejecucion_id: executionId, version: { planificacion_id: id } }, select: publicExecution })); if (!state) throw new NotFoundException('Ejecución no encontrada.'); return { ...state, replay: true }; }
+    let registered!: (id?: string) => void; const registration = new Promise<string | undefined>(resolve => { registered = resolve; }); this.pending.set(marker, { hash, registered: registration });
+    try { return await this.calculateOnce(id, dto, actor, key, registered, deadline); } finally { registered(); this.pending.delete(marker); }
+  }
+  private async calculateOnce(id: string, dto: CalculatePlanningDto, actor: string, key: string, registered: (id: string) => void, deadline: number) {
+    if (!/^[a-zA-Z0-9_-]{8,100}$/.test(key ?? '')) throw new BadRequestException('Indica una clave de idempotencia válida.');
+    const requestHash = makeHash({ id, dto });
+    try { const old = await this.budgeted(deadline, tx => tx.ejecucionCalculo.findUnique({ where: { actor_id_idempotency_key: { actor_id: actor, idempotency_key: key } }, select: { ...publicExecution, request_hash: true } })); if (old) { if (old.request_hash !== requestHash) throw new ConflictException('La clave de idempotencia ya corresponde a otra solicitud.'); const { request_hash, ...result } = old; void request_hash; return { ...result, replay: true }; } } catch (cause) { routingDatabaseError(cause); }
     if (this.busy) throw new HttpException('Ya hay un cálculo en curso. Espera antes de reintentar.', 429); this.busy = true;
     let executionId: string | undefined; const owner = randomUUID();
     try {
@@ -109,6 +122,10 @@ export class PlanningService implements OnModuleInit, OnModuleDestroy {
         result.snapped.forEach(point => assertPoint(this.coverage, { latitud: Number(point.latitud.toFixed(6)), longitud: Number(point.longitud.toFixed(6)) }));
         computed.push({ plan, result, evaluation: evaluateRoute(candidate, result.legs) });
       }
+      const snapshot = version.snapshot as unknown as PreparedSnapshot; const points = [snapshot.origin, ...snapshot.orders, ...(snapshot.return_to_origin ? [snapshot.origin] : [])];
+      const result = await this.osrm.calculate(points, AbortSignal.timeout(Math.max(1, deadline - Date.now())));
+      result.snapped.forEach(point => assertPoint(this.coverage, { latitud: Number(point.latitud.toFixed(6)), longitud: Number(point.longitud.toFixed(6)) }));
+      const evaluation = evaluateRoute(snapshot, result.legs);
       remainingTime(deadline);
       const completed = await this.prisma.$transaction(async tx => {
         await tx.$queryRaw`SELECT set_config('statement_timeout', ${String(remainingTime(deadline))}, true)`;
@@ -127,6 +144,13 @@ export class PlanningService implements OnModuleInit, OnModuleDestroy {
         const state = await tx.ejecucionCalculo.findFirst({ where: { ejecucion_id: executionId! }, select: executionResult }); if (!state) throw new ConflictException('No se pudo confirmar el resultado de la ejecución.'); remainingTime(deadline); return this.result(state, false, alternativas, alternativas ? computed.length : undefined);
       }, transactionBudget(deadline));
       return completed;
+        await tx.alternativaRuta.create({ data: { ejecucion_id: executionId!, rutas: { create: { versiones: { create: { vehiculo_id: snapshot.vehicle.vehiculo_id, distancia_m: result.distance_m, duracion_s: result.duration_s, input_hash: version.input_hash, resultado: json({ ...result, ...evaluation, origin: snapshot.origin, return_to_origin: snapshot.return_to_origin, inicio: snapshot.inicio, coverage: snapshot.coverage, metodo: 'SECUENCIAL_OSRM', optimized: false }), paradas: { create: evaluation.stops.map(stop => ({ pedido_id: stop.pedido_id, secuencia: stop.sequence, datos: json(stop) })) } } } } } } });
+        remainingTime(deadline);
+        const changed = await tx.ejecucionCalculo.updateMany({ where: { ejecucion_id: executionId!, estado: 'EN_CURSO', owner_token: owner, vence_en: { gt: new Date() } }, data: { estado: 'COMPLETADA', finalizado_en: new Date() } }); if (changed.count !== 1) throw new ConflictException('La ejecución perdió vigencia.');
+        remainingTime(deadline);
+        const state = await tx.ejecucionCalculo.findFirst({ where: { ejecucion_id: executionId! }, select: publicExecution }); if (!state) throw new ConflictException('No se pudo confirmar el resultado de la ejecución.'); remainingTime(deadline); return state;
+      }, transactionBudget(deadline));
+      return { ...completed, replay: false };
     } catch (cause) { let failure: unknown; try { if (Date.now() >= deadline) throw new GatewayTimeoutException('El cálculo excedió su tiempo máximo total. No se publicó ningún recorrido.'); routingDatabaseError(cause); } catch (value) { failure = value; } if (executionId) this.failLater(executionId, owner, failure); const status = failure instanceof HttpException ? failure.getStatus() : 500; throw new HttpException({ message: status === 500 ? 'No se pudo registrar el recorrido. No se conservaron resultados parciales.' : (failure as HttpException).message, code: `ROUTING_${status}`, ...(executionId ? { execution_id: executionId } : {}) }, status); }
     finally { this.busy = false; }
   }

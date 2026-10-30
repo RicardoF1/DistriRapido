@@ -19,3 +19,4 @@ export interface AlternativeVersion {
 }
 export interface CalculationRoute { ruta_id: string; version?: AlternativeVersion | null; versiones?: { numero: number; distancia_m: string; duracion_s: string }[] }
 export interface Calculation { ejecucion_id: string; estado: string; error_code?: string; alternativas: { alternativa_id: string; numero?: number; metodo: string; rutas: CalculationRoute[] }[]; alternativas_generadas?: number; solo_una_alternativa?: boolean }
+export interface Calculation { ejecucion_id: string; estado: string; error_code?: string; alternativas: { alternativa_id: string; rutas: { ruta_id: string }[] }[] }
