@@ -38,3 +38,27 @@ it('tablas no aprovisionadas dan 503 y recuperación no rompe inicio', async () 
 it('vence presupuesto durante persistencia y no publica COMPLETADA', async () => { let now = Date.now(); const clock = jest.spyOn(Date, 'now').mockImplementation(() => now); p.alternativaRuta.create.mockImplementation(async () => { now += 21000; return {}; }); try { await expect(service.calculate('plan', dto, 'actor', 'deadline-key')).rejects.toMatchObject({ status: 504 }); expect(p.ejecucionCalculo.updateMany.mock.calls.some(([args]) => args.data.estado === 'COMPLETADA')).toBe(false); } finally { clock.mockRestore(); } });
 it('incluye la lectura inicial de idempotencia en el presupuesto', async () => { let now = Date.now(); const clock = jest.spyOn(Date, 'now').mockImplementation(() => now); p.ejecucionCalculo.findUnique.mockImplementation(async () => { now += 21000; return null; }); try { await expect(service.calculate('plan', dto, 'actor', 'initial-timeout')).rejects.toMatchObject({ status: 504 }); expect(osrm.calculate).not.toHaveBeenCalled(); expect(p.ejecucionCalculo.create).not.toHaveBeenCalled(); } finally { clock.mockRestore(); } });
 it('lee confirmación dentro del cierre, no después de publicar', async () => { p.ejecucionCalculo.findFirst.mockRejectedValue(new Error('confirmation failed')); await expect(service.calculate('plan', dto, 'actor', 'confirmation-key')).rejects.toMatchObject({ status: 500 }); expect(p.ejecucionCalculo.findFirst).toHaveBeenCalledTimes(1); });
+it('genera alternativas deduplicadas en una sola ejecución y persiste el orden de cada estrategia', async () => {
+  const row = (id: string, latitud: number, longitud: number, fin: string) => ({ pedido_id: id, cliente_id: 'c-' + id, estado: 'PENDIENTE', peso_kg: 1, volumen_m3: 1, ventana_inicio: new Date('2030-01-01T12:00:00Z'), ventana_fin: new Date(fin), cliente: { estado: 'ACTIVO', direccion: 'Destino ' + id, latitud, longitud } });
+  p.pedido.findMany.mockResolvedValue([row('b', -12.2, -75.2, '2030-01-01T14:00:00Z'), row('a', -12.001, -75, '2030-01-01T13:00:00Z')]);
+  const input2 = { ...input, orders: [{ pedido_id: 'b', service_minutes: 1 }, { pedido_id: 'a', service_minutes: 1 }] };
+  const snapshot2 = await prepareSnapshot(p as unknown as Prisma.TransactionClient, input2, coverage as unknown as CoverageService);
+  const version2 = { version_id: 'version', snapshot: snapshot2, input_hash: makeHash(snapshot2) }; p.planificacionVersion.findUniqueOrThrow.mockResolvedValue(version2);
+  osrm.calculate.mockImplementation(async (points: { latitud: number; longitud: number }[]) => ({ geometry: { type: 'LineString', coordinates: [] }, distance_m: 100, duration_s: 30, legs: points.slice(1).map(() => ({ distance_m: 100, duration_s: 30 })), snapped: points.map(p => ({ ...p })), provenance: {} }));
+  const value = await service.generateAlternatives('plan', dto, 'actor', 'alt-key-1');
+  expect(value).toMatchObject({ estado: 'COMPLETADA', alternativas_generadas: 2, solo_una_alternativa: false });
+  expect(osrm.calculate).toHaveBeenCalledTimes(2);
+  const creates = p.alternativaRuta.create.mock.calls.map(([arg]: [{ data: { numero: number; metodo: string; rutas: { create: { versiones: { create: { input_hash: string; resultado: { estrategia: { codigo: string } }; paradas: { create: { pedido_id: string }[] } } } } } } }]) => arg.data);
+  expect(creates.map(d => [d.numero, d.metodo])).toEqual([[1, 'SECUENCIAL_ORDEN'], [2, 'SECUENCIAL_VENTANA']]);
+  expect(creates[0].rutas.create.versiones.create.paradas.create.map(s => s.pedido_id)).toEqual(['b', 'a']);
+  expect(creates[1].rutas.create.versiones.create.paradas.create.map(s => s.pedido_id)).toEqual(['a', 'b']);
+  expect(creates[0].rutas.create.versiones.create.resultado.estrategia.codigo).toBe('ORDEN_CONFIRMADO');
+  expect(creates[0].rutas.create.versiones.create.input_hash).not.toBe(creates[1].rutas.create.versiones.create.input_hash);
+});
+it('informa cuando las estrategias producen una sola alternativa', async () => { expect(await service.generateAlternatives('plan', dto, 'actor', 'alt-key-2')).toMatchObject({ alternativas_generadas: 1, solo_una_alternativa: true }); expect(p.alternativaRuta.create).toHaveBeenCalledTimes(1); });
+it.each(['version', 'sources'])('impide generar alternativas si la planificación no cumple la condición %s', async condition => {
+  if (condition === 'version') p.planificacion.findUnique.mockResolvedValue({ planificacion_id: 'plan', current_version: 2 });
+  if (condition === 'sources') p.pedido.findMany.mockResolvedValue([]);
+  await expect(service.generateAlternatives('plan', dto, 'actor', 'alt-key-3')).rejects.toMatchObject({ status: 409 });
+  expect(osrm.calculate).not.toHaveBeenCalled(); expect(p.alternativaRuta.create).not.toHaveBeenCalled();
+});

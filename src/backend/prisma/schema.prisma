@@ -17,32 +17,32 @@ model Rol {
 }
 
 model Usuario {
-  planificaciones Planificacion[]
-  calculos EjecucionCalculo[]
-  usuario_id    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  rol_id        String   @db.Uuid
-  email         String   @unique @db.VarChar(255)
-  password_hash String   @db.VarChar(255)
-  credentials_version Int @default(0)
-  estado        String   @default("ACTIVO") @db.VarChar(20)
-  creado_en     DateTime @default(now()) @db.Timestamptz(6)
-  conductor     Conductor?
-  rol           Rol      @relation(fields: [rol_id], references: [rol_id], onDelete: Restrict)
+  planificaciones     Planificacion[]
+  calculos            EjecucionCalculo[]
+  usuario_id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  rol_id              String             @db.Uuid
+  email               String             @unique @db.VarChar(255)
+  password_hash       String             @db.VarChar(255)
+  credentials_version Int                @default(0)
+  estado              String             @default("ACTIVO") @db.VarChar(20)
+  creado_en           DateTime           @default(now()) @db.Timestamptz(6)
+  conductor           Conductor?
+  rol                 Rol                @relation(fields: [rol_id], references: [rol_id], onDelete: Restrict)
 
   @@index([rol_id], map: "idx_usuarios_rol_id")
   @@map("usuarios")
 }
 
 model Cliente {
-  cliente_id String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  nombre     String  @db.VarChar(150)
-  telefono   String? @db.VarChar(30)
-  email      String? @db.VarChar(255)
-  direccion  String  @db.VarChar(255)
-  referencia String? @db.VarChar(255)
-  latitud    Decimal @db.Decimal(9, 6)
-  longitud   Decimal @db.Decimal(9, 6)
-  estado     String  @default("ACTIVO") @db.VarChar(20)
+  cliente_id String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nombre     String   @db.VarChar(150)
+  telefono   String?  @db.VarChar(30)
+  email      String?  @db.VarChar(255)
+  direccion  String   @db.VarChar(255)
+  referencia String?  @db.VarChar(255)
+  latitud    Decimal  @db.Decimal(9, 6)
+  longitud   Decimal  @db.Decimal(9, 6)
+  estado     String   @default("ACTIVO") @db.VarChar(20)
   pedidos    Pedido[]
 
   @@map("clientes")
@@ -50,18 +50,18 @@ model Cliente {
 
 model Pedido {
   paradas_ruta      ParadaRuta[]
-  pedido_id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  cliente_id        String   @db.Uuid
-  peso_kg           Decimal  @db.Decimal(10, 2)
-  volumen_m3        Decimal? @db.Decimal(10, 3)
-  descripcion_carga String?  @db.VarChar(255)
-  ventana_inicio    DateTime @db.Timestamptz(6)
-  ventana_fin       DateTime @db.Timestamptz(6)
-  prioridad         String   @db.VarChar(20)
-  tipo_producto     String   @db.VarChar(30)
-  estado            String   @default("PENDIENTE") @db.VarChar(20)
-  creado_en         DateTime @default(now()) @db.Timestamptz(6)
-  cliente           Cliente  @relation(fields: [cliente_id], references: [cliente_id], onDelete: Restrict)
+  pedido_id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cliente_id        String       @db.Uuid
+  peso_kg           Decimal      @db.Decimal(10, 2)
+  volumen_m3        Decimal?     @db.Decimal(10, 3)
+  descripcion_carga String?      @db.VarChar(255)
+  ventana_inicio    DateTime     @db.Timestamptz(6)
+  ventana_fin       DateTime     @db.Timestamptz(6)
+  prioridad         String       @db.VarChar(20)
+  tipo_producto     String       @db.VarChar(30)
+  estado            String       @default("PENDIENTE") @db.VarChar(20)
+  creado_en         DateTime     @default(now()) @db.Timestamptz(6)
+  cliente           Cliente      @relation(fields: [cliente_id], references: [cliente_id], onDelete: Restrict)
 
   @@index([cliente_id], map: "idx_pedidos_cliente")
   @@map("pedidos")
@@ -69,113 +69,135 @@ model Pedido {
 
 // Incremento de cálculo secuencial y US-013. Sin asignaciones ni algoritmo genético.
 model Planificacion {
-  planificacion_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  creado_por String @db.Uuid
-  etiqueta String @db.VarChar(100)
-  current_version Int @default(1)
-  creado_en DateTime @default(now()) @db.Timestamptz(6)
-  versiones PlanificacionVersion[]
-  creador Usuario @relation(fields: [creado_por], references: [usuario_id], onDelete: Restrict)
+  planificacion_id String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  creado_por       String                 @db.Uuid
+  etiqueta         String                 @db.VarChar(100)
+  current_version  Int                    @default(1)
+  creado_en        DateTime               @default(now()) @db.Timestamptz(6)
+  versiones        PlanificacionVersion[]
+  creador          Usuario                @relation(fields: [creado_por], references: [usuario_id], onDelete: Restrict)
+
   @@map("planificaciones")
 }
 
 model PlanificacionVersion {
-  version_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  planificacion_id String @db.Uuid
-  numero Int
-  snapshot Json @db.JsonB
-  input_hash String @db.VarChar(64)
-  creado_en DateTime @default(now()) @db.Timestamptz(6)
-  planificacion Planificacion @relation(fields: [planificacion_id], references: [planificacion_id], onDelete: Restrict)
-  ejecuciones EjecucionCalculo[]
+  version_id       String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  planificacion_id String             @db.Uuid
+  numero           Int
+  snapshot         Json               @db.JsonB
+  input_hash       String             @db.VarChar(64)
+  creado_en        DateTime           @default(now()) @db.Timestamptz(6)
+  planificacion    Planificacion      @relation(fields: [planificacion_id], references: [planificacion_id], onDelete: Restrict)
+  ejecuciones      EjecucionCalculo[]
+
   @@unique([planificacion_id, numero])
   @@map("planificaciones_versiones")
 }
 
 model EjecucionCalculo {
-  ejecucion_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  version_id String @db.Uuid
-  actor_id String @db.Uuid
-  idempotency_key String @db.VarChar(100)
-  request_hash String @db.VarChar(64)
-  estado String @default("EN_CURSO") @db.VarChar(20)
-  owner_token String @db.Uuid
-  vence_en DateTime @db.Timestamptz(6)
-  error_code String? @db.VarChar(40)
-  creado_en DateTime @default(now()) @db.Timestamptz(6)
-  finalizado_en DateTime? @db.Timestamptz(6)
-  version PlanificacionVersion @relation(fields: [version_id], references: [version_id], onDelete: Restrict)
-  alternativas AlternativaRuta[]
-  actor Usuario @relation(fields: [actor_id], references: [usuario_id], onDelete: Restrict)
+  ejecucion_id    String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version_id      String               @db.Uuid
+  actor_id        String               @db.Uuid
+  idempotency_key String               @db.VarChar(100)
+  request_hash    String               @db.VarChar(64)
+  estado          String               @default("EN_CURSO") @db.VarChar(20)
+  owner_token     String               @db.Uuid
+  vence_en        DateTime             @db.Timestamptz(6)
+  error_code      String?              @db.VarChar(40)
+  creado_en       DateTime             @default(now()) @db.Timestamptz(6)
+  finalizado_en   DateTime?            @db.Timestamptz(6)
+  version         PlanificacionVersion @relation(fields: [version_id], references: [version_id], onDelete: Restrict)
+  alternativas    AlternativaRuta[]
+  actor           Usuario              @relation(fields: [actor_id], references: [usuario_id], onDelete: Restrict)
+
   @@unique([actor_id, idempotency_key])
   @@index([estado, vence_en])
   @@map("ejecuciones_calculo")
 }
 
 model AlternativaRuta {
-  alternativa_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  ejecucion_id String @db.Uuid
-  numero Int @default(1)
-  metodo String @default("SECUENCIAL_OSRM") @db.VarChar(30)
-  ejecucion EjecucionCalculo @relation(fields: [ejecucion_id], references: [ejecucion_id], onDelete: Restrict)
-  rutas Ruta[]
+  alternativa_id String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ejecucion_id   String           @db.Uuid
+  numero         Int              @default(1)
+  metodo         String           @default("SECUENCIAL_OSRM") @db.VarChar(30)
+  ejecucion      EjecucionCalculo @relation(fields: [ejecucion_id], references: [ejecucion_id], onDelete: Restrict)
+  rutas          Ruta[]
+
   @@unique([ejecucion_id, numero])
   @@map("alternativas_ruta")
 }
 
 model Ruta {
-  ruta_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  alternativa_id String @db.Uuid
-  indice_recorrido Int @default(1)
-  current_version Int @default(1)
-  creado_en DateTime @default(now()) @db.Timestamptz(6)
-  alternativa AlternativaRuta @relation(fields: [alternativa_id], references: [alternativa_id], onDelete: Restrict)
-  versiones RutaVersion[]
+  ruta_id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  alternativa_id   String          @db.Uuid
+  conductor_id     String?         @db.Uuid
+  indice_recorrido Int             @default(1)
+  current_version  Int             @default(1)
+  estado           String          @default("GENERADA") @db.VarChar(20)
+  asignado_en      DateTime?       @db.Timestamptz(6)
+  iniciado_en      DateTime?       @db.Timestamptz(6)
+  finalizado_en    DateTime?       @db.Timestamptz(6)
+  creado_en        DateTime        @default(now()) @db.Timestamptz(6)
+  actualizado_en   DateTime        @updatedAt @db.Timestamptz(6)
+  alternativa      AlternativaRuta @relation(fields: [alternativa_id], references: [alternativa_id], onDelete: Restrict)
+  conductor        Conductor?      @relation(fields: [conductor_id], references: [conductor_id], onDelete: Restrict)
+  versiones        RutaVersion[]
+
   @@unique([alternativa_id, indice_recorrido])
+  @@index([conductor_id, estado], map: "idx_rutas_conductor_estado")
+  @@index([estado], map: "idx_rutas_estado")
   @@map("rutas")
 }
 
 model RutaVersion {
-  ruta_version_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  ruta_id String @db.Uuid
-  numero Int @default(1)
-  vehiculo_id String @db.Uuid
-  distancia_m Decimal @db.Decimal(16, 3)
-  duracion_s Decimal @db.Decimal(16, 3)
-  resultado Json @db.JsonB
-  input_hash String @db.VarChar(64)
-  creado_en DateTime @default(now()) @db.Timestamptz(6)
-  ruta Ruta @relation(fields: [ruta_id], references: [ruta_id], onDelete: Restrict)
-  vehiculo Vehiculo @relation(fields: [vehiculo_id], references: [vehiculo_id], onDelete: Restrict)
-  paradas ParadaRuta[]
+  ruta_version_id String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ruta_id         String       @db.Uuid
+  numero          Int          @default(1)
+  vehiculo_id     String       @db.Uuid
+  distancia_m     Decimal      @db.Decimal(16, 3)
+  duracion_s      Decimal      @db.Decimal(16, 3)
+  resultado       Json         @db.JsonB
+  input_hash      String       @db.VarChar(64)
+  creado_en       DateTime     @default(now()) @db.Timestamptz(6)
+  ruta            Ruta         @relation(fields: [ruta_id], references: [ruta_id], onDelete: Restrict)
+  vehiculo        Vehiculo     @relation(fields: [vehiculo_id], references: [vehiculo_id], onDelete: Restrict)
+  paradas         ParadaRuta[]
+
   @@unique([ruta_id, numero])
   @@map("rutas_versiones")
 }
 
 model ParadaRuta {
-  parada_id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  ruta_version_id String @db.Uuid
-  pedido_id String @db.Uuid
-  secuencia Int
-  datos Json @db.JsonB
-  ruta_version RutaVersion @relation(fields: [ruta_version_id], references: [ruta_version_id], onDelete: Restrict)
-  pedido Pedido @relation(fields: [pedido_id], references: [pedido_id], onDelete: Restrict)
+  parada_id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ruta_version_id  String      @db.Uuid
+  pedido_id        String      @db.Uuid
+  secuencia        Int
+  datos            Json        @db.JsonB
+  estado_entrega   String      @default("PENDIENTE") @db.VarChar(20)
+  causa_no_entrega String?     @db.VarChar(255)
+  atendido_en      DateTime?   @db.Timestamptz(6)
+  actualizado_en   DateTime    @updatedAt @db.Timestamptz(6)
+  version_entrega  Int         @default(0)
+  ruta_version     RutaVersion @relation(fields: [ruta_version_id], references: [ruta_version_id], onDelete: Restrict)
+  pedido           Pedido      @relation(fields: [pedido_id], references: [pedido_id], onDelete: Restrict)
+
   @@unique([ruta_version_id, secuencia])
   @@unique([ruta_version_id, pedido_id])
+  @@index([estado_entrega], map: "idx_paradas_ruta_estado_entrega")
   @@map("paradas_ruta")
 }
 
 model Vehiculo {
-  rutas_versiones RutaVersion[]
-  vehiculo_id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  placa                    String   @unique @db.VarChar(15)
-  tipo                     String   @db.VarChar(30)
-  capacidad_carga_kg       Decimal  @db.Decimal(10, 2)
-  capacidad_volumen_m3     Decimal? @db.Decimal(10, 3)
-  consumo_km_l             Decimal  @db.Decimal(10, 3)
-  factor_emision_kg_co2_km Decimal  @db.Decimal(10, 5)
-  anio_fabricacion         Int      @db.SmallInt
-  estado                   String   @default("DISPONIBLE") @db.VarChar(20)
+  rutas_versiones          RutaVersion[]
+  vehiculo_id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  placa                    String        @unique @db.VarChar(15)
+  tipo                     String        @db.VarChar(30)
+  capacidad_carga_kg       Decimal       @db.Decimal(10, 2)
+  capacidad_volumen_m3     Decimal?      @db.Decimal(10, 3)
+  consumo_km_l             Decimal       @db.Decimal(10, 3)
+  factor_emision_kg_co2_km Decimal       @db.Decimal(10, 5)
+  anio_fabricacion         Int           @db.SmallInt
+  estado                   String        @default("DISPONIBLE") @db.VarChar(20)
 
   @@index([estado], map: "idx_vehiculos_estado")
   @@index([tipo], map: "idx_vehiculos_tipo")
@@ -195,6 +217,7 @@ model Conductor {
   estado             String                    @default("ACTIVO") @db.VarChar(20)
   usuario            Usuario?                  @relation(fields: [usuario_id], references: [usuario_id], onDelete: Restrict)
   disponibilidades   DisponibilidadConductor[]
+  rutas              Ruta[]
 
   @@index([estado], map: "idx_conductores_estado")
   @@map("conductores")
@@ -211,6 +234,7 @@ model DisponibilidadConductor {
   creado_en         DateTime  @default(now()) @db.Timestamptz(6)
   actualizado_en    DateTime  @updatedAt @db.Timestamptz(6)
   conductor         Conductor @relation(fields: [conductor_id], references: [conductor_id], onDelete: Restrict)
+
   @@unique([conductor_id, inicio, fin], map: "uq_disponibilidad_conductor_intervalo")
   @@index([conductor_id, inicio, fin], map: "idx_disponibilidad_conductor_intervalo")
   @@index([estado], map: "idx_disponibilidad_conductor_estado")
