@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { mockOwnDriver } from './fixtures/driver-profile';
 const id = '10000000-0000-4000-8000-000000000001';
 const order = { pedido_id: id, cliente_id: id, peso_kg: '2.5', volumen_m3: null, descripcion_carga: 'Caja', estado: 'PENDIENTE', prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO', creado_en: '2026-10-01T12:00:00Z', ventana_inicio: '2026-10-02T14:00:00Z', ventana_fin: '2026-10-02T16:00:00Z', cliente: { nombre: 'Comercial Mantaro', direccion: 'Av. Giraldez', referencia: 'Puerta azul', telefono: null, email: null } };
 test.use({ timezoneId: 'Asia/Tokyo' });
@@ -37,9 +38,10 @@ test('US-005 consulta, filtros, paginación y detalle de solo lectura', async ({
 for (const role of ['Usuario Final / Conductor', 'Auditor Externo']) {
   test(`US-005 bloquea URL directa para ${role}`, async ({ page, baseURL }) => {
     const headers = { 'Access-Control-Allow-Origin': new URL(baseURL!).origin, 'Access-Control-Allow-Credentials': 'true' };
+    await mockOwnDriver(page, headers);
     await page.route('**/auth/me', route => route.fulfill({ headers, json: { usuario_id: id, email: 'noaccess@example.com', rol: { nombre: role }, expiresAt: Date.now() + 900000 } }));
     let queries = 0; await page.route(url => url.pathname === '/orders' || url.pathname.startsWith('/orders/'), route => { queries++; return route.abort(); });
-    await page.goto(`/pedidos/${id}`); await expect(page.getByRole('heading', { name: 'Acceso permitido' })).toBeVisible();
+    await page.goto(`/pedidos/${id}`); await expect(page.getByRole('heading', { name: role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Consultar pedidos' })).toHaveCount(0); expect(queries).toBe(0);
   });
 }

@@ -365,3 +365,35 @@ th { background: var(--color-surface-low); white-space: nowrap; }
     width: 100%;
   }
 }
+/* Acceso personal del conductor: preparación sin rutas ni entregas ficticias. */
+.driver-portal { max-width: 1200px; margin-inline: auto; }
+.driver-portal-heading { margin-bottom: 24px; }
+.driver-portal-heading h1 { margin: 6px 0 10px; }
+.driver-portal-eyebrow { color: var(--color-primary, #16764b); font-weight: 700; }
+.driver-identity { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 20px; margin-bottom: 20px; border: 1px solid #bfdecf; border-radius: 16px; background: #edf8f1; color: #143c30; }
+.driver-identity p { margin: 4px 0 0; }
+.driver-identity-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #fff; color: #16764b; font-weight: 700; }
+.driver-identity-state { font-size: .875rem; font-weight: 600; }
+.driver-panel-grid { display: grid; gap: 20px; }
+.driver-panel-card { min-width: 0; scroll-margin-top: 100px; }
+.driver-panel-card h2 { margin-top: 8px; }
+.driver-feature-label { display: inline-block; align-self: flex-start; padding: 4px 10px; border-radius: 20px; background: #edf3f8; color: #294a67; font-size: .8125rem; font-weight: 600; }
+.driver-feature-note { color: #526373; line-height: 1.65; }
+@media (min-width: 768px) { .driver-panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .driver-day { grid-column: 1 / -1; } .driver-identity-state { margin-left: auto; } }
+.driver-account-panel { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--color-border-subtle); display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.driver-account-form, .driver-account-form fieldset { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.driver-account-panel dd, .driver-account-panel p { overflow-wrap: anywhere; }
+.driver-account-confirm { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid #c1d8e8; border-radius: 10px; background: #f2f7fc; }
+.driver-account-confirm input { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+.routing-panel { min-width: 0; overflow-wrap: anywhere; }
+.routing-panel fieldset { min-width: 0; margin-block: 20px; padding: 16px; border: 1px solid #c9ded4; border-radius: 12px; }
+.routing-check { display: flex; align-items: flex-start; gap: 12px; margin-block: 12px; }
+.routing-check input { flex: 0 0 20px; width: 20px; height: 20px; margin-top: 2px; }
+.routing-check small { display: block; }
+.routing-stops { padding-left: 24px; }
+.routing-stops li { padding: 12px; border-bottom: 1px solid #c9ded4; }
+.routing-stops input { max-width: 100%; }
+.route-map { height: 520px; width: 100%; margin-block: 20px; border-radius: 12px; }
+.route-stop-marker { display: grid; place-items: center; border: 3px solid white; border-radius: 50%; background: #b5237d; color: white; font-weight: 700; }
+.route-stop-marker.origin { background: #146449; }
+@media(max-width:767px) { .route-map { height: 420px; } .routing-panel fieldset { padding: 12px; } }

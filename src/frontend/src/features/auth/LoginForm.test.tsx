@@ -6,7 +6,33 @@ import { authApi } from '../../services/api';
 import { loginResponse } from '../../test/fixtures';
 vi.mock('../../services/api', () => ({ authApi: { login: vi.fn() } }));
 describe('US-001 LoginForm', () => {
-  beforeEach(() => vi.resetAllMocks());
+  beforeEach(() => { vi.resetAllMocks(); sessionStorage.clear(); localStorage.clear(); });
+  afterEach(() => { sessionStorage.clear(); localStorage.clear(); vi.restoreAllMocks(); });
+  it('conserva solo el correo al desmontar y regresar, sin guardar contraseña', async () => {
+    const view = render(<LoginForm onSuccess={vi.fn()} />);
+    await userEvent.type(screen.getByLabelText('Correo electrónico'), 'original@example.com');
+    await userEvent.type(screen.getByLabelText('Contraseña'), 'private-input');
+    view.unmount();
+    render(<LoginForm onSuccess={vi.fn()} />);
+    expect(screen.getByLabelText('Correo electrónico')).toHaveValue('original@example.com');
+    expect(screen.getByLabelText('Contraseña')).toHaveValue('');
+    expect(localStorage.length).toBe(0);
+    expect(Object.values(sessionStorage)).toEqual(['original@example.com']);
+  });
+  it('restaura el correo guardado y permite olvidarlo al vaciar el campo', async () => {
+    sessionStorage.setItem('ecoruta.login.email', 'original@example.com');
+    render(<LoginForm onSuccess={vi.fn()} />);
+    expect(screen.getByLabelText('Correo electrónico')).toHaveValue('original@example.com');
+    await userEvent.clear(screen.getByLabelText('Correo electrónico'));
+    expect(sessionStorage.getItem('ecoruta.login.email')).toBeNull();
+  });
+  it('permite escribir si el navegador bloquea el almacenamiento', async () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('blocked'); });
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('blocked'); });
+    render(<LoginForm onSuccess={vi.fn()} />);
+    await userEvent.type(screen.getByLabelText('Correo electrónico'), 'valid@example.com');
+    expect(screen.getByLabelText('Correo electrónico')).toHaveValue('valid@example.com');
+  });
   it('renderiza correo, contraseña y acción accesibles', () => {
     render(<LoginForm onSuccess={vi.fn()} />);
     expect(screen.getByLabelText('Correo electrónico')).toHaveAttribute('autocomplete', 'username');

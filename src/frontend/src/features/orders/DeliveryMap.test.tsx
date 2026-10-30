@@ -10,6 +10,7 @@ it('sugerencia centra mapa; dragend fuera de cobertura invalida selección', asy
   const onChange = vi.fn();
   render(<DeliveryMap disabled={false} onChange={onChange} point={{ latitud: 1, longitud: 1 }} />);
   await ready();
+  await waitFor(() => expect(markerSpy).toHaveBeenCalled());
   const marker = markerSpy.mock.results.at(-1)!.value as L.Marker;
   expect(marker.getLatLng()).toMatchObject({ lat: 1, lng: 1 });
   expect(viewSpy).toHaveBeenCalledWith([1, 1], 17); expect(onChange).not.toHaveBeenCalled();

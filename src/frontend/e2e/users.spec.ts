@@ -22,7 +22,7 @@ test('US-003: Administrador crea y edita cuenta; F5 y logout mantienen protecci�
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   expect((await page.getByRole('button', { name: 'Cerrar sesión' }).boundingBox())?.height).toBeGreaterThanOrEqual(48);
   await page.screenshot({ path: test.info().outputPath('usuarios.png'), fullPage: true });
-  expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
+  expect(await page.evaluate(() => ({ local: localStorage.length, session: { ...sessionStorage } }))).toEqual({ local: 0, session: { 'ecoruta.login.email': email } });
   await page.getByRole('button', { name: 'Cerrar sesión' }).click(); await expect(page).toHaveURL(/\/login$/);
   await page.goto('/usuarios'); await expect(page).toHaveURL(/\/login$/);
 });

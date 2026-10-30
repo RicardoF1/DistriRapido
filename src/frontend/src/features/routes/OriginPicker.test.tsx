@@ -1,0 +1,10 @@
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
+import { OriginPicker } from './OriginPicker';
+const mock = vi.hoisted(() => ({ edit: vi.fn(), choose: vi.fn(), move: vi.fn(), confirmed: false, point: { latitud: -12, longitud: -75 }, coverageError: '' }));
+vi.mock('../orders/useDeliveryAddress', () => ({ useDeliveryAddress: () => ({ ...mock, suggestions: [{ address: 'Origen sugerido' }], status: '', focusRevision: 0 }) }));
+vi.mock('../orders/DeliveryMap', () => ({ DeliveryMap: ({ onChange }: { onChange: (point: object) => void }) => <button type="button" onClick={() => onChange(mock.point)}>Seleccionar en mapa</button> }));
+beforeEach(() => { vi.clearAllMocks(); mock.confirmed = false; mock.coverageError = ''; });
+it('no confirma texto escrito y solo emite origen cuando el selector está confirmado', async () => { const change = vi.fn(); const view = render(<OriginPicker disabled={false} onChange={change} />); expect(change).toHaveBeenLastCalledWith(null); fireEvent.change(screen.getByLabelText('Dirección del origen'), { target: { value: 'Cambio' } }); expect(mock.edit).toHaveBeenCalledWith('Cambio'); await userEvent.click(screen.getByRole('button', { name: 'Origen sugerido' })); expect(mock.choose).toHaveBeenCalled(); await userEvent.click(screen.getByRole('button', { name: 'Seleccionar en mapa' })); expect(mock.move).toHaveBeenCalled(); mock.confirmed = true; view.rerender(<OriginPicker disabled={false} onChange={change} />); expect(change).toHaveBeenLastCalledWith(expect.objectContaining(mock.point)); });
+it('falta de cobertura se muestra como error', () => { mock.coverageError = 'Cobertura ausente'; render(<OriginPicker disabled={false} onChange={vi.fn()} />); expect(screen.getByRole('alert')).toHaveTextContent('Cobertura ausente'); });

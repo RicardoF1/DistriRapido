@@ -1,0 +1,10 @@
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import { planningApi } from './planning-api';
+import { routesApi } from './routes-api';
+const fetcher = vi.fn();
+beforeEach(() => { vi.stubGlobal('fetch', fetcher); fetcher.mockImplementation(async () => new Response('{}')); });
+afterEach(() => { vi.unstubAllGlobals(); vi.clearAllMocks(); });
+it('transporta confirmaciones, versión e idempotencia sin enviar métricas', async () => { await planningApi.calculate('plan', 2, 'stable-key'); const [url, options] = fetcher.mock.calls[0]; expect(url).toContain('/planning/plan/calculations'); expect(options.credentials).toBe('include'); expect(options.headers['Idempotency-Key']).toBe('stable-key'); expect(JSON.parse(options.body)).toEqual({ expected_version: 2, confirm_origin: true, confirm_order: true, confirm_return: true }); });
+it('conserva semántica de consulta y edición versionada', async () => { await planningApi.candidates('start', 'end', 2); expect(fetcher.mock.calls[0][0]).toContain('page=2'); await planningApi.update('p', 1, {} as Parameters<typeof planningApi.prepare>[0]); expect(JSON.parse(fetcher.mock.calls[1][1].body)).toMatchObject({ expected_version: 1 }); await planningApi.execution('p', 'e'); await routesApi.list(2, 'plan'); await routesApi.get('r', 1); expect(fetcher.mock.calls[4][0]).toContain('/routes/r/versions/1'); expect(fetcher.mock.calls[4][1].method).toBeUndefined(); });
+it.each([400, 403, 404, 409, 422, 429, 502, 503, 504, 500])('conserva error HTTP %s sin sustituirlo por lista vacía', async status => { fetcher.mockResolvedValue(new Response('{}', { status })); await expect(routesApi.list()).rejects.toMatchObject({ status }); });
+it('recupera identificador de ejecución en fallo del proveedor', async () => { fetcher.mockResolvedValue(new Response(JSON.stringify({ message: 'OSRM no disponible', execution_id: 'e', code: 'ROUTING_503' }), { status: 503 })); await expect(planningApi.calculate('p', 1, 'key')).rejects.toMatchObject({ status: 503, executionId: 'e', code: 'ROUTING_503', message: 'OSRM no disponible' }); });

@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { mockOwnDriver } from './fixtures/driver-profile';
 // Frontend navigation regression: API contracts are intercepted; no DB fixtures or writes.
 for (const role of ['Administrador', 'Operador / Técnico', 'Usuario Final / Conductor', 'Auditor Externo']) {
   test(`US-004 navegación: ${role}`, async ({ page, baseURL }) => {
     let authenticated = false; let userRequests = 0;
     const user = { usuario_id: 'navigation-test-user', email: 'navigation@example.com', rol: { rol_id: 'navigation-role', nombre: role } };
     const headers = { 'Access-Control-Allow-Origin': new URL(baseURL ?? 'http://localhost:5173').origin, 'Access-Control-Allow-Credentials': 'true', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
+    await mockOwnDriver(page, headers);
     await page.route(url => url.pathname.startsWith('/auth/'), async route => {
       if (route.request().method() === 'OPTIONS') { await route.fulfill({ status: 204, headers }); return; }
       const path = new URL(route.request().url()).pathname;
@@ -16,12 +18,13 @@ for (const role of ['Administrador', 'Operador / Técnico', 'Usuario Final / Con
       userRequests++;
       await route.fulfill({ status: role === 'Administrador' ? 200 : 403, headers, json: [{ ...user, rol_id: user.rol.rol_id, estado: 'ACTIVO', creado_en: new Date().toISOString() }] });
     });
+    await page.route('http://localhost:3000/admin/summary', route => route.fulfill({ headers, json: { totalOrders: 0, pendingOrders: 0, totalUsers: 1, ordersByState: [] } }));
     await page.goto('/login'); await page.getByLabel('Correo electrónico').fill(user.email); await page.getByLabel('Contraseña', { exact: true }).fill('frontend-test-only'); await page.getByRole('button', { name: 'Iniciar sesión' }).click();
-    await expect(page.getByRole('heading', { name: role === 'Administrador' ? 'Panel de administración' : 'Acceso permitido' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: role === 'Administrador' ? 'Panel de administración' : role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' })).toBeVisible();
     const allowed = role === 'Administrador' || role === 'Operador / Técnico';
     if (!allowed) {
       await expect(page.locator('main').getByRole('link', { name: 'Registrar pedido', exact: true })).toHaveCount(0);
-      await page.goto('/pedidos/nuevo'); await expect(page.getByRole('heading', { name: role === 'Administrador' ? 'Panel de administración' : 'Acceso permitido' })).toBeVisible(); await expect(page.getByRole('form')).toHaveCount(0);
+      await page.goto('/pedidos/nuevo'); await expect(page.getByRole('heading', { name: role === 'Administrador' ? 'Panel de administración' : role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' })).toBeVisible(); await expect(page.getByRole('form')).toHaveCount(0);
       expect(userRequests).toBe(0);
     } else {
       await expect(page.locator('main').getByRole('link', { name: 'Registrar pedido', exact: true })).toBeVisible();
@@ -42,7 +45,7 @@ for (const role of ['Administrador', 'Operador / Técnico', 'Usuario Final / Con
       const checked = page.waitForResponse(response => response.url().endsWith('/auth/me') && response.status() === 200);
       await page.evaluate(() => window.dispatchEvent(new Event('focus'))); await checked; await expect(page.getByLabel('Nombre del cliente')).toHaveValue('Borrador en memoria');
       await page.reload(); await expect(page.getByRole('form')).toBeVisible(); await expect(page.getByLabel('Nombre del cliente')).toHaveValue('');
-      expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
+      expect(await page.evaluate(() => ({ local: localStorage.length, session: { ...sessionStorage } }))).toEqual({ local: 0, session: { 'ecoruta.login.email': user.email } });
     }
     await page.getByRole('button', { name: 'Cerrar sesión' }).click(); await expect(page).toHaveURL(/\/login$/); await page.goto('/pedidos/nuevo'); await expect(page).toHaveURL(/\/login$/);
   });

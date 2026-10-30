@@ -42,6 +42,9 @@ export function ProtectedRoute() {
   const allowed = accessPath(role);
 
   const operationalRoute =
+    location.pathname === '/planificacion' ||
+    location.pathname === '/rutas' ||
+    location.pathname.startsWith('/rutas/') ||
     location.pathname === '/conductores' ||
     location.pathname.startsWith('/conductores/') ||
     location.pathname === '/disponibilidad' ||

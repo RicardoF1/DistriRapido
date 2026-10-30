@@ -5,6 +5,7 @@
 } from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
 import { AccessPage } from '../pages/AccessPage';
+import { DriverAccessPage } from '../pages/DriverAccessPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { UsersPage } from '../pages/UsersPage';
@@ -18,6 +19,10 @@ import { DriversLayout } from '../layouts/DriversLayout';
 import { DriversPage } from '../pages/DriversPage';
 import { AvailabilityLayout } from '../layouts/AvailabilityLayout';
 import { AvailabilityPage } from '../pages/AvailabilityPage';
+import { PlanningPage } from '../pages/PlanningPage';
+import { RoutesPage } from '../pages/RoutesPage';
+import { RouteDetailPage } from '../pages/RouteDetailPage';
+import { RoutesLayout } from '../layouts/RoutesLayout';
 
 export function AppRoutes() {
   return (
@@ -28,6 +33,7 @@ export function AppRoutes() {
       />
 
       <Route element={<ProtectedRoute />}>
+        <Route path="/acceso/conductor" element={<DriverAccessPage />} />
         <Route
           path="/acceso/:role"
           element={<AccessPage />}
@@ -52,6 +58,11 @@ export function AppRoutes() {
           />
         </Route>
 
+        <Route element={<RoutesLayout />}>
+          <Route path="/planificacion" element={<PlanningPage />} />
+          <Route path="/rutas" element={<RoutesPage />} />
+          <Route path="/rutas/:id" element={<RouteDetailPage />} />
+        </Route>
         <Route element={<DriversLayout />}>
           <Route
             path="/conductores"

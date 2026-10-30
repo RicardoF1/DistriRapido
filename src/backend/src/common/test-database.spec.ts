@@ -1,0 +1,3 @@
+import { assertIsolatedDatabase } from './test-database';
+it.each(['postgresql://runner@localhost/distrirapido_test', 'postgresql://runner@localhost/distrirapido_test?schema=public', 'postgresql://runner@localhost/distrirapido?schema=distrirapido_routing_20261029_test'])('acepta aislamiento explícito %s', url => { expect(() => assertIsolatedDatabase(url)).not.toThrow(); });
+it.each([undefined, '', 'not-a-url', 'postgresql://runner@localhost/distrirapido', 'postgresql://runner@localhost/distrirapido?schema=public', 'postgresql://runner@localhost/distrirapido_test?schema=production', 'https://localhost/distrirapido_test'])('rechaza destino no aislado', url => { expect(() => assertIsolatedDatabase(url)).toThrow('aislado'); });

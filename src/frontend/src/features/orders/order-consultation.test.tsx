@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { AppRoutes } from '../../routes/AppRoutes';
+vi.mock('../../services/driver-profile-api', () => ({ driverProfileApi: { me: async () => ({ conductor_id: 'fixture', nombre_completo: 'Conductor de prueba', estado: 'ACTIVO' }) } }));
 import { AuthProvider } from '../auth/AuthProvider';
 import { authApi, ApiError } from '../../services/api';
 import { ordersApi } from '../../services/orders-api';
@@ -71,7 +72,7 @@ it.each([403, 404])('detalle maneja HTTP %s', async status => {
 });
 it.each(['Usuario Final / Conductor', 'Auditor Externo'])('bloquea URL directa para %s', async role => {
   vi.mocked(authApi.me).mockResolvedValue({ ...loginResponse.user, rol: { ...loginResponse.user.rol, nombre: role }, expiresAt: Date.now() + 900000 });
-  setup(`/pedidos/${id}`); await screen.findByRole('heading', { name: 'Acceso permitido' });
+  setup(`/pedidos/${id}`); await screen.findByRole('heading', { name: role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' });
   expect(ordersApi.get).not.toHaveBeenCalled(); expect(screen.queryByRole('link', { name: 'Consultar pedidos' })).not.toBeInTheDocument();
 });
 it.each(['/pedidos', `/pedidos/${id}`])('401 restaura login %s', async path => {

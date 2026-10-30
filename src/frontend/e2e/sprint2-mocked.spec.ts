@@ -7,7 +7,10 @@ const vehicle = { vehiculo_id: 'vehicle-id', placa: 'ABC-123', tipo: 'Furgón', 
 test.beforeEach(async ({ page }) => {
   let currentOrder = { ...order };
   let vehicles = [{ ...vehicle }];
+  // An unmatched API call must never reach the development database.
+  await page.route('http://localhost:3000/**', route => route.abort());
   await page.route('http://localhost:3000/auth/me', route => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ...user, expiresAt: Date.now() + 3600000 }) }));
+  await page.route('http://localhost:3000/admin/summary', route => route.fulfill({ json: { totalOrders: 1, pendingOrders: 1, totalUsers: 1, ordersByState: [{ state: 'PENDIENTE', count: 1 }] } }));
   await page.route('http://localhost:3000/orders/order-id**', async route => {
     if (route.request().method() === 'PATCH') {
       const body = route.request().postDataJSON() as { estado: string };

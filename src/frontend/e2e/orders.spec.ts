@@ -39,7 +39,7 @@ for (const role of ['admin', 'operator'] as const) {
     expect(Number.isFinite(payload.cliente.latitud)).toBe(true); expect(Number.isFinite(payload.cliente.longitud)).toBe(true); expect(payload.cliente.referencia).toBe('Puerta azul');
     const body = await saved.json(); expect(body.volumen_m3).toBe(role === 'admin' ? '0.015' : null);
     await expect(page.getByText('Pedido registrado correctamente')).toBeVisible(); expect(requests).toBe(1);
-    expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
+    expect(await page.evaluate(() => ({ local: localStorage.length, session: { ...sessionStorage } }))).toEqual({ local: 0, session: { 'ecoruta.login.email': email } });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({ path: test.info().outputPath('registrar-pedido.png'), fullPage: true });
     await page.reload(); await expect(page.getByRole('form', { name: 'Registrar pedido' })).toBeVisible(); await expect(page.getByLabel('Nombre del cliente')).toHaveValue('');
