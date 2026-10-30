@@ -39,6 +39,7 @@ it('dibuja cinco distritos y Ver cobertura reajusta vista sin reiniciar marcador
   render(<DeliveryMap onChange={onChange} disabled={false} point={{ latitud: 2, longitud: 2 }} />);
   await ready(); const map = screen.getByRole('region');
   expect(screen.getByRole('list', { name: 'Distritos autorizados' }).children).toHaveLength(5);
+  await waitFor(() => expect(map.querySelector('.delivery-marker')).not.toBeNull());
   const marker = map.querySelector('.delivery-marker');
   fireEvent.click(screen.getByRole('button', { name: 'Ver cobertura' }));
   await waitFor(() => expect(fit).toHaveBeenCalledTimes(2)); expect(map.querySelector('.delivery-marker')).toBe(marker);
