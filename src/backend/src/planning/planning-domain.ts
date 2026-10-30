@@ -16,6 +16,29 @@ function canonical(value: unknown): unknown {
 }
 export const makeHash = (value: unknown) => createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
 export function validateSequence(ids: string[]) { if (!ids.length || ids.length > 30 || new Set(ids).size !== ids.length) throw new BadRequestException('Selecciona de 1 a 30 pedidos diferentes y confirma su orden.'); }
+export interface RouteCandidate {
+  codigo: string; metodo: string; nombre: string; descripcion: string; orders: PreparedSnapshot['orders'];
+}
+const gapMeters = (a: Point, b: Point) => { const rad = Math.PI / 180; const dlat = (b.latitud - a.latitud) * rad; const dlon = (b.longitud - a.longitud) * rad; return 6371000 * 2 * Math.asin(Math.min(1, Math.sqrt(Math.sin(dlat / 2) ** 2 + Math.cos(a.latitud * rad) * Math.cos(b.latitud * rad) * Math.sin(dlon / 2) ** 2))); };
+const strategy = (codigo: string, metodo: string, nombre: string, descripcion: string, orders: PreparedSnapshot['orders']): RouteCandidate => ({ codigo, metodo, nombre, descripcion, orders });
+// US-011: solo propone órdenes de paradas; las métricas viales siempre las calcula OSRM sobre el orden propuesto.
+export function routeCandidates(s: PreparedSnapshot): RouteCandidate[] {
+  if (!s.orders.length) return [];
+  const ventana = [...s.orders].sort((a, b) => Date.parse(a.ventana_fin) - Date.parse(b.ventana_fin) || Date.parse(a.ventana_inicio) - Date.parse(b.ventana_inicio) || a.pedido_id.localeCompare(b.pedido_id));
+  const pendientes = [...s.orders]; const cercano: PreparedSnapshot['orders'] = []; let actual: Point = s.origin;
+  while (pendientes.length) {
+    let best = 0;
+    for (let i = 1; i < pendientes.length; i++) { const d = gapMeters(actual, pendientes[i]); const chosen = gapMeters(actual, pendientes[best]); if (d < chosen || d === chosen && pendientes[i].pedido_id.localeCompare(pendientes[best].pedido_id) < 0) best = i; }
+    const [next] = pendientes.splice(best, 1); cercano.push(next); actual = next;
+  }
+  const candidates = [
+    strategy('ORDEN_CONFIRMADO', 'SECUENCIAL_ORDEN', 'Orden confirmado', 'Respeta el orden de paradas confirmado al preparar la planificación.', s.orders),
+    strategy('VENTANA_LIMITE', 'SECUENCIAL_VENTANA', 'Ventana más próxima', 'Atiende primero los pedidos cuyo límite de ventana vence antes.', ventana),
+    strategy('CERCANO_ORIGEN', 'SECUENCIAL_CERCANO', 'Vecino más cercano', 'Propone en cada paso la parada pendiente más cercana en línea recta al punto actual; OSRM calcula las métricas viales del orden resultante.', cercano),
+  ];
+  const seen = new Set<string>();
+  return candidates.filter(candidate => { const key = candidate.orders.map(o => o.pedido_id).join('|'); if (seen.has(key)) return false; seen.add(key); return true; });
+}
 export function evaluateRoute(s: PreparedSnapshot, legs: { distance_m: number; duration_s: number }[]) {
   const warnings: string[] = []; let time = Date.parse(s.inicio);
   const expected = s.orders.length + (s.return_to_origin ? 1 : 0);
