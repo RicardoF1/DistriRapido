@@ -11,7 +11,7 @@ import { loginResponse } from '../test/fixtures';
 import { accessPath } from './role-access';
 import { adminApi } from '../services/admin-api';
 import { driverProfileApi } from '../services/driver-profile-api';
-vi.mock('../services/driver-profile-api', () => ({ driverProfileApi: { me: vi.fn().mockResolvedValue({ conductor_id: 'fixture', nombre_completo: 'Conductor de prueba', estado: 'ACTIVO' }) } }));
+vi.mock('../services/driver-profile-api', () => ({ driverProfileApi: { me: vi.fn().mockResolvedValue({ conductor_id: 'fixture', nombre_completo: 'Conductor de prueba', estado: 'ACTIVO' }), routes: vi.fn().mockResolvedValue([]), route: vi.fn(), updateDelivery: vi.fn() } }));
 vi.mock('../services/admin-api', () => ({ adminApi: { summary: vi.fn().mockResolvedValue({ totalOrders: 0, pendingOrders: 0, totalUsers: 0, ordersByState: [] }) } }));
 vi.mock('../services/api', async () => {
   const actual = await vi.importActual<typeof import('../services/api')>('../services/api');
@@ -24,7 +24,7 @@ function renderRoutes(path = '/login', role = 'Administrador') {
   return { acceptSession };
 }
 describe('Acceso según rol', () => {
-  beforeEach(() => { vi.resetAllMocks(); vi.mocked(driverProfileApi.me).mockResolvedValue({ conductor_id: 'fixture', nombre_completo: 'Conductor de prueba', estado: 'ACTIVO' }); vi.mocked(adminApi.summary).mockResolvedValue({ totalOrders: 0, pendingOrders: 0, totalUsers: 0, ordersByState: [] }); vi.mocked(authApi.me).mockResolvedValue({ ...loginResponse.user, expiresAt: Date.now() + 900000 }); });
+  beforeEach(() => { vi.resetAllMocks(); vi.mocked(driverProfileApi.me).mockResolvedValue({ conductor_id: 'fixture', nombre_completo: 'Conductor de prueba', estado: 'ACTIVO' }); vi.mocked(driverProfileApi.routes).mockResolvedValue([]); vi.mocked(adminApi.summary).mockResolvedValue({ totalOrders: 0, pendingOrders: 0, totalUsers: 0, ordersByState: [] }); vi.mocked(authApi.me).mockResolvedValue({ ...loginResponse.user, expiresAt: Date.now() + 900000 }); });
   it('protege acceso directo sin sesión', async () => {
     vi.mocked(authApi.me).mockRejectedValue(new ApiError('missing', 401));
     render(<MemoryRouter initialEntries={['/acceso/administrador']}><AuthProvider><AppRoutes /></AuthProvider></MemoryRouter>);
