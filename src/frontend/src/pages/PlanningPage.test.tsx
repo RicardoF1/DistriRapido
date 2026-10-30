@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { PlanningPage } from './PlanningPage';
-const mock = vi.hoisted(() => ({ candidates: vi.fn(), prepare: vi.fn(), update: vi.fn(), calculate: vi.fn(), execution: vi.fn(), acceptSession: vi.fn() }));
+const mock = vi.hoisted(() => ({ candidates: vi.fn(), prepare: vi.fn(), update: vi.fn(), calculate: vi.fn(), alternatives: vi.fn(), execution: vi.fn(), acceptSession: vi.fn() }));
 vi.mock('../hooks/useAuth', () => ({ useAuth: () => ({ acceptSession: mock.acceptSession }) }));
 vi.mock('../services/planning-api', () => ({ planningApi: mock }));
 vi.mock('../features/routes/OriginPicker', () => ({ OriginPicker: ({ onChange }: { onChange: (p: object) => void }) => <button type="button" onClick={() => onChange({ latitud: -12, longitud: -75, label: 'Origen sintético' })}>Elegir origen sintético</button> }));
@@ -19,4 +19,14 @@ it('completada por consulta de estado libera draft y prepara otra planificación
   await userEvent.click(screen.getByRole('button', { name: 'Preparar planificación' })); await screen.findByRole('button', { name: 'Calcular recorrido por vías con OSRM' }); await userEvent.click(screen.getByRole('button', { name: 'Calcular recorrido por vías con OSRM' })); await userEvent.click(await screen.findByRole('button', { name: 'Consultar estado' })); await screen.findByText('Recorrido calculado, sin optimización genética ni asignación.');
   await userEvent.type(screen.getByLabelText('Nombre de planificación'), ' nuevo'); for (const name of ['Confirmo el origen seleccionado.', 'Confirmo el orden y los tiempos de atención.', 'Confirmo si el recorrido regresa al origen.']) await userEvent.click(screen.getByLabelText(name));
   await userEvent.click(screen.getByRole('button', { name: 'Preparar planificación' })); expect(mock.prepare).toHaveBeenCalledTimes(2); expect(mock.update).not.toHaveBeenCalled();
+});
+it('genera alternativas y muestra cada recorrido para evaluar', async () => {
+  mock.alternatives.mockResolvedValue({ ejecucion_id: 'e', estado: 'COMPLETADA', alternativas_generadas: 2, solo_una_alternativa: false, alternativas: [{ alternativa_id: 'a1', numero: 1, metodo: 'SECUENCIAL_ORDEN', rutas: [{ ruta_id: 'r1' }] }, { alternativa_id: 'a2', numero: 2, metodo: 'SECUENCIAL_VENTANA', rutas: [{ ruta_id: 'r2' }] }] });
+  await open(); await userEvent.click(screen.getByText('Elegir origen sintético')); await userEvent.click(screen.getByLabelText('Seleccionar pedido o')); await userEvent.selectOptions(screen.getByLabelText('Vehículo candidato'), 'v'); await userEvent.click(screen.getByLabelText('Conductor sintético')); await userEvent.type(screen.getByLabelText('Atención en minutos para o'), '5'); await userEvent.selectOptions(screen.getByLabelText('Finalización del recorrido'), 'OPEN');
+  for (const name of ['Confirmo el origen seleccionado.', 'Confirmo el orden y los tiempos de atención.', 'Confirmo si el recorrido regresa al origen.']) await userEvent.click(screen.getByLabelText(name));
+  await userEvent.click(screen.getByRole('button', { name: 'Preparar planificación' })); await userEvent.click(await screen.findByRole('button', { name: 'Generar alternativas de ruta' }));
+  expect(await screen.findByText('Se generaron 2 alternativas con el mismo proveedor y presupuesto.')).toBeInTheDocument();
+  expect(screen.getByText('Alternativa 1 · Orden confirmado')).toBeInTheDocument(); expect(screen.getByText('Alternativa 2 · Ventana más próxima')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Consultar recorrido de la alternativa 1' })).toHaveAttribute('href', '/rutas/r1');
+  expect(mock.alternatives).toHaveBeenCalledTimes(1); expect(mock.calculate).not.toHaveBeenCalled();
 });
