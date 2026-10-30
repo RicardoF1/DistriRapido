@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AppLayout } from '../layouts/AppLayout';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { useAuth } from '../hooks/useAuth';
@@ -22,10 +22,20 @@ export function DriverAccessPage() {
   const [causes, setCauses] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState('');
 
-  function handleError(cause: unknown, fallback: string) {
-    if (cause instanceof ApiError && cause.status === 401) { acceptSession(null); return; }
-    setError({ message: cause instanceof Error ? cause.message : fallback, retry: !(cause instanceof ApiError && cause.status === 403) });
-  }
+  const handleError = useCallback(
+    (cause: unknown, fallback: string) => {
+      if (cause instanceof ApiError && cause.status === 401) {
+        acceptSession(null);
+        return;
+      }
+
+      setError({
+        message: cause instanceof Error ? cause.message : fallback,
+        retry: !(cause instanceof ApiError && cause.status === 403),
+      });
+    },
+    [acceptSession],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -38,7 +48,7 @@ export function DriverAccessPage() {
       finally { if (!controller.signal.aborted) setLoadingRoutes(false); }
     }).catch((cause: unknown) => { if (!controller.signal.aborted) handleError(cause, 'No se pudo comprobar tu identidad de conductor.'); });
     return () => controller.abort();
-  }, [session, acceptSession, attempt]);
+  }, [session, acceptSession, attempt, handleError]);
 
   async function openRoute(id: string) {
     setBusy(id); setError(null); setNotice('');
