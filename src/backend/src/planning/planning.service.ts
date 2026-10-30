@@ -10,7 +10,27 @@ import { CalculatePlanningDto, PeriodDto, PreparePlanningDto, UpdatePlanningDto 
 const remainingTime = (deadline: number) => { const remaining = Math.floor(deadline - Date.now()); if (remaining <= 0) throw new GatewayTimeoutException('El cálculo excedió su tiempo máximo total. No se publicó ningún recorrido.'); return remaining; };
 const transactionBudget = (deadline: number) => { const timeout = remainingTime(deadline); return { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, timeout, maxWait: Math.min(2000, timeout) }; };
 const json = (value: unknown) => JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
-const publicExecution = { ejecucion_id: true, estado: true, error_code: true, creado_en: true, finalizado_en: true, alternativas: { orderBy: { numero: 'asc' }, select: { alternativa_id: true, numero: true, metodo: true, rutas: { select: { ruta_id: true } } } } } as const;
+const publicExecution = { ejecucion_id: true, estado: true, error_code: true, creado_en: true, finalizado_en: true, alternativas: { orderBy: { numero: 'asc' }, select: { alternativa_id: true, numero: true, metodo: true, rutas: { select: { ruta_id: true, versiones: { orderBy: { numero: 'desc' }, take: 1, select: { numero: true, distancia_m: true, duracion_s: true } } } } } } } as const;
+const executionResult = { ...publicExecution, alternativas: { orderBy: { numero: 'asc' }, select: { alternativa_id: true, numero: true, metodo: true, rutas: { select: { ruta_id: true, versiones: { orderBy: { numero: 'desc' }, take: 1, select: { numero: true, distancia_m: true, duracion_s: true, resultado: true } } } } } } } as const;
+type ExecutionState = { alternativas?: { alternativa_id: string; numero: number; metodo: string; rutas: { ruta_id: string; versiones?: { numero: number; distancia_m: unknown; duracion_s: unknown; resultado?: unknown }[] }[] }[] };
+const record = (value: unknown): Record<string, unknown> => value !== null && typeof value === 'object' ? value as Record<string, unknown> : {};
+const compactExecution = <T extends ExecutionState>(state: T) => ({
+  ...state,
+  alternativas: (state.alternativas ?? []).map(alternative => ({
+    alternativa_id: alternative.alternativa_id, numero: alternative.numero, metodo: alternative.metodo,
+    rutas: alternative.rutas.map(route => {
+      const version = route.versiones?.[0]; const data = record(version?.resultado);
+      return { ruta_id: route.ruta_id, version: version ? {
+        numero: version.numero, distancia_m: version.distancia_m, duracion_s: version.duracion_s,
+        origin: data.origin ?? null, geometry: data.geometry ?? null,
+        warnings: Array.isArray(data.warnings) ? data.warnings : [],
+        end: data.end ?? null, operational_duration_s: data.operational_duration_s ?? null,
+        estrategia: data.estrategia ?? null, orden: Array.isArray(data.orden) ? data.orden : [],
+        confirmable: data.confirmable === true,
+      } : null };
+    }),
+  })),
+});
 @Injectable()
 export class PlanningService implements OnModuleInit, OnModuleDestroy {
   private busy = false; private timer?: ReturnType<typeof setInterval>;
@@ -51,18 +71,18 @@ export class PlanningService implements OnModuleInit, OnModuleDestroy {
   async execution(id: string, executionId: string) { try { const value = await this.prisma.ejecucionCalculo.findFirst({ where: { ejecucion_id: executionId, version: { planificacion_id: id } }, select: publicExecution }); if (!value) throw new NotFoundException('Ejecución no encontrada.'); return value; } catch (cause) { routingDatabaseError(cause); } }
   async calculate(id: string, dto: CalculatePlanningDto, actor: string, key: string) { return this.run(id, dto, actor, key, false); }
   async generateAlternatives(id: string, dto: CalculatePlanningDto, actor: string, key: string) { return this.run(id, dto, actor, key, true); }
-  private result<T extends { alternativas?: unknown[] }>(state: T, replay: boolean, alternativas: boolean, count = state.alternativas?.length ?? 0) { return { ...state, replay, ...(alternativas ? { alternativas_generadas: count, solo_una_alternativa: count === 1 } : {}) }; }
+  private result<T extends ExecutionState>(state: T, replay: boolean, alternativas: boolean, count = state.alternativas?.length ?? 0) { return { ...compactExecution(state), replay, ...(alternativas ? { alternativas_generadas: count, solo_una_alternativa: count === 1 } : {}) }; }
   private async run(id: string, dto: CalculatePlanningDto, actor: string, key: string, alternativas: boolean) {
     const deadline = Date.now() + (this.osrm.totalTimeoutMs ?? 20000);
     const marker = actor + ':' + key; const hash = makeHash(alternativas ? { id, dto, alternativas: true } : { id, dto }); const pending = this.pending.get(marker);
-    if (pending) { if (pending.hash !== hash) throw new ConflictException('La clave de idempotencia ya corresponde a otra solicitud.'); const executionId = await pending.registered; if (!executionId) throw new ConflictException('La solicitud anterior no pudo iniciar. Revisa sus datos.'); const state = await this.budgeted(deadline, tx => tx.ejecucionCalculo.findFirst({ where: { ejecucion_id: executionId, version: { planificacion_id: id } }, select: publicExecution })); if (!state) throw new NotFoundException('Ejecución no encontrada.'); return this.result(state, true, alternativas); }
+    if (pending) { if (pending.hash !== hash) throw new ConflictException('La clave de idempotencia ya corresponde a otra solicitud.'); const executionId = await pending.registered; if (!executionId) throw new ConflictException('La solicitud anterior no pudo iniciar. Revisa sus datos.'); const state = await this.budgeted(deadline, tx => tx.ejecucionCalculo.findFirst({ where: { ejecucion_id: executionId, version: { planificacion_id: id } }, select: executionResult })); if (!state) throw new NotFoundException('Ejecución no encontrada.'); return this.result(state, true, alternativas); }
     let registered!: (id?: string) => void; const registration = new Promise<string | undefined>(resolve => { registered = resolve; }); this.pending.set(marker, { hash, registered: registration });
     try { return await this.runOnce(id, dto, actor, key, registered, deadline, alternativas); } finally { registered(); this.pending.delete(marker); }
   }
   private async runOnce(id: string, dto: CalculatePlanningDto, actor: string, key: string, registered: (id: string) => void, deadline: number, alternativas: boolean) {
     if (!/^[a-zA-Z0-9_-]{8,100}$/.test(key ?? '')) throw new BadRequestException('Indica una clave de idempotencia válida.');
     const requestHash = makeHash(alternativas ? { id, dto, alternativas: true } : { id, dto });
-    try { const old = await this.budgeted(deadline, tx => tx.ejecucionCalculo.findUnique({ where: { actor_id_idempotency_key: { actor_id: actor, idempotency_key: key } }, select: { ...publicExecution, request_hash: true } })); if (old) { if (old.request_hash !== requestHash) throw new ConflictException('La clave de idempotencia ya corresponde a otra solicitud.'); const { request_hash, ...result } = old; void request_hash; return this.result(result, true, alternativas); } } catch (cause) { routingDatabaseError(cause); }
+    try { const old = await this.budgeted(deadline, tx => tx.ejecucionCalculo.findUnique({ where: { actor_id_idempotency_key: { actor_id: actor, idempotency_key: key } }, select: { ...executionResult, request_hash: true } })); if (old) { if (old.request_hash !== requestHash) throw new ConflictException('La clave de idempotencia ya corresponde a otra solicitud.'); const { request_hash, ...result } = old; void request_hash; return this.result(result, true, alternativas); } } catch (cause) { routingDatabaseError(cause); }
     if (this.busy) throw new HttpException('Ya hay un cálculo en curso. Espera antes de reintentar.', 429); this.busy = true;
     let executionId: string | undefined; const owner = randomUUID();
     try {
@@ -104,7 +124,7 @@ export class PlanningService implements OnModuleInit, OnModuleDestroy {
         remainingTime(deadline);
         const changed = await tx.ejecucionCalculo.updateMany({ where: { ejecucion_id: executionId!, estado: 'EN_CURSO', owner_token: owner, vence_en: { gt: new Date() } }, data: { estado: 'COMPLETADA', finalizado_en: new Date() } }); if (changed.count !== 1) throw new ConflictException('La ejecución perdió vigencia.');
         remainingTime(deadline);
-        const state = await tx.ejecucionCalculo.findFirst({ where: { ejecucion_id: executionId! }, select: publicExecution }); if (!state) throw new ConflictException('No se pudo confirmar el resultado de la ejecución.'); remainingTime(deadline); return this.result(state, false, alternativas, alternativas ? computed.length : undefined);
+        const state = await tx.ejecucionCalculo.findFirst({ where: { ejecucion_id: executionId! }, select: executionResult }); if (!state) throw new ConflictException('No se pudo confirmar el resultado de la ejecución.'); remainingTime(deadline); return this.result(state, false, alternativas, alternativas ? computed.length : undefined);
       }, transactionBudget(deadline));
       return completed;
     } catch (cause) { let failure: unknown; try { if (Date.now() >= deadline) throw new GatewayTimeoutException('El cálculo excedió su tiempo máximo total. No se publicó ningún recorrido.'); routingDatabaseError(cause); } catch (value) { failure = value; } if (executionId) this.failLater(executionId, owner, failure); const status = failure instanceof HttpException ? failure.getStatus() : 500; throw new HttpException({ message: status === 500 ? 'No se pudo registrar el recorrido. No se conservaron resultados parciales.' : (failure as HttpException).message, code: `ROUTING_${status}`, ...(executionId ? { execution_id: executionId } : {}) }, status); }
