@@ -110,6 +110,12 @@ Vite carga recursos privados solo si están aprovisionados y su SHA-256 coincide
 
 La corrección y sus verificaciones están documentadas en [Corrección CI y fixtures sintéticos V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/06%20Corrección%20CI%20y%20fixtures%20sintéticos%20V_1_1_0.md).
 
+## Avances compartidos del Sprint 3
+
+La rama `feature/sprint-3-avances` incorpora el panel del conductor, cuentas vinculadas, restablecimiento/cambio de contraseñas con revocación de sesiones y el incremento parcial de planificación/consulta HGR-32 / US-013. Consulta [el informe de entrega](docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Sprint-3/08%20Entrega%20p%C3%BAblica%20de%20avances%20V_1_1_0.md) y los informes técnicos originales de esa carpeta.
+
+US-013 sigue pendiente de migración de rutas, OSRM privado con grafo real y validación vial desde el navegador. No hay optimización genética ni asignación a conductores. Las credenciales, respaldos y datos geográficos privados se aprovisionan por separado y no están en GitHub. Antes de actualizar una base existente, revisar las dos migraciones nuevas: `migrate deploy` aplicaría todas las pendientes.
+
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Resolver y documentar los permisos de redistribución INEI antes de publicar datos o imágenes. Revisar la evidencia técnica 05 y verificar persistencia en una base exclusivamente de pruebas, sin utilizar los registros existentes.
