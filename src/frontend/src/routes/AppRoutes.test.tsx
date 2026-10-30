@@ -10,6 +10,8 @@ import { authApi, ApiError } from '../services/api';
 import { loginResponse } from '../test/fixtures';
 import { accessPath } from './role-access';
 import { adminApi } from '../services/admin-api';
+import { driverProfileApi } from '../services/driver-profile-api';
+vi.mock('../services/driver-profile-api', () => ({ driverProfileApi: { me: vi.fn().mockResolvedValue({ conductor_id: 'fixture', nombre_completo: 'Conductor de prueba', estado: 'ACTIVO' }) } }));
 vi.mock('../services/admin-api', () => ({ adminApi: { summary: vi.fn().mockResolvedValue({ totalOrders: 0, pendingOrders: 0, totalUsers: 0, ordersByState: [] }) } }));
 vi.mock('../services/api', async () => {
   const actual = await vi.importActual<typeof import('../services/api')>('../services/api');
@@ -22,7 +24,7 @@ function renderRoutes(path = '/login', role = 'Administrador') {
   return { acceptSession };
 }
 describe('Acceso según rol', () => {
-  beforeEach(() => { vi.resetAllMocks(); vi.mocked(adminApi.summary).mockResolvedValue({ totalOrders: 0, pendingOrders: 0, totalUsers: 0, ordersByState: [] }); vi.mocked(authApi.me).mockResolvedValue({ ...loginResponse.user, expiresAt: Date.now() + 900000 }); });
+  beforeEach(() => { vi.resetAllMocks(); vi.mocked(driverProfileApi.me).mockResolvedValue({ conductor_id: 'fixture', nombre_completo: 'Conductor de prueba', estado: 'ACTIVO' }); vi.mocked(adminApi.summary).mockResolvedValue({ totalOrders: 0, pendingOrders: 0, totalUsers: 0, ordersByState: [] }); vi.mocked(authApi.me).mockResolvedValue({ ...loginResponse.user, expiresAt: Date.now() + 900000 }); });
   it('protege acceso directo sin sesión', async () => {
     vi.mocked(authApi.me).mockRejectedValue(new ApiError('missing', 401));
     render(<MemoryRouter initialEntries={['/acceso/administrador']}><AuthProvider><AppRoutes /></AuthProvider></MemoryRouter>);
@@ -33,8 +35,8 @@ describe('Acceso según rol', () => {
     ['Usuario Final / Conductor', '/acceso/conductor'], ['Auditor Externo', '/acceso/auditor'],
   ])('redirige %s y verifica identidad con API', async (role, path) => {
     expect(accessPath(role)).toBe(path); vi.mocked(authApi.me).mockResolvedValue({ ...loginResponse.user, rol: { ...loginResponse.user.rol, nombre: role }, expiresAt: Date.now() + 900000 }); renderRoutes('/login', role);
-    expect(await screen.findByRole('heading', { name: role === 'Administrador' ? 'Panel de administración' : 'Acceso permitido' })).toBeVisible();
-    expect(authApi.me).toHaveBeenCalledWith(expect.any(AbortSignal));
+    expect(await screen.findByRole('heading', { name: role === 'Administrador' ? 'Panel de administración' : role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' })).toBeVisible();
+    await waitFor(() => expect(role === 'Usuario Final / Conductor' ? driverProfileApi.me : authApi.me).toHaveBeenCalledWith(expect.any(AbortSignal)));
   });
   it('corrige destino ajeno al rol', async () => {
     renderRoutes('/acceso/conductor'); expect(await screen.findByRole('heading', { name: 'Panel de administración' })).toBeVisible();
@@ -70,11 +72,12 @@ describe('Acceso según rol', () => {
   it.each(['Operador / Técnico', 'Usuario Final / Conductor', 'Auditor Externo'])('conserva pantalla y opciones de %s sin panel administrativo', async role => {
     vi.mocked(authApi.me).mockResolvedValue({ ...loginResponse.user, rol: { ...loginResponse.user.rol, nombre: role }, expiresAt: Date.now() + 900000 });
     renderRoutes('/acceso/administrador', role);
-    await screen.findByRole('heading', { name: 'Acceso permitido' });
+    await screen.findByRole('heading', { name: role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' });
     expect(screen.queryByRole('heading', { name: 'Panel de administración' })).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Usuarios y roles' })).not.toBeInTheDocument();
     expect(screen.queryByRole('navigation', { name: 'Accesos rápidos' })).not.toBeInTheDocument();
-    expect(screen.getByText('Cuenta')).toBeVisible();
+    if (role === 'Usuario Final / Conductor') expect(await screen.findByText('Conductor de prueba')).toBeVisible();
+    else expect(screen.getByText('Cuenta')).toBeVisible();
   });
   it('tiene destino seguro para rol desconocido', () => { expect(accessPath('unknown')).toBe('/acceso/sin-permiso'); });
   it('permite reintentar un fallo de red', async () => {

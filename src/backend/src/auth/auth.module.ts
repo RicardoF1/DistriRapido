@@ -12,6 +12,6 @@ import { RequestOriginGuard } from '../common/request-origin';
 @Module({
   imports: [UsersDataModule, JwtModule.registerAsync({ inject: [ConfigService], useFactory: (config: ConfigService) => ({ secret: config.getOrThrow<string>('JWT_SECRET') }) })],
   controllers: [AuthController], providers: [AuthService, PasswordService, JwtAuthGuard, AdministratorGuard, RequestOriginGuard],
-  exports: [AuthService, JwtAuthGuard, AdministratorGuard, RequestOriginGuard],
+  exports: [AuthService, PasswordService, JwtAuthGuard, AdministratorGuard, RequestOriginGuard],
 })
 export class AuthModule {}

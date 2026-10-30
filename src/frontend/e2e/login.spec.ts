@@ -22,8 +22,8 @@ test('US-001 / US-002: login, F5, cierre explícito y rutas protegidas', async (
   await expect(page).toHaveURL(/\/acceso\/administrador$/);
   await expect(page.getByRole('heading', { name: /^(Panel de administración|Acceso permitido)$/ })).toBeVisible();
   await expect(page.getByText(email, { exact: true })).toBeVisible();
-  const storage = await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }));
-  expect(storage).toEqual({ local: 0, session: 0 });
+  const storage = await page.evaluate(() => ({ local: localStorage.length, session: { ...sessionStorage } }));
+  expect(storage).toEqual({ local: 0, session: { 'ecoruta.login.email': email } });
   await page.reload();
   await expect(page).toHaveURL(/\/acceso\/administrador$/);
   await expect(page.getByRole('heading', { name: /^(Panel de administración|Acceso permitido)$/ })).toBeVisible();
@@ -44,6 +44,8 @@ test('US-001 / US-002: login, F5, cierre explícito y rutas protegidas', async (
   await logoutResponse;
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByRole('heading', { name: 'Acceso al sistema' })).toBeVisible();
+  await expect(page.getByLabel('Correo electrónico')).toHaveValue(email);
+  await expect(page.getByLabel('Contraseña', { exact: true })).toHaveValue('');
   expect((await context.cookies()).some((cookie) => cookie.name === 'distrirapido_session_v2')).toBe(false);
   expect((await context.request.get(`${apiUrl}/auth/me`)).status()).toBe(401);
   await page.goto('/acceso/administrador');

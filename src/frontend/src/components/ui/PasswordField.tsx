@@ -4,7 +4,7 @@ export function PasswordField({ value, onChange, error, autoComplete = 'current-
   return <div className="form-field">
     <label htmlFor="password">Contraseña</label>
     <div className="password-control">
-      <input id="password" name="password" type={visible ? 'text' : 'password'} autoComplete={autoComplete} value={value} onChange={(event) => onChange(event.target.value)} maxLength={128} required aria-invalid={Boolean(error)} aria-describedby={error ? 'password-error' : undefined} />
+      <input id="password" name="password" type={visible ? 'text' : 'password'} autoComplete={autoComplete} value={value} onChange={(event) => onChange(event.target.value)} maxLength={256} required aria-invalid={Boolean(error)} aria-describedby={error ? 'password-error' : undefined} />
       <button type="button" className="password-toggle" onClick={() => setVisible(!visible)} aria-label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'} aria-pressed={visible}>
         {visible ? 'Ocultar' : 'Mostrar'}
       </button>

@@ -3,6 +3,7 @@
   test,
   type Page,
 } from '@playwright/test';
+import { mockOwnDriver } from './fixtures/driver-profile';
 
 const driverId =
   'b9a0b3e9-f147-4cb7-b18c-43b6161b51f3';
@@ -39,6 +40,7 @@ async function mockApi(
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Credentials': 'true',
   };
+  await mockOwnDriver(page, headers);
 
   const driver = {
     conductor_id: driverId,

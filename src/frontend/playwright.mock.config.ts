@@ -2,7 +2,19 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './e2e',
-  testMatch: '**/sprint2-mocked.spec.ts',
+  // Explicit allowlist: these specs intercept mutations with page.route.
+  // Real-login / real-write specs (login, orders, users) are excluded.
+  testMatch: [
+    '**/driver-credentials.spec.ts',
+    '**/routes.spec.ts',
+    '**/driver-accounts.spec.ts',
+    '**/driver-panel.spec.ts',
+    '**/sprint2-mocked.spec.ts', '**/drivers.spec.ts', '**/availability.spec.ts',
+    '**/login-email.spec.ts', '**/login-background.spec.ts',
+    '**/order-marker-sync.spec.ts', '**/order-coverage.spec.ts',
+    '**/order-consultation.spec.ts', '**/order-navigation.spec.ts',
+    '**/responsive.spec.ts', '**/admin-welcome.spec.ts', '**/admin-summary.spec.ts',
+  ],
   workers: 1,
   fullyParallel: false,
   use: {

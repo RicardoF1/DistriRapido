@@ -1,7 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
+import { mockOwnDriver } from './fixtures/driver-profile';
 const sample = { totalOrders: 2, pendingOrders: 2, totalUsers: 2, ordersByState: [{ state: 'PENDIENTE', count: 2 }] };
 async function identity(page: Page, baseURL: string, role = 'Administrador') {
   const headers = { 'Access-Control-Allow-Origin': new URL(baseURL).origin, 'Access-Control-Allow-Credentials': 'true' };
+  await mockOwnDriver(page, headers);
   await page.route('**/auth/me', route => route.fulfill({ headers, json: { usuario_id: 'summary-test', email: 'admin@example.com', rol: { nombre: role }, expiresAt: Date.now() + 900000 } }));
   return headers;
 }
@@ -27,5 +29,5 @@ test('carga, error sin ceros y reintento', async ({page,baseURL}) => {
   await page.getByRole('button',{name:'Reintentar resumen'}).click();await expect(page.locator('.admin-metric dd')).toHaveText(['0','0','0']);await expect(page.getByText('No hay pedidos registrados.')).toBeVisible();expect(calls).toBe(2);
 });
 for(const role of ['Operador / Técnico','Usuario Final / Conductor','Auditor Externo'])test('no solicita resumen para '+role,async({page,baseURL})=>{
-  await identity(page,baseURL!,role);let calls=0;await page.route('**/admin/summary',route=>{calls++;return route.abort();});await page.goto('/acceso/administrador');await expect(page.getByRole('heading',{name:'Acceso permitido'})).toBeVisible();await expect(page.getByRole('heading',{name:'Resumen general'})).toHaveCount(0);expect(calls).toBe(0);
+  await identity(page,baseURL!,role);let calls=0;await page.route('**/admin/summary',route=>{calls++;return route.abort();});await page.goto('/acceso/administrador');await expect(page.getByRole('heading',{name:role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido'})).toBeVisible();await expect(page.getByRole('heading',{name:'Resumen general'})).toHaveCount(0);expect(calls).toBe(0);
 });

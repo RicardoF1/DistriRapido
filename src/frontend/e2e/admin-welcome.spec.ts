@@ -1,7 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
+import { mockOwnDriver } from './fixtures/driver-profile';
 async function session(page: Page, baseURL: string, role = 'Administrador') {
   let active = true;
   const headers = { 'Access-Control-Allow-Origin': new URL(baseURL).origin, 'Access-Control-Allow-Credentials': 'true' };
+  await mockOwnDriver(page, headers);
   await page.route('**/auth/me', route => route.fulfill({ status: active ? 200 : 401, headers, json: active ? { usuario_id: 'welcome-test', email: 'admin@example.com', rol: { nombre: role }, expiresAt: Date.now() + 900000 } : { message: 'Sin sesión' } }));
   await page.route('**/auth/logout', route => { active = false; return route.fulfill({ status: 204, headers }); });
   await page.route('**/admin/summary', route => route.fulfill({ headers, json: { totalOrders: 0, pendingOrders: 0, totalUsers: 0, ordersByState: [] } }));
@@ -39,10 +41,11 @@ for (const width of [390, 768, 1366, 1440]) {
 for (const role of ['Operador / Técnico', 'Usuario Final / Conductor', 'Auditor Externo']) {
   test(`${role}: conserva permisos y contenido de acceso`, async ({ page, baseURL }) => {
     await session(page, baseURL!, role); await page.goto('/acceso/administrador');
-    await expect(page.getByRole('heading', { name: 'Acceso permitido' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Panel de administración' })).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'Usuarios y roles' })).toHaveCount(0);
-    await expect(page.getByText('Cuenta', { exact: true })).toBeVisible();
-    await page.goto('/usuarios'); await expect(page.getByRole('heading', { name: 'Acceso permitido' })).toBeVisible();
+    if (role === 'Usuario Final / Conductor') await expect(page.getByText('Conductor de prueba', { exact: true })).toBeVisible();
+    else await expect(page.getByText('Cuenta', { exact: true })).toBeVisible();
+    await page.goto('/usuarios'); await expect(page.getByRole('heading', { name: role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' })).toBeVisible();
   });
 }

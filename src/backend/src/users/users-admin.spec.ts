@@ -8,9 +8,9 @@ describe('US-003 usuarios', () => {
   const rol_id = randomUUID(); const usuario_id = randomUUID();
   const dto = { email: 'new@example.com', password: 'test-password-1234', rol_id };
   const publicUser = { usuario_id, email: dto.email, rol_id, estado: 'ACTIVO', creado_en: new Date(), rol: { rol_id, nombre: 'Administrador' } };
-  const prisma = { usuario: { findMany: jest.fn(), findUnique: jest.fn(), create: jest.fn(), update: jest.fn() }, rol: { findUnique: jest.fn() } };
+  const prisma = { usuario: { findMany: jest.fn(), findUnique: jest.fn(), create: jest.fn(), update: jest.fn() }, rol: { findUnique: jest.fn() }, conductor: { findUnique: jest.fn() }, $transaction: jest.fn() };
   let service: UsersService;
-  beforeEach(() => { jest.resetAllMocks(); service = new UsersService(prisma as unknown as PrismaService); prisma.rol.findUnique.mockResolvedValue(publicUser.rol); prisma.usuario.findUnique.mockResolvedValue(publicUser); prisma.usuario.findMany.mockResolvedValue([publicUser]); prisma.usuario.create.mockResolvedValue(publicUser); prisma.usuario.update.mockResolvedValue(publicUser); });
+  beforeEach(() => { jest.resetAllMocks(); prisma.conductor.findUnique.mockResolvedValue(null); prisma.$transaction.mockImplementation((operation: (tx: unknown) => unknown) => operation(prisma)); service = new UsersService(prisma as unknown as PrismaService); prisma.rol.findUnique.mockResolvedValue(publicUser.rol); prisma.usuario.findUnique.mockResolvedValue(publicUser); prisma.usuario.findMany.mockResolvedValue([publicUser]); prisma.usuario.create.mockResolvedValue(publicUser); prisma.usuario.update.mockResolvedValue(publicUser); });
   it('lista y consulta sin seleccionar hash', async () => {
     expect(await service.list()).toEqual([publicUser]); expect(await service.get(usuario_id)).toEqual(publicUser);
     expect(prisma.usuario.findMany).toHaveBeenCalledWith(expect.objectContaining({ select: PUBLIC_USER_SELECT }));

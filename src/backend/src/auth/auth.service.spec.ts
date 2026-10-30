@@ -62,4 +62,31 @@ describe('US-001 AuthService', () => {
     const token = await jwt.signAsync({ sub: id }, { issuer: 'distrirapido', audience: 'distrirapido-web' });
     await expect(service.authenticate(token)).rejects.toBeInstanceOf(UnauthorizedException);
   });
+  it('firma la versión comprobada y revoca tokens anteriores después de un cambio', async () => {
+    users.findByEmail.mockResolvedValue({ ...user, credentials_version: 3 });
+    users.findById.mockResolvedValue({ ...user, credentials_version: 3 });
+    const result = await service.login({ email: user.email, password: 'input' });
+    expect(jwt.decode(result.accessToken).cv).toBe(3);
+    await expect(service.authenticate(result.accessToken)).resolves.toHaveProperty('usuario_id', id);
+    users.findById.mockResolvedValue({ ...user, credentials_version: 4 });
+    await expect(service.authenticate(result.accessToken)).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+  it.each([null, '0', -1, 0.5, Number.MAX_SAFE_INTEGER + 1])('rechaza cv inválido %s', async cv => {
+    const token = await jwt.signAsync({ sub: id, cv }, { issuer: 'distrirapido', audience: 'distrirapido-web', expiresIn: 900 });
+    await expect(service.authenticate(token)).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+  it('admite tokens heredados solo hasta el primer cambio', async () => {
+    const token = await jwt.signAsync({ sub: id }, { issuer: 'distrirapido', audience: 'distrirapido-web', expiresIn: 900 });
+    users.findById.mockResolvedValue({ ...user, credentials_version: 0 });
+    await expect(service.authenticate(token)).resolves.toHaveProperty('usuario_id', id);
+    users.findById.mockResolvedValue({ ...user, credentials_version: 1 });
+    await expect(service.authenticate(token)).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+  it('no firma una versión nueva si hubo un reset mientras verificaba la contraseña anterior', async () => {
+    users.findByEmail.mockResolvedValue({ ...user, credentials_version: 0 });
+    passwords.verify.mockImplementation(async () => { users.findById.mockResolvedValue({ ...user, credentials_version: 1 }); return true; });
+    const result = await service.login({ email: user.email, password: 'input' });
+    expect(jwt.decode(result.accessToken).cv).toBe(0);
+    await expect(service.authenticate(result.accessToken)).rejects.toBeInstanceOf(UnauthorizedException);
+  });
 });

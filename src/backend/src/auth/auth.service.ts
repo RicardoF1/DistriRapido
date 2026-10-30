@@ -26,18 +26,21 @@ export class AuthService {
       throw new UnauthorizedException(INVALID_CREDENTIALS);
     }
     const expiresIn = this.config.getOrThrow<number>('JWT_EXPIRES_SECONDS');
-    const accessToken = await this.jwt.signAsync({ sub: user.usuario_id }, { ...TOKEN_OPTIONS, expiresIn });
+    const accessToken = await this.jwt.signAsync({ sub: user.usuario_id, cv: user.credentials_version ?? 0 }, { ...TOKEN_OPTIONS, expiresIn });
     return { accessToken, tokenType: 'Bearer', expiresIn, user: this.identity(user) };
   }
 
   async authenticate(token: string): Promise<SessionIdentityDto> {
     let sub: unknown;
+    let cv: unknown;
     let expiresAt: number;
     try {
-      const payload = await this.jwt.verifyAsync<{ sub?: unknown; exp?: number }>(token, {
+      const payload = await this.jwt.verifyAsync<{ sub?: unknown; exp?: number; cv?: unknown }>(token, {
         issuer: TOKEN_OPTIONS.issuer, audience: TOKEN_OPTIONS.audience, algorithms: ['HS256'],
       });
       sub = payload.sub;
+      cv = Object.prototype.hasOwnProperty.call(payload, 'cv') ? payload.cv : 0;
+      if (typeof cv !== 'number' || !Number.isSafeInteger(cv) || cv < 0) throw new Error('Invalid credentials version');
       if (typeof payload.exp !== 'number' || !Number.isFinite(payload.exp) || payload.exp * 1000 <= Date.now()) throw new Error('Invalid expiry');
       expiresAt = payload.exp * 1000;
     } catch { throw new UnauthorizedException('Debes iniciar sesión para acceder.'); }
@@ -45,7 +48,7 @@ export class AuthService {
       throw new UnauthorizedException('Debes iniciar sesión para acceder.');
     }
     const user = await this.users.findById(sub);
-    if (!user || user.estado !== 'ACTIVO' || !isAllowedRole(user.rol.nombre)) {
+    if (!user || user.estado !== 'ACTIVO' || !isAllowedRole(user.rol.nombre) || cv !== (user.credentials_version ?? 0)) {
       throw new UnauthorizedException('Debes iniciar sesión para acceder.');
     }
     return { ...this.identity(user), expiresAt };

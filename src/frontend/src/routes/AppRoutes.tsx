@@ -5,6 +5,7 @@
 } from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
 import { AccessPage } from '../pages/AccessPage';
+import { DriverAccessPage } from '../pages/DriverAccessPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { UsersPage } from '../pages/UsersPage';
@@ -28,6 +29,7 @@ export function AppRoutes() {
       />
 
       <Route element={<ProtectedRoute />}>
+        <Route path="/acceso/conductor" element={<DriverAccessPage />} />
         <Route
           path="/acceso/:role"
           element={<AccessPage />}

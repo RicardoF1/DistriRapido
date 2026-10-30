@@ -25,6 +25,7 @@ export function AppLayout({ children, title, navigationLabel = 'Área autenticad
       <div className="sidebar-brand"><BrandLogo /><div><strong>EcoRuta Huancayo</strong><p>Gestión de última milla</p></div></div>
       <nav id="app-navigation" ref={navigation} className="app-navigation" aria-label={navigationLabel} onClick={() => setOpen(false)}>
         <NavLink to={accessPath(role)}>Acceso</NavLink>
+        {role === 'Usuario Final / Conductor' && <><a href="#mi-cuenta">Mi cuenta</a><a href="#mi-jornada">Mi jornada</a><a href="#mis-rutas">Mis rutas</a><a href="#mis-entregas">Mis entregas</a></>}
         {role === 'Administrador' && <NavLink to="/usuarios">Usuarios</NavLink>}
         {role === 'Administrador' && <NavLink to="/vehiculos">Vehículos</NavLink>}
         {operational && <><NavLink to="/conductores">Conductores</NavLink><NavLink to="/disponibilidad">Disponibilidad</NavLink><NavLink to="/pedidos" end>Consultar pedidos</NavLink><NavLink to="/pedidos/nuevo">Registrar pedido</NavLink></>}

@@ -9,6 +9,7 @@ import { ordersApi } from '../../services/orders-api';
 import { loginResponse } from '../../test/fixtures';
 import type { RegisteredOrder } from '../../types/orders';
 import { geocoding } from '../../services/geocoding';
+vi.mock('../../services/driver-profile-api', () => ({ driverProfileApi: { me: async () => ({ conductor_id: 'fixture', nombre_completo: 'Conductor de prueba', estado: 'ACTIVO' }) } }));
 vi.mock('./DeliveryMap', () => ({ DeliveryMap: ({ onChange }: { onChange: (point: { latitud: number; longitud: number }) => void }) => <button type="button" onClick={() => onChange({ latitud: 2, longitud: 2 })}>Seleccionar destino de prueba</button> }));
 vi.mock('../../services/geocoding', () => ({ geocoding: { search: vi.fn().mockResolvedValue([]), reverse: vi.fn().mockRejectedValue(new Error('offline')) } }));
 vi.mock('../../services/orders-api', () => ({ ordersApi: { create: vi.fn() } }));
@@ -156,7 +157,7 @@ describe('US-004 Registrar pedido', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Registrar otro pedido' })); expect(screen.getByLabelText(labels.nombre)).toHaveValue('');
   });
   it.each(['Usuario Final / Conductor', 'Auditor Externo'])('%s no accede al formulario', async role => {
-    setup(role); expect(await screen.findByRole('heading', { name: 'Acceso permitido' })).toBeVisible(); expect(screen.queryByRole('form')).not.toBeInTheDocument(); expect(ordersApi.create).not.toHaveBeenCalled();
+    setup(role); expect(await screen.findByRole('heading', { name: role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' })).toBeVisible(); expect(screen.queryByRole('form')).not.toBeInTheDocument(); expect(ordersApi.create).not.toHaveBeenCalled();
   });
   it('sin sesión vuelve al login', async () => {
     setup(); vi.mocked(authApi.me).mockRejectedValue(new ApiError('Sin sesión', 401));

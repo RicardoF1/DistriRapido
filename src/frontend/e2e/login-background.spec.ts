@@ -10,6 +10,7 @@ for (const width of [390, 768, 1366, 1440]) {
       if (new URL(route.request().url()).pathname === '/auth/login') { authenticated = true; return route.fulfill({ headers, json: { user, expiresIn: 900, accessToken: 'test-only', tokenType: 'Bearer' } }); }
       return route.fulfill({ status: authenticated ? 200 : 401, headers, json: authenticated ? { ...user, expiresAt: Date.now() + 900000 } : {} });
     });
+    await page.route('http://localhost:3000/admin/summary', route => route.fulfill({ headers, json: { totalOrders: 0, pendingOrders: 0, totalUsers: 1, ordersByState: [] } }));
     await page.goto('/login');
     const email = page.getByLabel('Correo electrónico');
     await expect(email).toBeVisible();

@@ -21,6 +21,7 @@ model Usuario {
   rol_id        String   @db.Uuid
   email         String   @unique @db.VarChar(255)
   password_hash String   @db.VarChar(255)
+  credentials_version Int @default(0)
   estado        String   @default("ACTIVO") @db.VarChar(20)
   creado_en     DateTime @default(now()) @db.Timestamptz(6)
   conductor     Conductor?
