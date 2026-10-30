@@ -46,7 +46,7 @@ Cobertura: statements 87.04%, branches 80.09%, functions 83.89%, lines 92.15%.
 
 ### Integración continua
 
-Los checks de backend, frontend, CodeQL y code scanning aprobaron antes de la integración final. El PR #12 fusionó eature/sprint-3-avances hacia main.
+Los checks de backend, frontend, CodeQL y code scanning aprobaron antes de la integración final. El PR #12 fusionó feature/sprint-3-avances hacia main.
 
 ## Demostración local
 

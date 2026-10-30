@@ -39,6 +39,6 @@
 ## Compromisos para el siguiente Sprint
 
 - Aprovisionar OSRM real antes de validar rutas viales de extremo a extremo.
-- Reducir advertencias de ct(...) en pruebas React.
+- Reducir advertencias de act(...) en pruebas React.
 - Revisar el tamaño del bundle y aplicar división de código cuando corresponda.
 - Atender dependencias con vulnerabilidades bajas sin usar actualizaciones forzadas no controladas.

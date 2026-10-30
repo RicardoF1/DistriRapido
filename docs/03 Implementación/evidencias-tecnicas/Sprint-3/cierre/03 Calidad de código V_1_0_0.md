@@ -46,10 +46,9 @@ Cobertura: statements 87.04%, branches 80.09%, functions 83.89%, lines 92.15%.
 ## Hallazgos técnicos
 
 - Vite advierte un chunk JavaScript superior a 500 KB.
-- Algunas pruebas React emiten advertencias por actualizaciones no envueltas en ct(...).
+- Algunas pruebas React emiten advertencias por actualizaciones no envueltas en act(...).
 - La instalación del backend reportó seis vulnerabilidades de severidad baja.
-- No se aplicó
-pm audit fix --force para evitar cambios mayores no controlados.
+- No se aplicó npm audit fix --force para evitar cambios mayores no controlados.
 
 ## SonarQube
 

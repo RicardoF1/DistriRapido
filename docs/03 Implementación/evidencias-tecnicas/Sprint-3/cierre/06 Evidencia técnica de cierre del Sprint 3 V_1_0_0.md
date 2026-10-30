@@ -23,9 +23,9 @@
 ## Servicios Docker
 
     NAME                               IMAGE                            COMMAND                  SERVICE    CREATED          STATUS                 PORTS
-    distrirapido_analisis-backend-1    distrirapido_analisis-backend    "docker-entrypoint.sΓÇª"   backend    13 minutes ago   Up 13 minutes          127.0.0.1:3000->3000/tcp
-    distrirapido_analisis-frontend-1   distrirapido_analisis-frontend   "/docker-entrypoint.ΓÇª"   frontend   10 minutes ago   Up 10 minutes          127.0.0.1:5173->80/tcp
-    distrirapido_analisis-postgres-1   postgres:16-alpine               "docker-entrypoint.sΓÇª"   postgres   4 hours ago      Up 4 hours (healthy)   127.0.0.1:5432->5432/tcp
+    distrirapido_analisis-backend-1    distrirapido_analisis-backend    "docker-entrypoint.s…"   backend    13 minutes ago   Up 13 minutes          127.0.0.1:3000->3000/tcp
+    distrirapido_analisis-frontend-1   distrirapido_analisis-frontend   "/docker-entrypoint.…"   frontend   10 minutes ago   Up 10 minutes          127.0.0.1:5173->80/tcp
+    distrirapido_analisis-postgres-1   postgres:16-alpine               "docker-entrypoint.s…"   postgres   4 hours ago      Up 4 hours (healthy)   127.0.0.1:5432->5432/tcp
 
 ## Estado de migraciones
 
@@ -38,46 +38,46 @@
 
 ## Logs recientes del backend
 
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDriverOwnCredentialsController {/driver}:[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/driver/account/password, POST} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDriverAccountsController {/drivers}:[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/drivers/account-options, GET} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/drivers/:id/account, PUT} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/drivers/:id/account, POST} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDriversController {/drivers}:[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/drivers, GET} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/drivers/:id, GET} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/drivers, POST} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/drivers/:id, PATCH} route[39m[38;5;3m +13ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDriverProfileController {/driver}:[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/driver/deliveries/:id/status, PATCH} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/driver/routes, GET} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/driver/routes/:id, GET} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/driver/me, GET} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAvailabilityController {/availability}:[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/availability, GET} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/availability/:id, GET} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/availability, POST} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/availability/:id, PATCH} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mVehiclesController {/vehicles}:[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/vehicles, GET} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/vehicles/:id, GET} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/vehicles, POST} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/vehicles/:id, PATCH} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPlanningController {/planning}:[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/planning/candidates, GET} route[39m[38;5;3m +2ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/planning, POST} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/planning/:id, GET} route[39m[38;5;3m +2ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/planning/:id, PATCH} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/planning/:id/calculations, POST} route[39m[38;5;3m +2ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/planning/:id/alternatives, POST} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/planning/:id/calculations/:executionId, GET} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mRoutesController {/routes}:[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/routes, GET} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/routes/:id/assignment, PATCH} route[39m[38;5;3m +2ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/routes/:id, GET} route[39m[38;5;3m +1ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/routes/:id/versions/:version, GET} route[39m[38;5;3m +0ms[39m
-    backend-1  | [32m[Nest] 1  - [39m10/30/2026, 8:42:24 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +149ms[39m
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RoutesResolver] DriverOwnCredentialsController {/driver}: +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/driver/account/password, POST} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RoutesResolver] DriverAccountsController {/drivers}: +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/drivers/account-options, GET} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/drivers/:id/account, PUT} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/drivers/:id/account, POST} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RoutesResolver] DriversController {/drivers}: +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/drivers, GET} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/drivers/:id, GET} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/drivers, POST} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/drivers/:id, PATCH} route +13ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RoutesResolver] DriverProfileController {/driver}: +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/driver/deliveries/:id/status, PATCH} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/driver/routes, GET} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/driver/routes/:id, GET} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/driver/me, GET} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RoutesResolver] AvailabilityController {/availability}: +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/availability, GET} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/availability/:id, GET} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/availability, POST} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/availability/:id, PATCH} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RoutesResolver] VehiclesController {/vehicles}: +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/vehicles, GET} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/vehicles/:id, GET} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/vehicles, POST} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/vehicles/:id, PATCH} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RoutesResolver] PlanningController {/planning}: +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/planning/candidates, GET} route +2ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/planning, POST} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/planning/:id, GET} route +2ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/planning/:id, PATCH} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/planning/:id/calculations, POST} route +2ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/planning/:id/alternatives, POST} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/planning/:id/calculations/:executionId, GET} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RoutesResolver] RoutesController {/routes}: +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/routes, GET} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/routes/:id/assignment, PATCH} route +2ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/routes/:id, GET} route +1ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [RouterExplorer] Mapped {/routes/:id/versions/:version, GET} route +0ms
+    backend-1  | [Nest] 1  - 10/30/2026, 8:42:24 PM     LOG [NestApplication] Nest application successfully started +149ms
 
 ## Logs recientes del frontend
 
