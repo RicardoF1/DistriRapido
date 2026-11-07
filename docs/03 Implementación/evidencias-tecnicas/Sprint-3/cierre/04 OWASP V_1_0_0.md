@@ -9,15 +9,18 @@
 - Pull Request final: #12
 - Commit de integración en main: debc2e7
 - Actualización del análisis estático: 2026-11-06 20:03:59 -05:00, commit 37bd746c8227219aceb5652a9a510fa750f9c9dd
+- Validación funcional con OSRM local: 2026-11-06, commit 600564f6c309e36b38904830652c5add1f70a799
 
 ## Alcance revisado
 
 - Inicio y cierre de sesión.
 - Roles y autorización.
 - Gestión de conductores y credenciales.
-- Planificación, asignación y operación de entregas.
+- Planificación y consulta de rutas; endpoint backend de asignación con control de versión, sin interfaz habilitada en este incremento.
+- Operación de entregas.
 - Validación de entradas y errores HTTP.
 - Persistencia con Prisma y PostgreSQL.
+- Servicio local de rutas OSRM y su integración con el backend.
 
 ## Controles observados
 
@@ -32,7 +35,8 @@
 
 - Acceso condicionado por roles.
 - Operaciones del conductor verifican identidad y pertenencia.
-- Asignación y actualización utilizan controles de versión y estado.
+- La asignación (endpoint backend `PATCH /routes/:id/assignment`) utiliza controles de versión y estado. Los controles fueron revisados en el endpoint backend y sus pruebas; no se realizó validación manual desde la interfaz porque esa acción no está disponible.
+- La actualización de entregas utiliza controles de versión y estado.
 
 ### Entrada y persistencia
 
@@ -47,6 +51,20 @@
 - Token de SonarQube manejado solo en sesión.
 - geodata/coverage/v1 permanece ignorado por restricciones de redistribución.
 - No se publican contraseñas, hashes ni paquetes privados.
+
+### Servicio de rutas OSRM
+
+Controles comprobados en la validación del 2026-11-06:
+
+- OSRM se publica únicamente en `127.0.0.1:5000`; no queda expuesto en otras interfaces del equipo.
+- El backend consulta `http://osrm:5000` dentro de la red de Compose. `OSRM_ALLOWED_ORIGIN` coincide exactamente con `OSRM_BASE_URL`; se rechazan URLs con credenciales, consultas o fragmentos, y no se siguen redirecciones.
+- No se usan servidores públicos de demostración: `router.project-osrm.org` y `routing.openstreetmap.de` se rechazan por configuración.
+- La carpeta del grafo se monta en solo lectura y sin crear la ruta en el host.
+- La imagen está fijada por tag y digest: `ghcr.io/project-osrm/osrm-backend:v26.10.0-debian@sha256:55dbfd47d984c2cacd64e32901b4321c86b5ec761438e69aa053dc78698a786f`. No se usa `latest`.
+- El contenedor usa raíz de solo lectura, `tmpfs` para `/tmp`, `cap_drop: ALL`, `no-new-privileges`, límites de 2 CPU y 2 GB y `restart: "no"`.
+- El backend limita el ajuste de cada punto a 100 m y envía ese límite a OSRM.
+- El PBF, el recorte, el grafo y su procedencia permanecen en `.local/osrm-data`, ignorada por Git. Los datos OpenStreetMap están bajo licencia ODbL y no se redistribuyen desde el repositorio.
+- Las variables de OSRM se definieron solo en la sesión; no se modificó `.env` ni se registran contraseñas, tokens o la cadena de conexión a la base de datos.
 
 ## Análisis estático con SonarQube
 
@@ -74,8 +92,9 @@ La clasificación se registró el 2026-11-06 20:45 -05:00 mediante revisión man
 
 - Revisar las seis vulnerabilidades de severidad baja reportadas por npm.
 - Mantener dependencias mayores bajo actualización planificada.
-- Aprovisionar OSRM con origen, revisión y permisos documentados.
+- Revisar el aviso de npm sobre scripts de instalación no cubiertos por `allowScripts` en la construcción de imágenes.
+- Reevaluar los límites de CPU, memoria y concurrencia de OSRM antes de un despliegue con varias instancias.
 
 ## Conclusión
 
-No se identificaron bloqueos críticos durante las pruebas, el análisis de CI ni el análisis de SonarQube, que reporta 0 vulnerabilidades y Security rating A. Los tres Security Hotspots se revisaron manualmente y quedaron REVIEWED / SAFE, con Security review rating A. Antes de un despliegue productivo todavía hay que completar la auditoría de dependencias y las pruebas dinámicas.
+No se identificaron bloqueos críticos durante las pruebas, el análisis de CI ni el análisis de SonarQube, que reporta 0 vulnerabilidades y Security rating A. Los tres Security Hotspots se revisaron manualmente y quedaron REVIEWED / SAFE, con Security review rating A. OSRM local quedó aprovisionado con origen, revisión, imagen fijada por digest, montaje de solo lectura y exposición limitada a localhost. Antes de un despliegue productivo todavía hay que completar la auditoría de dependencias y las pruebas dinámicas.

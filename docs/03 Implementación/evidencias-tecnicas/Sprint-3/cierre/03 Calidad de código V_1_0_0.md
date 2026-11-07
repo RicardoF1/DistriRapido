@@ -9,6 +9,7 @@
 - Pull Request final: #12
 - Commit de integración en main: debc2e7
 - Actualización del análisis estático: 2026-11-06 20:03:59 -05:00, commit 37bd746c8227219aceb5652a9a510fa750f9c9dd
+- Validación funcional con OSRM local: 2026-11-06, commit 600564f6c309e36b38904830652c5add1f70a799
 
 ## Resultados de pruebas
 
@@ -133,7 +134,7 @@ El incremento cumple lint, build, pruebas y cobertura mínima. El tercer anális
 <!-- SPRINT3-OSRM-STATUS -->
 ## Validación funcional local
 
-Se verificó localmente el flujo de administración hasta la preparación de una planificación con dos pedidos:
+Estado anterior (2026-10-30): se verificó localmente el flujo de administración hasta la preparación de una planificación con dos pedidos:
 
 - inicio de sesión administrativo;
 - registro de vehículo disponible;
@@ -144,4 +145,14 @@ Se verificó localmente el flujo de administración hasta la preparación de una
 - selección de vehículo, conductor, origen, orden y tiempos de atención;
 - preparación correcta de la planificación.
 
-El intento de generar alternativas mostró el resultado **“La ejecución no produjo un recorrido disponible”**. La planificación funciona, pero el cálculo vial y el registro del recorrido permanecen bloqueados hasta aprovisionar y configurar OSRM con su grafo de red. Por esta razón, la consulta de rutas muestra cero recorridos registrados.
+En aquel momento, el intento de generar alternativas mostró **“La ejecución no produjo un recorrido disponible”**: la ejecución quedó FALLIDA con `HTTP_503` porque OSRM aún no estaba aprovisionado, y la consulta de rutas mostraba cero recorridos registrados. Ese bloqueo quedó resuelto con la validación del 2026-11-06; la ejecución fallida se conserva como historial.
+
+### Validación con OSRM local (2026-11-06)
+
+Sobre `main` en `600564f6c309e36b38904830652c5add1f70a799`, con backend y frontend reconstruidos desde ese commit, OSRM v26.10.0 (`ghcr.io/project-osrm/osrm-backend:v26.10.0-debian@sha256:55dbfd47d984c2cacd64e32901b4321c86b5ec761438e69aa053dc78698a786f`, perfil `driving`, MLD) respondió a través de Compose y desde el backend por `http://osrm:5000`. PostgreSQL conservó su volumen y reconoce las 9 migraciones. La ruta de referencia `d9ebaee0-85df-4504-99d6-764839838c6a`, con revisión `geofabrik-peru-261105-sha256:70cce1d0a42c-car-mld-osrm-v26.10.0` y método `SECUENCIAL_OSRM`, midió 3 888.7 m (3.89 km), 356.2 s de viaje (5.9 min) y 7 800 s con atención y esperas (130 min), con `LineString` de 86 coordenadas, 2 paradas ordenadas, ajustes de 0.1 m, 49.9 m y 23.1 m (límite 100 m), `warnings=[]` y ejecución COMPLETADA.
+
+En la base existen tres rutas porque se realizaron tres ejecuciones manuales en la interfaz. Además de la ruta de referencia, las versiones `c89138c6` y `b04c7f85` se generaron con la opción de alternativas, la estrategia de orden confirmado y otro origen; cada una mide 4.30 km y 6.5 min, con la misma procedencia y revisión. Son cálculos reales de OSRM, no resultados sintéticos: OSRM registró exactamente tres consultas del backend, todas con HTTP 200.
+
+Las tres rutas están en estado GENERADA y **0 rutas tienen conductor asignado**, porque la interfaz indica: "La asignación no está habilitada en este incremento." El backend dispone del endpoint `PATCH /routes/:id/assignment` con control de versión, pero la interfaz web no ofrece todavía la acción de asignar. La ausencia de asignación responde al alcance del incremento y no es un fallo de OSRM. El cálculo es secuencial sobre el orden confirmado (`optimized=false`), no una ruta óptima global, y no considera tráfico en tiempo real. OSRM no devuelve `data_version`; la trazabilidad se apoya en la revisión del grafo.
+
+Esta validación funcional no modificó código, por lo que los resultados de SonarQube registrados arriba siguen vigentes. Detalle en 06 Evidencia técnica de cierre del Sprint 3 V_1_0_0 y en `infra/osrm/README.md`.
