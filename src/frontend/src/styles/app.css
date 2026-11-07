@@ -118,6 +118,7 @@ th { background: var(--color-surface-low); white-space: nowrap; }
 .app-navigation { display: flex; flex-direction: column; gap: 8px; }
 .app-navigation a { padding: 12px; min-height: 48px; border-radius: var(--radius-lg); color: var(--color-text-muted); text-decoration: none; font-weight: 600; }
 .app-navigation a:hover { background: var(--color-surface-low); }
+.app-navigation a[aria-current="location"] { color: var(--color-primary); box-shadow: inset 3px 0 var(--color-primary); }
 .app-navigation a.active { color: var(--color-primary); background: var(--color-in-transit-bg); box-shadow: inset 3px 0 var(--color-primary); }
 .app-workspace, .app-content, .form-field { min-width: 0; }
 .app-header { display: flex; align-items: center; gap: 24px; padding: 16px 24px; background: var(--color-card); border-bottom: 1px solid var(--color-border-subtle); flex-wrap: wrap; }
@@ -377,6 +378,7 @@ th { background: var(--color-surface-low); white-space: nowrap; }
 .driver-panel-grid { display: grid; gap: 20px; }
 .driver-panel-card { min-width: 0; scroll-margin-top: 100px; }
 .driver-panel-card h2 { margin-top: 8px; }
+.driver-panel-card:focus { outline: 3px solid var(--color-primary); outline-offset: 3px; }
 .driver-feature-label { display: inline-block; align-self: flex-start; padding: 4px 10px; border-radius: 20px; background: #edf3f8; color: #294a67; font-size: .8125rem; font-weight: 600; }
 .driver-feature-note { color: #526373; line-height: 1.65; }
 @media (min-width: 768px) { .driver-panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .driver-day { grid-column: 1 / -1; } .driver-identity-state { margin-left: auto; } }

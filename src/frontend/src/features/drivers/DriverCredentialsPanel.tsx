@@ -50,7 +50,7 @@ export function DriverCredentialsPanel({ id }: { id: string }) {
 export function DriverOwnPassword() {
   const { acceptSession } = useAuth(); const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  return <section id="mi-cuenta" className="users-panel driver-panel-card"><h2>Mi cuenta</h2>{!open ? <button className="button button-secondary" type="button" onClick={() => setOpen(true)}>Cambiar mi contraseña</button> : <PasswordForm own cancel={() => setOpen(false)} save={async data => {
+  return <section id="mi-cuenta" className="users-panel driver-panel-card" tabIndex={-1} aria-labelledby="driver-own-account-title"><h2 id="driver-own-account-title">Mi cuenta</h2>{!open ? <button className="button button-secondary" type="button" onClick={() => setOpen(true)}>Cambiar mi contraseña</button> : <PasswordForm own cancel={() => setOpen(false)} save={async data => {
     try {
       await driverCredentialsApi.own(data); setOpen(false);
       // One-time, non-sensitive notice survives the protected-route redirect race.

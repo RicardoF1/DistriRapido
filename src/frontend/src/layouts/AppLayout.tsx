@@ -3,6 +3,8 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { BrandLogo } from '../components/BrandLogo';
 import { LogoutButton } from '../components/LogoutButton';
 import { useAuth } from '../hooks/useAuth';
+import { useLocationHash } from '../hooks/useLocationHash';
+import { DRIVER_SECTIONS, revealDriverSection } from '../features/drivers/driver-sections';
 import { accessPath } from '../routes/role-access';
 export function AppLayout({ children, title, navigationLabel = 'Área autenticada' }: { children: ReactNode; title: string; navigationLabel?: string }) {
   const { session } = useAuth();
@@ -10,6 +12,9 @@ export function AppLayout({ children, title, navigationLabel = 'Área autenticad
   const { pathname } = useLocation();
   useEffect(() => { setOpen(false); }, [pathname]);
   const dismissMenu = () => setOpen(false);
+  const hash = useLocationHash();
+  // Repetir el ancla actual no emite hashchange: se vuelve a enfocar la sección directamente.
+  function followSection(id: string) { dismissMenu(); if (window.location.hash === `#${id}`) revealDriverSection(window.location.hash); }
   const toggle = useRef<HTMLButtonElement>(null);
   const navigation = useRef<HTMLElement>(null);
   const role = session?.user.rol.nombre ?? '';
@@ -28,7 +33,7 @@ export function AppLayout({ children, title, navigationLabel = 'Área autenticad
       <div className="sidebar-brand"><BrandLogo /><div><strong>EcoRuta Huancayo</strong><p>Gestión de última milla</p></div></div>
       <nav id="app-navigation" ref={navigation} className="app-navigation" aria-label={navigationLabel}>
         <NavLink onClick={dismissMenu} to={accessPath(role)}>Acceso</NavLink>
-        {role === 'Usuario Final / Conductor' && <><a href="#mi-cuenta" onClick={dismissMenu}>Mi cuenta</a><a href="#mi-jornada" onClick={dismissMenu}>Mi jornada</a><a href="#mis-rutas" onClick={dismissMenu}>Mis rutas</a><a href="#mis-entregas" onClick={dismissMenu}>Mis entregas</a></>}
+        {role === 'Usuario Final / Conductor' && DRIVER_SECTIONS.map(({ id, label }) => <a key={id} href={`#${id}`} aria-current={hash === `#${id}` ? 'location' : undefined} onClick={() => followSection(id)}>{label}</a>)}
         {role === 'Administrador' && <NavLink onClick={dismissMenu} to="/usuarios">Usuarios</NavLink>}
         {role === 'Administrador' && <NavLink onClick={dismissMenu} to="/vehiculos">Vehículos</NavLink>}
         {operational && <><NavLink onClick={dismissMenu} to="/rutas">Consultar rutas</NavLink><NavLink onClick={dismissMenu} to="/planificacion">Preparar recorrido</NavLink></>}
