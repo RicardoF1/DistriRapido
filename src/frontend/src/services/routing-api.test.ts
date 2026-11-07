@@ -8,3 +8,15 @@ it('transporta confirmaciones, versión e idempotencia sin enviar métricas', as
 it('conserva semántica de consulta y edición versionada', async () => { await planningApi.candidates('start', 'end', 2); expect(fetcher.mock.calls[0][0]).toContain('page=2'); await planningApi.update('p', 1, {} as Parameters<typeof planningApi.prepare>[0]); expect(JSON.parse(fetcher.mock.calls[1][1].body)).toMatchObject({ expected_version: 1 }); await planningApi.execution('p', 'e'); await routesApi.list(2, 'plan'); await routesApi.get('r', 1); expect(fetcher.mock.calls[4][0]).toContain('/routes/r/versions/1'); expect(fetcher.mock.calls[4][1].method).toBeUndefined(); });
 it.each([400, 403, 404, 409, 422, 429, 502, 503, 504, 500])('conserva error HTTP %s sin sustituirlo por lista vacía', async status => { fetcher.mockResolvedValue(new Response('{}', { status })); await expect(routesApi.list()).rejects.toMatchObject({ status }); });
 it('recupera identificador de ejecución en fallo del proveedor', async () => { fetcher.mockResolvedValue(new Response(JSON.stringify({ message: 'OSRM no disponible', execution_id: 'e', code: 'ROUTING_503' }), { status: 503 })); await expect(planningApi.calculate('p', 1, 'key')).rejects.toMatchObject({ status: 503, executionId: 'e', code: 'ROUTING_503', message: 'OSRM no disponible' }); });
+it('asignación envía solo el contrato actual, sin versión, vehículo ni idempotencia', async () => {
+  await routesApi.assign('r/1', 'd');
+  const [url, options] = fetcher.mock.calls[0];
+  expect(url).toMatch(/\/routes\/r%2F1\/assignment$/);
+  expect(options).toMatchObject({ method: 'PATCH', credentials: 'include', headers: { 'Content-Type': 'application/json' } });
+  expect(JSON.parse(options.body)).toEqual({ conductor_id: 'd', expected_estado: 'GENERADA', confirmed: true });
+  expect(options.headers).not.toHaveProperty('Idempotency-Key');
+  await routesApi.candidates('r');
+  expect(fetcher.mock.calls[1][0]).toMatch(/\/routes\/r\/assignment-candidates$/);
+  expect(fetcher.mock.calls[1][1].method).toBeUndefined();
+});
+it.each([400, 403, 404, 409])('conserva el mensaje del backend al asignar con %s', async status => { fetcher.mockResolvedValue(new Response(JSON.stringify({ message: 'Motivo del backend' }), { status })); await expect(routesApi.assign('r', 'd')).rejects.toMatchObject({ status, message: 'Motivo del backend' }); });
