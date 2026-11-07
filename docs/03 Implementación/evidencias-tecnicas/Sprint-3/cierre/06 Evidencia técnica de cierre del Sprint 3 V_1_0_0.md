@@ -8,6 +8,7 @@
 - Commit completo: debc2e7893863c64111586a32fd9a955b88c8da2
 - Pull Request final: #12
 - Commit de integración en main: debc2e7
+- Actualización del análisis estático: 2026-11-06 20:03:59 -05:00, commit 37bd746c8227219aceb5652a9a510fa750f9c9dd
 
 ## Historial Git
 
@@ -121,6 +122,33 @@
 - Paquete privado de geocobertura v1.0.0 validado mediante el aprovisionador oficial.
 - Cuenta administrativa local creada mediante db:bootstrap.
 - Esquema de base de datos actualizado.
+
+## Análisis estático final
+
+| Análisis | Commit | Quality Gate | Resultado |
+|---|---|---|---|
+| 1 | 9ea2146 | OK, sin condiciones evaluadas | Primer análisis: sin línea base de código nuevo, por lo que no se evaluaron condiciones. |
+| 2 | d2b632a | ERROR | `new_violations` = 1 (S4624 en `planning-data.ts`). |
+| 3 | 37bd746 | OK | `new_violations` = 0, `new_coverage` = 100.0%, `new_duplicated_lines_density` = 0.0%. |
+
+Resultado del análisis 3 (commit `37bd746c8227219aceb5652a9a510fa750f9c9dd`):
+
+- Coverage 86.1%, line coverage 92.0%, branch coverage 80.5%.
+- Bugs 0, vulnerabilities 0, code smells 263, Security Hotspots 3 (TO_REVIEW).
+- Duplicación 0.0%, deuda técnica 1748 min (29 h 8 min), NCLOC 5850.
+- Reliability A (antes D), Security A, Maintainability A. Security review rating E: 0% de hotspots revisados.
+- Backend: 42 suites y 473 pruebas aprobadas. Frontend: 37 archivos y 310 pruebas aprobadas.
+- Rutas LCOV sin resolver: 0.
+
+Últimos cinco commits de main en el momento del análisis 3 (git log -5 --oneline):
+
+    37bd746 refactor(planning): simplify route lock query construction
+    d2b632a fix(quality): address reliability and security findings
+    19d6c45 docs: retirar carpeta Post-Sprint-1
+    77d7e10 docs: corregir caracteres y codificacion en cierre sprint 3
+    9ea2146 test(frontend): stabilize delivery map marker assertion
+
+Pendientes: revisión manual de los tres Security Hotspots y de los 8 issues S2699 de pruebas con Supertest, y atención de los code smells restantes. El detalle está en 03 Calidad de código V_1_0_0 y 04 OWASP V_1_0_0.
 
 ## Restricciones
 
