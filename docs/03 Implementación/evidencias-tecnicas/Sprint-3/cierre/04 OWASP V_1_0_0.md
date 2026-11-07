@@ -54,29 +54,28 @@ Análisis final sobre main, commit `37bd746c8227219aceb5652a9a510fa750f9c9dd`, c
 
 - Quality Gate: OK, con condiciones de código nuevo evaluadas.
 - Vulnerabilities: 0. Security rating: A.
-- Security review rating: E, porque se ha revisado el 0% de los Security Hotspots. La revisión de seguridad no está aprobada.
+- Security review rating: A, con el 100% de los Security Hotspots revisados (era E antes de la revisión manual).
 
 ### Hotspots corregidos
 
 - `src/backend/src/orders/order.dto.ts`, líneas 31 y 32 (S5852, denegación de servicio por backtracking): la validación de zona horaria de `ventana_inicio` y `ventana_fin` pasó de `/T.*(?:Z|[+-]\d{2}:\d{2})$/` a `/T[^T]*(?:Z|[+-]\d{2}:\d{2})$/`, de tiempo lineal. Se conserva `@IsISO8601({ strict: true })`. En la medición local, una entrada de 100 000 caracteres T bajó de unos 16.7 s a menos de 1 ms. Hay pruebas para valores válidos e inválidos y para la entrada maliciosa. Los dos hotspots desaparecieron en el segundo análisis.
 
-### Hotspots pendientes de revisión manual
+### Hotspots revisados manualmente
 
-| Archivo | Línea | Regla | Probabilidad | Estado | Observación técnica |
+| Archivo | Línea | Regla | Probabilidad | Estado | Justificación registrada |
 |---|---:|---|---|---|---|
-| `src/frontend/src/features/users/UserForm.tsx` | 21 | S2068 (credencial en el código) | HIGH | TO_REVIEW | La cadena señalada es el mensaje de validación de la contraseña inicial, no una credencial. |
-| `src/frontend/src/features/auth/LoginForm.tsx` | 32 | S5852 (backtracking) | MEDIUM | TO_REVIEW | La expresión del correo se aplica solo si el valor tiene 255 caracteres o menos, y se ejecuta en el navegador. |
-| `src/frontend/src/features/users/UserForm.tsx` | 19 | S5852 (backtracking) | MEDIUM | TO_REVIEW | Mismo límite previo de 255 caracteres; el campo tiene además `maxLength={255}`. |
+| `src/frontend/src/features/users/UserForm.tsx` | 21 | S2068 (credencial en el código) | HIGH | REVIEWED / SAFE | La cadena detectada es un mensaje de validación sobre la longitud permitida, no una contraseña ni una credencial codificada. La contraseña real procede del formulario y no está almacenada en el código fuente. |
+| `src/frontend/src/features/auth/LoginForm.tsx` | 32 | S5852 (backtracking) | MEDIUM | REVIEWED / SAFE | La expresión regular solo se ejecuta cuando el correo normalizado tiene como máximo 255 caracteres. El operador `&&` aplica cortocircuito antes de `RegExp.test()`, por lo que las entradas mayores no son evaluadas. |
+| `src/frontend/src/features/users/UserForm.tsx` | 19 | S5852 (backtracking) | MEDIUM | REVIEWED / SAFE | La expresión regular solo se ejecuta para valores de hasta 255 caracteres. La condición de longitud aparece primero, el operador `\|\|` aplica cortocircuito y el campo también usa `maxLength=255`. |
 
-Las observaciones técnicas son el resultado del análisis del código. Los tres hotspots siguen pendientes de revisión y clasificación en SonarQube.
+La clasificación se registró el 2026-11-06 20:45 -05:00 mediante revisión manual en SonarQube: cada hotspot recibió su comentario técnico y pasó a REVIEWED / SAFE. Los hotspots no se eliminaron del código; se revisaron y se clasificaron como seguros. No se modificó código ni se ejecutó un nuevo análisis para esta clasificación.
 
 ## Riesgos pendientes
 
 - Revisar las seis vulnerabilidades de severidad baja reportadas por npm.
-- Revisar y clasificar en SonarQube los tres Security Hotspots en estado TO_REVIEW (Security review rating E).
 - Mantener dependencias mayores bajo actualización planificada.
 - Aprovisionar OSRM con origen, revisión y permisos documentados.
 
 ## Conclusión
 
-No se identificaron bloqueos críticos durante las pruebas, el análisis de CI ni el análisis de SonarQube, que reporta 0 vulnerabilidades y Security rating A. La revisión de seguridad no está completa: quedan tres Security Hotspots por revisar (Security review rating E). Antes de un despliegue productivo hay que completar esa revisión, la auditoría de dependencias y pruebas dinámicas.
+No se identificaron bloqueos críticos durante las pruebas, el análisis de CI ni el análisis de SonarQube, que reporta 0 vulnerabilidades y Security rating A. Los tres Security Hotspots se revisaron manualmente y quedaron REVIEWED / SAFE, con Security review rating A. Antes de un despliegue productivo todavía hay que completar la auditoría de dependencias y las pruebas dinámicas.

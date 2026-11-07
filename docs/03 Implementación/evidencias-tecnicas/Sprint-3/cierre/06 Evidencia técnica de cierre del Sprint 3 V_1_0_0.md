@@ -134,9 +134,9 @@
 Resultado del análisis 3 (commit `37bd746c8227219aceb5652a9a510fa750f9c9dd`):
 
 - Coverage 86.1%, line coverage 92.0%, branch coverage 80.5%.
-- Bugs 0, vulnerabilities 0, code smells 263, Security Hotspots 3 (TO_REVIEW).
+- Bugs 0, vulnerabilities 0, code smells 263, Security Hotspots 3 (revisados manualmente y clasificados REVIEWED / SAFE).
 - Duplicación 0.0%, deuda técnica 1748 min (29 h 8 min), NCLOC 5850.
-- Reliability A (antes D), Security A, Maintainability A. Security review rating E: 0% de hotspots revisados.
+- Reliability A (antes D), Security A, Maintainability A. Security review rating A: 100% de hotspots revisados (era E antes de la revisión manual del 2026-11-06 20:45 -05:00).
 - Backend: 42 suites y 473 pruebas aprobadas. Frontend: 37 archivos y 310 pruebas aprobadas.
 - Rutas LCOV sin resolver: 0.
 
@@ -148,7 +148,7 @@ Resultado del análisis 3 (commit `37bd746c8227219aceb5652a9a510fa750f9c9dd`):
     77d7e10 docs: corregir caracteres y codificacion en cierre sprint 3
     9ea2146 test(frontend): stabilize delivery map marker assertion
 
-Pendientes: revisión manual de los tres Security Hotspots y de los 8 issues S2699 de pruebas con Supertest, y atención de los code smells restantes. El detalle está en 03 Calidad de código V_1_0_0 y 04 OWASP V_1_0_0.
+Pendientes: clasificación de los 8 issues S2699 de pruebas con Supertest y atención de los code smells restantes. Los tres Security Hotspots ya se revisaron en SonarQube, con comentario técnico y estado SAFE. El detalle está en 03 Calidad de código V_1_0_0 y 04 OWASP V_1_0_0.
 
 ## Restricciones
 

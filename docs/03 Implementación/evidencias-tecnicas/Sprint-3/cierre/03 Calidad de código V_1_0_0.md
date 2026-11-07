@@ -83,14 +83,14 @@ Cobertura: statements 87.04%, branches 80.09%, functions 83.89%, lines 92.15%.
 | Bugs | 2 | 0 |
 | Vulnerabilities | 0 | 0 |
 | Code smells | 265 | 263 |
-| Security hotspots | 5 | 3 |
+| Security hotspots | 5 | 3 (revisados después como SAFE) |
 | Duplicated lines density | 0.0% | 0.0% |
 | Technical debt | 1763 min | 1748 min (29 h 8 min) |
 | NCLOC | 5838 | 5850 |
 | Reliability rating | D | A |
 | Security rating | A | A |
 | Maintainability rating | A | A |
-| Security review rating | No consultado | E (0% de hotspots revisados) |
+| Security review rating | No consultado | A (100% de hotspots revisados; era E antes de la revisión manual) |
 
 ### Pruebas y cobertura del commit analizado (37bd746)
 
@@ -125,11 +125,11 @@ Resultado: los dos bugs quedaron corregidos y Reliability rating mejoró de D a 
   - No se agregaron aserciones de relleno ni comentarios NOSONAR. Los ocho issues siguen abiertos, pendientes de revisión manual en SonarQube.
 - Los 21 Critical son code smells de mantenibilidad: complejidad cognitiva (S3776, 14), uso de `void` (S3735, 4) y funciones anidadas en exceso (S2004, 3).
 - Sigue abierto un S4624 anterior en `src/frontend/src/features/orders/OrderForm.tsx:84`, fuera del alcance de estas correcciones.
-- Los tres Security Hotspots restantes están en estado TO_REVIEW (ver 04 OWASP V_1_0_0). Security review rating es E porque se ha revisado el 0% de los hotspots. La revisión de seguridad no está aprobada.
+- Los tres Security Hotspots que quedaron tras el análisis 3 se revisaron manualmente en SonarQube el 2026-11-06 20:45 -05:00. Cada uno recibió un comentario técnico y quedó en estado REVIEWED / SAFE. Los hotspots no se eliminaron del código: se revisaron y se clasificaron como seguros (detalle en 04 OWASP V_1_0_0). Con el 100% de los hotspots revisados, Security review rating pasó de E a A sin un nuevo análisis.
 
 ## Conclusión
 
-El incremento cumple lint, build, pruebas y cobertura mínima. El tercer análisis de SonarQube sobre `37bd746` evaluó las condiciones de código nuevo y terminó con el Quality Gate en OK, 0 bugs, 0 vulnerabilidades y Reliability, Security y Maintainability en A. Quedan pendientes 263 code smells, incluidos 8 S2699 a revisar manualmente, y la revisión de 3 Security Hotspots: Security review rating sigue en E.
+El incremento cumple lint, build, pruebas y cobertura mínima. El tercer análisis de SonarQube sobre `37bd746` evaluó las condiciones de código nuevo y terminó con el Quality Gate en OK, 0 bugs, 0 vulnerabilidades y Reliability, Security y Maintainability en A. Los 3 Security Hotspots se revisaron manualmente y quedaron REVIEWED / SAFE, por lo que Security review rating es A (100% revisados). Quedan pendientes 263 code smells, incluidos 8 S2699 de pruebas con Supertest por clasificar.
 <!-- SPRINT3-OSRM-STATUS -->
 ## Validación funcional local
 
