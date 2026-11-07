@@ -96,10 +96,19 @@ it('muestra los textos del panel en UTF-8', async () => {
   expect(document.body.textContent).not.toMatch(/[ÃÂ]|â[€œ]/);
 });
 it('muestra Vehículo no disponible y los estados de carga con puntos suspensivos correctos', async () => {
+  let verify!: (value: typeof profile) => void;
   let release!: (value: DriverRouteSummary[]) => void;
+  vi.mocked(driverProfileApi.me).mockReturnValue(new Promise(done => { verify = done; }));
   vi.mocked(driverProfileApi.routes).mockReturnValue(new Promise(done => { release = done; }));
   open();
-  expect(await screen.findByText('Cargando rutas asignadas…')).toBeVisible();
+  const checking = await screen.findByText('Comprobando tu identidad de conductor…');
+  expect(checking.tagName).toBe('OUTPUT');
+  expect(screen.getByRole('status')).toBe(checking);
+  verify(profile);
+  const loading = await screen.findByText('Cargando rutas asignadas…');
+  expect(loading).toBeVisible();
+  expect(loading.tagName).toBe('OUTPUT');
+  expect(screen.getByRole('status')).toBe(loading);
   release([{ ...summary, version: null }]);
   expect(await screen.findByText('Vehículo no disponible')).toBeVisible();
   expect(document.body.textContent).not.toMatch(/[ÃÂ]|â[€œ]/);
