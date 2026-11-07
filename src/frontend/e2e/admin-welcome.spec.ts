@@ -28,10 +28,12 @@ for (const width of [390, 768, 1366, 1440]) {
     expect(columns).toBe(width >= 1024 ? 3 : width >= 768 ? 2 : 1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     const card = shortcuts.getByRole('link', { name: 'Usuarios y roles' }); await card.focus(); await expect(card).toBeFocused();
+    // WCAG 2.5.3: el nombre accesible es el texto visible completo de la tarjeta.
+    await expect(card).not.toHaveAttribute('aria-label', /.*/); await expect(card).toHaveAccessibleName('Usuarios y roles Administra las cuentas y los permisos del sistema Abrir módulo');
     await page.screenshot({ path: `test-results/admin-welcome-${width}.png`, fullPage: true });
     await page.keyboard.press('Enter'); await expect(page).toHaveURL(/\/usuarios$/);
     for (const [name, path] of [['Registrar pedido', '/pedidos/nuevo'], ['Consultar pedidos', '/pedidos']] as const) {
-      await page.goto('/acceso/administrador'); await page.getByRole('navigation', { name: 'Accesos rápidos' }).getByRole('link', { name, exact: true }).click();
+      await page.goto('/acceso/administrador'); await page.getByRole('navigation', { name: 'Accesos rápidos' }).getByRole('link', { name: new RegExp(`^${name} `) }).click();
       await expect(page).toHaveURL(new RegExp(`${path}$`));
     }
     await page.getByRole('button', { name: 'Cerrar sesión' }).click(); await expect(page).toHaveURL(/\/login$/);

@@ -2,7 +2,7 @@ import { act, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { AlternativesMap } from './AlternativesMap';
 import type { Calculation } from '../../types/planning';
-const mocks = vi.hoisted(() => ({ map: vi.fn(), fitBounds: vi.fn(), remove: vi.fn(), invalidateSize: vi.fn(), tileError: undefined as (() => void) | undefined, tileLayer: vi.fn(), polyline: vi.fn(), marker: vi.fn(), setStyle: vi.fn(), latLngBounds: vi.fn() }));
+const mocks = vi.hoisted(() => ({ map: vi.fn(), fitBounds: vi.fn(), remove: vi.fn(), invalidateSize: vi.fn(), tileError: undefined as (() => void) | undefined, tileLayer: vi.fn(), polyline: vi.fn(), marker: vi.fn(), setStyle: vi.fn(), latLngBounds: vi.fn(), zoom: vi.fn() }));
 vi.mock('leaflet', () => ({
   default: {
     map: (...args: unknown[]) => { mocks.map(...args); return { fitBounds: mocks.fitBounds, remove: mocks.remove, invalidateSize: mocks.invalidateSize }; },
@@ -11,7 +11,7 @@ vi.mock('leaflet', () => ({
     marker: (...args: unknown[]) => { mocks.marker(...args); return { addTo: vi.fn() }; },
     divIcon: (options: unknown) => options,
     latLngBounds: (...args: unknown[]) => { mocks.latLngBounds(...args); return { bounds: true }; },
-    control: { scale: () => ({ addTo: vi.fn() }) },
+    control: { scale: () => ({ addTo: vi.fn() }), zoom: (options: unknown) => { mocks.zoom(options); return { addTo: vi.fn() }; } },
   },
 }));
 const version = (coordinates: number[][], label: string) => ({ numero: 1, distancia_m: '1000', duracion_s: '120', origin: { latitud: -12, longitud: -75, label }, geometry: { type: 'LineString' as const, coordinates }, warnings: [], end: null, operational_duration_s: 120, estrategia: null, orden: ['o'], confirmable: true });
@@ -24,6 +24,8 @@ it('dibuja una línea por alternativa, un origen compartido y una leyenda con co
   const view = render(<AlternativesMap alternatives={alternatives} activeId={null} />);
   expect(mocks.tileLayer).toHaveBeenCalledWith(expect.stringContaining('openstreetmap'), expect.any(Object));
   expect(mocks.polyline).toHaveBeenCalledTimes(4);
+  expect(mocks.map.mock.calls[0][1]).toMatchObject({ zoomControl: false });
+  expect(mocks.zoom).toHaveBeenCalledExactlyOnceWith({ zoomInTitle: 'Acercar', zoomOutTitle: 'Alejar' });
   expect(mocks.polyline.mock.calls[0][1]).toMatchObject({ color: '#ffffff' });
   expect(mocks.polyline.mock.calls[1][1]).toMatchObject({ color: '#0b6bcb' });
   expect(mocks.polyline.mock.calls[2][1]).toMatchObject({ color: '#ffffff' });

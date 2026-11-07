@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
@@ -46,9 +46,16 @@ describe('Acceso según rol', () => {
     await screen.findByRole('heading', { name: 'Panel de administración' });
     const shortcuts = screen.getByRole('navigation', { name: 'Accesos rápidos' });
     expect(shortcuts.querySelectorAll('a')).toHaveLength(3);
-    expect(screen.getByRole('link', { name: 'Usuarios y roles' })).toHaveAttribute('href', '/usuarios');
-    expect(shortcuts.querySelector('a[href="/pedidos/nuevo"]')).toHaveAccessibleName('Registrar pedido');
-    expect(shortcuts.querySelector('a[href="/pedidos"]')).toHaveAccessibleName('Consultar pedidos');
+    expect(within(shortcuts).getByRole('link', { name: /^Usuarios y roles/ })).toHaveAttribute('href', '/usuarios');
+    // WCAG 2.5.3: el nombre accesible es el texto visible completo de la tarjeta, sin aria-label que lo recorte.
+    const names = [['/usuarios', 'Usuarios y roles Administra las cuentas y los permisos del sistema Abrir módulo'], ['/pedidos/nuevo', 'Registrar pedido Registra una nueva solicitud de entrega Abrir módulo'], ['/pedidos', 'Consultar pedidos Consulta y revisa los pedidos registrados Abrir módulo']];
+    for (const [href, name] of names) {
+      const card = shortcuts.querySelector<HTMLAnchorElement>(`a[href="${href}"]`)!;
+      expect(card).not.toHaveAttribute('aria-label'); expect(card).toHaveAccessibleName(name);
+      const visible = [...card.querySelectorAll('h2, p, .admin-shortcut-action')].map(part => part.textContent!.replace('→', '').trim());
+      for (const text of visible) expect(name).toContain(text);
+      expect(card.querySelector('.admin-shortcut-action [aria-hidden="true"]')).toHaveTextContent('→');
+    }
     expect(screen.queryByText('Cuenta')).not.toBeInTheDocument();
     expect(screen.queryByText('Rol')).not.toBeInTheDocument();
     expect(screen.getAllByText(loginResponse.user.email)).toHaveLength(1);

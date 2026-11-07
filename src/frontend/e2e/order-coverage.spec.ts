@@ -52,7 +52,7 @@ test('arrastre fuera de cobertura invalida y bloquea POST', async ({ page, baseU
   await page.getByLabel('Dirección de entrega').fill('Destino');
   await page.getByRole('button', { name: /^Destino, Huancayo/ }).click();
   await expect(page.getByText('Ubicación confirmada.', { exact: true })).toBeVisible();
-  const zoomOut = page.getByRole('button', { name: 'Zoom out' });
+  const zoomOut = page.getByRole('button', { name: 'Alejar', exact: true });
   for (let i=0; i<7; i++) { await zoomOut.click(); await page.waitForTimeout(300); await expect(page.locator('.leaflet-zoom-anim')).toHaveCount(0); }
   await page.locator('.delivery-marker').hover();
   const marker = page.locator('.delivery-marker'); const box = (await marker.boundingBox())!;

@@ -22,7 +22,9 @@ async function mock(page: Page, origin: string, role = 'Administrador', fail = f
 }
 for (const width of [390, 768, 1366, 1440]) test(`consulta de ruta persistida responsive ${width}`, async ({ page, baseURL }) => {
   await page.setViewportSize({ width, height: 900 }); const calls = await mock(page, new URL(baseURL!).origin); await page.goto('/rutas'); await page.getByRole('link', { name: 'Consultar recorrido', exact: true }).click(); await expect(page.getByRole('heading', { name: 'Detalle de recorrido' })).toBeVisible(); await expect(page.getByRole('region', { name: 'Recorrido registrado de solo lectura' })).toBeVisible(); await expect(page.locator('.route-stop-marker').first()).toBeVisible(); await expect(page.getByText('Destino sintético')).toBeVisible(); expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true); expect(calls).toHaveLength(0);
-  const path = page.locator('.route-map .leaflet-overlay-pane path'); await expect(path).toBeVisible(); expect(((await path.getAttribute('d')) ?? '').split('L').length).toBeGreaterThanOrEqual(4);
+  // Halo blanco bajo la línea de color: dos trazos con la misma geometría.
+  const paths = page.locator('.route-map .leaflet-overlay-pane path'); await expect(paths).toHaveCount(2); await expect(paths.first()).toHaveAttribute('stroke', '#ffffff'); await expect(paths.last()).toHaveAttribute('stroke', '#0b6bcb');
+  const path = paths.last(); await expect(path).toBeVisible(); expect(((await path.getAttribute('d')) ?? '').split('L').length).toBeGreaterThanOrEqual(4); expect(await paths.first().getAttribute('d')).toBe(await path.getAttribute('d'));
   if (process.env.E2E_CAPTURE_DIR) await page.screenshot({ path: join(process.env.E2E_CAPTURE_DIR, `route-${width}.png`), fullPage: true });
 });
 test('geometría corrupta muestra error visible sin línea sustitutiva', async ({ page, baseURL }) => {
@@ -35,6 +37,43 @@ test('origen/orden/regreso explícitos, fallo OSRM y nueva clave sin duplicar pr
   const calls = await mock(page, new URL(baseURL!).origin, 'Operador / Técnico', true); await page.goto('/planificacion'); await page.getByLabel('Inicio de jornada').fill('2030-01-01T07:00'); await page.getByLabel('Límite de jornada').fill('2030-01-01T10:00'); await page.getByRole('button', { name: 'Consultar pedidos y recursos' }).click();
   await page.getByLabel('Seleccionar pedido ' + orderId).check(); await page.getByLabel('Vehículo candidato').selectOption(id); await page.getByLabel('Conductor sintético', { exact: true }).check(); await page.getByLabel('Atención en minutos para ' + orderId).fill('5'); await page.getByLabel('Dirección del origen').fill('Origen sintético'); await page.getByRole('button', { name: /Origen sintético, Huancayo/ }).click(); await page.getByLabel('Finalización del recorrido').selectOption('OPEN');
   await expect(page.getByRole('button', { name: 'Preparar planificación' })).toBeDisabled(); for (const text of ['Confirmo el origen seleccionado.', 'Confirmo el orden y los tiempos de atención.', 'Confirmo si el recorrido regresa al origen.']) await page.getByLabel(text).check();
-  await page.getByRole('button', { name: 'Preparar planificación' }).click(); await page.getByRole('button', { name: 'Calcular recorrido por vías con OSRM' }).click(); await expect(page.getByRole('alert').filter({ hasText: 'OSRM no disponible' })).toBeVisible(); await page.getByRole('button', { name: 'Preparar nuevo intento de cálculo' }).click(); await page.getByRole('button', { name: 'Calcular recorrido por vías con OSRM' }).click(); await expect(page.getByRole('link', { name: 'Consultar recorrido registrado' })).toBeVisible();
+  await page.getByRole('button', { name: 'Preparar planificación' }).click(); await page.getByRole('button', { name: 'Calcular recorrido por vías con OSRM' }).click(); await expect(page.getByRole('alert').filter({ hasText: 'OSRM no disponible' })).toBeVisible(); await page.getByRole('button', { name: 'Preparar nuevo intento de cálculo' }).click(); await page.getByRole('button', { name: 'Calcular recorrido por vías con OSRM' }).click(); await expect(page.getByRole('link', { name: 'Consultar recorrido de la alternativa 1' })).toHaveAttribute('href', '/rutas/' + id);
   expect(calls.filter(c => c.path === '/planning')).toHaveLength(1); const calculations = calls.filter(c => c.path.endsWith('/calculations')); expect(calculations).toHaveLength(2); expect(calculations[0].key).not.toBe(calculations[1].key); expect(calculations[0].body).toMatchObject({ confirm_origin: true, confirm_order: true, confirm_return: true });
+});
+test('mapa de ruta: marcadores y flechas fuera del orden de tabulación, controles accesibles', async ({ page, baseURL }) => {
+  await mock(page, new URL(baseURL!).origin); await page.goto('/rutas/' + id);
+  const map = page.getByRole('region', { name: 'Recorrido registrado de solo lectura' }); await expect(map).toBeVisible();
+  const arrows = page.locator('.route-map .route-direction'); const stops = page.locator('.route-map .route-stop-marker');
+  expect(await arrows.count()).toBeGreaterThan(0); await expect(stops).toHaveCount(2);
+  for (const marker of [...await arrows.all(), ...await stops.all()]) { await expect(marker).not.toHaveAttribute('role', /.*/); await expect(marker).not.toHaveAttribute('tabindex', /.*/); }
+  // Origen y paradas mantienen el puntero (title al pasar el ratón); las flechas son decorativas.
+  for (const stop of await stops.all()) { await expect(stop).toHaveClass(/leaflet-interactive/); expect(await stop.evaluate(el => getComputedStyle(el).pointerEvents)).not.toBe('none'); }
+  for (const arrow of await arrows.all()) await expect(arrow).not.toHaveClass(/leaflet-interactive/);
+  await expect(stops.nth(0)).toHaveAttribute('title', 'Origen: Origen sintético'); await expect(stops.nth(1)).toHaveAttribute('title', 'Parada 1: Destino sintético');
+  await expect(stops.nth(1).locator('span')).toHaveText('1');
+  await expect(page.locator('.route-map .leaflet-overlay-pane path')).toHaveCount(2);
+  await expect(page.locator('.route-map .leaflet-control-zoom a')).toHaveCount(2);
+  await expect(page.getByRole('button', { name: 'Acercar', exact: true })).toHaveAttribute('title', 'Acercar'); await expect(page.getByRole('button', { name: 'Alejar', exact: true })).toHaveAttribute('title', 'Alejar');
+  await expect(page.getByRole('button', { name: /Zoom (in|out)/ })).toHaveCount(0);
+  await map.focus(); const visited: string[] = [];
+  for (let i = 0; i < 8 && !visited.includes('Centrar'); i++) { await page.keyboard.press('Tab'); visited.push(await page.evaluate(() => { const el = document.activeElement as HTMLElement; return el.classList.contains('leaflet-marker-icon') ? 'MARCADOR' : (el.textContent ?? '').trim() || el.getAttribute('aria-label') || el.tagName; })); }
+  expect(visited).not.toContain('MARCADOR'); expect(visited).toContain('Centrar');
+  const recenter = page.getByRole('button', { name: 'Centrar el recorrido en el mapa' }); await expect(recenter).toBeFocused();
+  await page.keyboard.press('Enter'); await page.keyboard.press('Space'); await expect(recenter).toBeFocused(); await expect(stops).toHaveCount(2);
+});
+test('mapa de entrega en planificación: distritos fuera de la tabulación y zoom en español', async ({ page, baseURL }) => {
+  await mock(page, new URL(baseURL!).origin, 'Operador / Técnico'); await page.goto('/planificacion');
+  await page.getByLabel('Inicio de jornada').fill('2030-01-01T07:00'); await page.getByLabel('Límite de jornada').fill('2030-01-01T10:00'); await page.getByRole('button', { name: 'Consultar pedidos y recursos' }).click();
+  const map = page.getByRole('region', { name: 'Mapa de ubicación de entrega' }); await expect(map).toBeVisible();
+  const districts = map.locator('.leaflet-overlay-pane path'); await expect(districts).toHaveCount(5);
+  for (const district of await districts.all()) { await expect(district).toHaveAttribute('tabindex', '-1'); await expect(district).not.toHaveAttribute('role', /.*/); await expect(district).not.toHaveAttribute('aria-label', /.*/); }
+  expect(await districts.evaluateAll(paths => paths.map(path => path.getAttribute('stroke')))).toEqual(['#006948', '#2563eb', '#9a3412', '#7c3aed', '#0e7490']);
+  await expect(map.getByRole('button', { name: 'Acercar', exact: true })).toBeVisible(); await expect(map.getByRole('button', { name: 'Alejar', exact: true })).toBeVisible();
+  // Recorrido real con Tab desde el mapa: el siguiente foco es el zoom, nunca un distrito, y Shift+Tab regresa al mapa.
+  await map.focus(); const focused = async () => page.evaluate(() => { const el = document.activeElement!; return el.tagName === 'path' ? 'DISTRITO' : el.getAttribute('aria-label') ?? el.tagName; });
+  await page.keyboard.press('Tab'); expect(await focused()).toBe('Acercar');
+  await page.keyboard.press('Tab'); expect(await focused()).toBe('Alejar');
+  const visited: string[] = []; for (let i = 0; i < 6; i++) { await page.keyboard.press('Tab'); visited.push(await focused()); } expect(visited).not.toContain('DISTRITO');
+  await map.focus(); await page.keyboard.press('Tab'); await page.keyboard.press('Shift+Tab'); await expect(map).toBeFocused();
+  await page.keyboard.press('Enter'); await expect(map).toBeFocused();
 });

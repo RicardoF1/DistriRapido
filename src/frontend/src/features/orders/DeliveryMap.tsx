@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useCoverage } from '../../hooks/useCoverage';
+import { SPANISH_ZOOM } from '../../services/map-controls';
 import { coverageBounds, coverageManifest, districtAt, normalizePoint, OUTSIDE_COVERAGE, type Coverage } from '../../services/coverage';
 
 export interface DeliveryPoint { latitud: number; longitud: number }
@@ -21,7 +22,8 @@ export function DeliveryMap({ onChange, disabled, point, focusRevision = 0, conf
   useEffect(() => { callback.current = onChange; blocked.current = disabled; }, [onChange, disabled]);
   useEffect(() => { if (disabled) markerRef.current?.dragging?.disable(); else markerRef.current?.dragging?.enable(); }, [disabled]);
   useEffect(() => {
-    const map = L.map(container.current!, { scrollWheelZoom: false }).setView([-12.065, -75.204], 13);
+    const map = L.map(container.current!, { scrollWheelZoom: false, zoomControl: false }).setView([-12.065, -75.204], 13);
+    L.control.zoom(SPANISH_ZOOM).addTo(map);
     mapRef.current = map;
     const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -79,6 +81,9 @@ export function DeliveryMap({ onChange, disabled, point, focusRevision = 0, conf
         districtLayer.bindTooltip(label, { sticky: true });
       },
     }).addTo(map);
+    // Los distritos solo informan (tooltip al pasar el puntero). Leaflet les añade escuchadores de foco para el
+    // tooltip y Chromium vuelve enfocable un SVG con esos escuchadores; tabindex=-1 los saca del orden de tabulación.
+    layer.eachLayer(district => (district as L.Path).getElement()?.setAttribute('tabindex', '-1'));
     const [west, south, east, north] = coverageBounds(coverage);
     map.fitBounds([[south, west], [north, east]], { padding: [20, 20] });
     return () => { map.removeLayer(layer); };

@@ -75,3 +75,19 @@ it('informa de API desactualizada sin fabricar totales', async () => {
   expect(await screen.findByRole('alert')).toHaveTextContent('Inicia la API de esta misma versión');
   expect(screen.queryByText('0')).not.toBeInTheDocument();
 });
+it('mantiene una lista de definición válida con el icono decorativo dentro de cada término', async () => {
+  vi.mocked(adminApi.summary).mockResolvedValue({ totalOrders: 6, pendingOrders: 2, totalUsers: 3, ordersByState: [{ state: 'PENDIENTE', count: 2 }] });
+  const { container } = view(); await screen.findByText('Pedidos por estado');
+  const metrics = container.querySelector('dl.admin-metrics')!;
+  const groups = [...metrics.children];
+  expect(groups.map(group => group.tagName)).toEqual(['DIV', 'DIV', 'DIV']);
+  for (const group of groups) expect([...group.children].map(child => child.tagName)).toEqual(['DT', 'DD']);
+  expect(groups.map(group => [group.querySelector('dt')!.textContent, group.querySelector('dd')!.textContent])).toEqual([['Pedidos registrados', '6'], ['Pedidos pendientes', '2'], ['Usuarios registrados', '3']]);
+  for (const icon of metrics.querySelectorAll('.admin-metric-icon')) {
+    expect(icon.parentElement!.tagName).toBe('DT');
+    expect(icon).toHaveAttribute('aria-hidden', 'true');
+    expect(icon.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+  }
+  expect(within(metrics as HTMLElement).getAllByRole('term').map(term => term.textContent)).toEqual(['Pedidos registrados', 'Pedidos pendientes', 'Usuarios registrados']);
+  expect(within(metrics as HTMLElement).getAllByRole('definition').map(value => value.textContent)).toEqual(['6', '2', '3']);
+});

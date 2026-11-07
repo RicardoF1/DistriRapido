@@ -3,6 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Calculation } from '../../types/planning';
 import { latLngs, routeColor, validGeometry } from './map-style';
+import { SPANISH_ZOOM } from '../../services/map-controls';
 
 const TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
@@ -20,7 +21,8 @@ export function AlternativesMap({ alternatives, activeId }: { alternatives: Calc
   const hasGeometry = drawable.length > 0;
   useEffect(() => {
     if (!hasGeometry || !container.current) return;
-    const view = L.map(container.current, { scrollWheelZoom: false, zoomControl: true });
+    const view = L.map(container.current, { scrollWheelZoom: false, zoomControl: false });
+    L.control.zoom(SPANISH_ZOOM).addTo(view);
     map.current = view;
     L.tileLayer(TILES, { maxZoom: 19, attribution: ATTRIBUTION })
       .on('tileerror', () => setError('No se pudo cargar el mapa base. Las alternativas siguen disponibles en sus tarjetas.'))

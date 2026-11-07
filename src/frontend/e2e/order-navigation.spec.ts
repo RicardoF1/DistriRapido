@@ -23,11 +23,11 @@ for (const role of ['Administrador', 'Operador / Técnico', 'Usuario Final / Con
     await expect(page.getByRole('heading', { name: role === 'Administrador' ? 'Panel de administración' : role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' })).toBeVisible();
     const allowed = role === 'Administrador' || role === 'Operador / Técnico';
     if (!allowed) {
-      await expect(page.locator('main').getByRole('link', { name: 'Registrar pedido', exact: true })).toHaveCount(0);
+      await expect(page.locator('main').getByRole('link', { name: /^Registrar pedido/ })).toHaveCount(0);
       await page.goto('/pedidos/nuevo'); await expect(page.getByRole('heading', { name: role === 'Administrador' ? 'Panel de administración' : role === 'Usuario Final / Conductor' ? 'Panel del conductor' : 'Acceso permitido' })).toBeVisible(); await expect(page.getByRole('form')).toHaveCount(0);
       expect(userRequests).toBe(0);
     } else {
-      await expect(page.locator('main').getByRole('link', { name: 'Registrar pedido', exact: true })).toBeVisible();
+      await expect(page.locator('main').getByRole('link', { name: /^Registrar pedido/ })).toBeVisible();
       if (role === 'Administrador') {
         await page.getByRole('link', { name: 'Usuarios y roles' }).click(); await expect(page).toHaveURL(/\/usuarios$/); await expect(page.getByRole('table')).toBeVisible();
         const navigation = page.getByRole('navigation', { name: 'Administración' });

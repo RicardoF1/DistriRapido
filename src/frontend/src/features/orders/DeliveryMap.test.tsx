@@ -62,3 +62,20 @@ it('volver a elegir la misma sugerencia centra y acerca incluso después de Ver 
   expect(screen.getByRole('region').querySelector('.delivery-marker')).toHaveClass('delivery-marker-unconfirmed');
   setView.mockRestore();
 });
+it('distritos informativos fuera de la tabulación, sin rol de control y zoom con nombres en español', async () => {
+  render(<DeliveryMap disabled={false} onChange={vi.fn()} />);
+  await ready(); const map = screen.getByRole('region', { name: 'Mapa de ubicación de entrega' });
+  const districts = [...map.querySelectorAll('.leaflet-overlay-pane path')];
+  expect(districts).toHaveLength(5);
+  for (const district of districts) {
+    expect(district).toHaveAttribute('tabindex', '-1');
+    expect(district).not.toHaveAttribute('role');
+    expect(district).not.toHaveAttribute('aria-label');
+  }
+  // Geometría y colores se conservan: un trazo por distrito con su color de leyenda.
+  expect(districts.map(path => path.getAttribute('stroke'))).toEqual(['#006948', '#2563eb', '#9a3412', '#7c3aed', '#0e7490']);
+  expect(districts.every(path => (path.getAttribute('d') ?? '').length > 0)).toBe(true);
+  expect(map).toHaveAttribute('tabindex', '0');
+  const zoom = [...map.querySelectorAll('.leaflet-control-zoom a')];
+  expect(zoom.map(control => [control.getAttribute('role'), control.getAttribute('aria-label'), control.getAttribute('title')])).toEqual([['button', 'Acercar', 'Acercar'], ['button', 'Alejar', 'Alejar']]);
+});

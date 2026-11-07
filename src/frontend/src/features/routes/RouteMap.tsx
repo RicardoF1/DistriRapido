@@ -2,11 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { RouteDetail } from '../../types/routes';
+import { SPANISH_ZOOM } from '../../services/map-controls';
 import { formatDistance, formatDuration, latLngs, legArrows, validGeometry } from './map-style';
 
 const ROUTE_COLOR = '#0b6bcb';
 const TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+// Origen y paradas son informativos: conservan el title al pasar el puntero, pero no son paradas de tabulación.
+const INFORMATIVE_MARKER = { interactive: true, keyboard: false } as const;
+// Las flechas son decorativas: sin interacción de puntero ni de teclado.
+const DECORATIVE_MARKER = { interactive: false, keyboard: false } as const;
 
 export function RouteMap({ version }: { version: RouteDetail['versiones'][number] }) {
   const container = useRef<HTMLDivElement>(null);
@@ -17,7 +22,8 @@ export function RouteMap({ version }: { version: RouteDetail['versiones'][number
   const line = validGeometry(geometry) ? geometry : null;
   useEffect(() => {
     if (!line || !container.current) return;
-    const view = L.map(container.current, { scrollWheelZoom: false, zoomControl: true });
+    const view = L.map(container.current, { scrollWheelZoom: false, zoomControl: false });
+    L.control.zoom(SPANISH_ZOOM).addTo(view);
     map.current = view;
     L.tileLayer(TILES, { maxZoom: 19, attribution: ATTRIBUTION })
       .on('tileerror', () => setError('No se pudo cargar el mapa base. El recorrido y las paradas siguen disponibles.'))
@@ -26,10 +32,10 @@ export function RouteMap({ version }: { version: RouteDetail['versiones'][number
     const casing = L.polyline(coordinates, { color: '#ffffff', weight: 10, opacity: .95, lineCap: 'round', lineJoin: 'round' }).addTo(view);
     L.polyline(coordinates, { color: ROUTE_COLOR, weight: 5, opacity: 1, lineCap: 'round', lineJoin: 'round' }).addTo(view);
     const origin = version.resultado.origin;
-    L.marker([origin.latitud, origin.longitud], { title: 'Origen: ' + origin.label, icon: L.divIcon({ className: 'route-stop-marker origin', html: '<span>O</span>', iconSize: [34, 34], iconAnchor: [17, 17] }) }).addTo(view);
-    for (const stop of version.paradas) L.marker([stop.datos.latitud, stop.datos.longitud], { title: 'Parada ' + stop.secuencia + ': ' + stop.datos.direccion, icon: L.divIcon({ className: 'route-stop-marker', html: '<span>' + Number(stop.secuencia) + '</span>', iconSize: [34, 34], iconAnchor: [17, 17] }) }).addTo(view);
+    L.marker([origin.latitud, origin.longitud], { ...INFORMATIVE_MARKER, title: 'Origen: ' + origin.label, icon: L.divIcon({ className: 'route-stop-marker origin', html: '<span>O</span>', iconSize: [34, 34], iconAnchor: [17, 17] }) }).addTo(view);
+    for (const stop of version.paradas) L.marker([stop.datos.latitud, stop.datos.longitud], { ...INFORMATIVE_MARKER, title: 'Parada ' + stop.secuencia + ': ' + stop.datos.direccion, icon: L.divIcon({ className: 'route-stop-marker', html: '<span>' + Number(stop.secuencia) + '</span>', iconSize: [34, 34], iconAnchor: [17, 17] }) }).addTo(view);
     const points = [origin, ...version.paradas.map(stop => ({ latitud: stop.datos.latitud, longitud: stop.datos.longitud })), ...(version.resultado.return_to_origin ? [origin] : [])];
-    for (const arrow of legArrows(line, points)) L.marker([arrow.lat, arrow.lng], { interactive: false, icon: L.divIcon({ className: 'route-direction', html: '<span style="transform: rotate(' + arrow.angle + 'deg)"></span>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(view);
+    for (const arrow of legArrows(line, points)) L.marker([arrow.lat, arrow.lng], { ...DECORATIVE_MARKER, icon: L.divIcon({ className: 'route-direction', html: '<span style="transform: rotate(' + arrow.angle + 'deg)"></span>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(view);
     bounds.current = casing.getBounds();
     view.fitBounds(bounds.current, { padding: [45, 45], maxZoom: 16 });
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(view);
