@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type SubmitEvent } from 'react';
 import { ApiError } from '../../services/api';
 import { routesApi } from '../../services/routes-api';
 import type { AssignmentCandidate, RouteAssignment } from '../../types/routes';
@@ -34,7 +34,7 @@ export function RouteAssignmentPanel({ routeId, onAssigned, onReload, onSessionE
     return () => controller.abort();
   }, [routeId, onSessionExpired]);
 
-  async function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (sending.current || !candidates || !selected || !confirmed) return;
     sending.current = true;
@@ -55,7 +55,7 @@ export function RouteAssignmentPanel({ routeId, onAssigned, onReload, onSessionE
   return <form className="route-assignment" onSubmit={event => void submit(event)} aria-busy={busy}>
     <fieldset disabled={busy}>
       <legend>Asignar conductor</legend>
-      {!ready && !error && <p role="status">Cargando conductores elegibles…</p>}
+      {!ready && !error && <p><output>Cargando conductores elegibles…</output></p>}
       <label htmlFor="route-assignment-driver">Conductor</label>
       <select id="route-assignment-driver" value={selected} disabled={!ready || candidates.length === 0} onChange={event => setSelected(event.target.value)}>
         <option value="">Selecciona un conductor</option>

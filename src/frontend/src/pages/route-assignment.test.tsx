@@ -75,7 +75,9 @@ it('mantiene el botón deshabilitado durante la carga, sin selección y sin conf
   let resolve!: (value: typeof candidates) => void;
   mock.candidates.mockReturnValue(new Promise(done => { resolve = done; }));
   open();
-  expect(await screen.findByText('Cargando conductores elegibles…')).toHaveAttribute('role', 'status');
+  const loadingCandidates = await screen.findByText('Cargando conductores elegibles…');
+  expect(loadingCandidates.tagName).toBe('OUTPUT');
+  expect(screen.getAllByRole('status')).toContain(loadingCandidates);
   const button = screen.getByRole('button', { name: 'Asignar ruta' });
   expect(button).toBeDisabled();
   resolve(candidates);
@@ -101,7 +103,9 @@ it('bloquea el doble envío, recarga el detalle y muestra la asignación sin red
   expect(screen.getByRole('button', { name: 'Asignando…' })).toBeDisabled();
   mock.get.mockResolvedValue(assigned);
   finish({ ruta_id: 'r', estado: 'ASIGNADA', asignado_en: assignedAt, current_version: 1, conductor: { conductor_id: 'd1', nombre_completo: 'Ana Elegible' } });
-  expect(await screen.findByText(/^Ruta asignada a Ana Elegible el /)).toHaveAttribute('role', 'status');
+  const assignedNotice = await screen.findByText(/^Ruta asignada a Ana Elegible el /);
+  expect(assignedNotice.tagName).toBe('OUTPUT');
+  expect(screen.getAllByRole('status')).toContain(assignedNotice);
   expect(await screen.findByText('ASIGNADA')).toBeVisible();
   expect(screen.getByText('Ana Elegible')).toBeVisible();
   expect(screen.getByText(new Date(assignedAt).toLocaleString('es-PE', { timeZone: 'America/Lima' }))).toBeVisible();
