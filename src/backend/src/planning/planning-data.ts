@@ -29,9 +29,14 @@ export async function prepareSnapshot(db: Prisma.TransactionClient, input: Prepa
   return { origin: { ...input.origin, label: input.origin.label.trim() }, return_to_origin: input.return_to_origin, inicio: new Date(input.inicio).toISOString(), fin: new Date(input.fin).toISOString(), orders, vehicle: { vehiculo_id: source.vehicle.vehiculo_id, capacidad_carga_kg: Number(source.vehicle.capacidad_carga_kg), capacidad_volumen_m3: source.vehicle.capacidad_volumen_m3 === null ? null : Number(source.vehicle.capacidad_volumen_m3) }, drivers: source.drivers.map(d => ({ conductor_id: d.conductor_id, intervals: d.disponibilidades.map(a => ({ disponibilidad_id: a.disponibilidad_id, inicio: a.inicio.toISOString(), fin: a.fin.toISOString() })) })), source_hash: makeHash(source), coverage: { version: coverageRelease.version, hash: makeHash(coverageRelease.files_sha256) } };
 }
 export const sourceInput = (s: PreparedSnapshot) => ({ orders: s.orders, vehiculo_id: s.vehicle.vehiculo_id, conductor_ids: s.drivers.map(d => d.conductor_id), inicio: s.inicio, fin: s.fin });
+export function compareLockIds(a: string, b: string): number {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
 export async function lockSnapshot(db: Prisma.TransactionClient, s: PreparedSnapshot) {
   const groups = [{ table: 'pedidos', key: 'pedido_id', ids: s.orders.map(o => o.pedido_id) }, { table: 'clientes', key: 'cliente_id', ids: s.orders.map(o => o.cliente_id) }, { table: 'vehiculos', key: 'vehiculo_id', ids: [s.vehicle.vehiculo_id] }, { table: 'conductores', key: 'conductor_id', ids: s.drivers.map(d => d.conductor_id) }, { table: 'disponibilidades_conductores', key: 'disponibilidad_id', ids: s.drivers.flatMap(d => d.intervals.map(i => i.disponibilidad_id)) }];
-  for (const group of groups) if (group.ids.length) await db.$queryRaw(Prisma.sql`SELECT ${Prisma.raw(group.key)} FROM ${Prisma.raw(group.table)} WHERE ${Prisma.raw(group.key)} IN (${Prisma.join([...new Set(group.ids)].sort().map(id => Prisma.sql`${id}::uuid`))}) ORDER BY ${Prisma.raw(group.key)} FOR SHARE`);
+  for (const group of groups) if (group.ids.length) await db.$queryRaw(Prisma.sql`SELECT ${Prisma.raw(group.key)} FROM ${Prisma.raw(group.table)} WHERE ${Prisma.raw(group.key)} IN (${Prisma.join([...new Set(group.ids)].sort(compareLockIds).map(id => Prisma.sql`${id}::uuid`))}) ORDER BY ${Prisma.raw(group.key)} FOR SHARE`);
 }
 export function routingDatabaseError(cause: unknown): never {
   if (cause instanceof Prisma.PrismaClientKnownRequestError) { if (['P2021', 'P2022'].includes(cause.code)) throw new ServiceUnavailableException('Sistema de rutas pendiente de habilitación: falta revisar y aplicar la migración autorizada.'); if (['P2034', 'P2028', 'P2002', 'P2003'].includes(cause.code)) throw new ConflictException('Los datos de planificación cambiaron. Recarga antes de reintentar.'); }

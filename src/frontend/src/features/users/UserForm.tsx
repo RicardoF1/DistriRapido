@@ -16,7 +16,7 @@ export function UserForm({ roles, initial, onSave }: { roles: RoleOption[]; init
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const normalized = email.trim().toLowerCase(); const next: Record<string, string> = {};
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized) || normalized.length > 255) next.email = 'Introduce un correo electrónico válido.';
+    if (normalized.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) next.email = 'Introduce un correo electrónico válido.';
     if (!roles.some((item) => item.rol_id === role)) next.role = 'Selecciona un rol permitido.';
     if (!initial && (password.length < 12 || password.length > 128)) next.password = 'La contraseña inicial debe tener entre 12 y 128 caracteres.';
     setErrors(next); setError('');

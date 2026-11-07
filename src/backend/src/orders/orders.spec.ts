@@ -92,3 +92,25 @@ describe('RF-003 → US-004', () => {
     expect(() => service.create({ ...valid, ventana_inicio: inicio, ventana_fin: fin })).toThrow('fin posterior'); expect(prisma.$transaction).not.toHaveBeenCalled();
   });
 });
+describe('S5852 ventana horaria con zona explícita', () => {
+  const fieldErrors = async (field: 'ventana_inicio' | 'ventana_fin', value: string) =>
+    (await validate(plainToInstance(CreateOrderDto, { ...valid, [field]: value }))).filter(e => e.property === field);
+  const fields = ['ventana_inicio', 'ventana_fin'] as const;
+  it.each(fields)('%s acepta ISO terminada en Z', async f => {
+    expect(await fieldErrors(f, '2026-10-02T09:00:00Z')).toHaveLength(0);
+    expect(await fieldErrors(f, '2026-10-02T09:00:00.000Z')).toHaveLength(0);
+  });
+  it.each(fields)('%s acepta ISO con desplazamiento ±hh:mm', async f => {
+    expect(await fieldErrors(f, '2026-10-02T09:00:00-05:00')).toHaveLength(0);
+    expect(await fieldErrors(f, '2026-10-02T09:00:00+05:30')).toHaveLength(0);
+  });
+  it.each(fields)('%s rechaza valor sin zona horaria', async f => {
+    const [error] = await fieldErrors(f, '2026-10-02T09:00:00');
+    expect(error.constraints).toHaveProperty('matches');
+  });
+  it.each(fields)('%s rechaza cadena larga con múltiples T en tiempo lineal', async f => {
+    const [error] = await fieldErrors(f, 'T'.repeat(100_000));
+    expect(error.constraints).toHaveProperty('matches');
+    expect(error.constraints).toHaveProperty('isIso8601');
+  });
+});

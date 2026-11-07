@@ -29,7 +29,7 @@ export function LoginForm({ onSuccess }: { onSuccess: (response: LoginResponse) 
     if (loading) return;
     const normalizedEmail = email.trim().toLowerCase();
     const nextErrors = {
-      email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) && normalizedEmail.length <= 255 ? undefined : 'Introduce un correo electrónico válido.',
+      email: normalizedEmail.length <= 255 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) ? undefined : 'Introduce un correo electrónico válido.',
       password: password.length > 0 ? undefined : 'Introduce tu contraseña.',
     };
     setErrors(nextErrors);

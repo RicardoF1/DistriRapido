@@ -76,4 +76,13 @@ describe('US-001 LoginForm', () => {
     expect(await screen.findByRole('alert')).toHaveFocus(); expect(screen.getByLabelText('Correo electrónico')).toHaveValue('test@example.com');
     expect(screen.getByRole('button', { name: /Iniciar sesión/ })).toBeEnabled();
   });
+  it('rechaza correo de más de 255 caracteres sin llamar a la API', async () => {
+    render(<LoginForm onSuccess={vi.fn()} />);
+    await userEvent.click(screen.getByLabelText('Correo electrónico'));
+    await userEvent.paste(`${'a'.repeat(250)}@ejemplo.com`);
+    await userEvent.type(screen.getByLabelText('Contraseña'), 'x');
+    await userEvent.click(screen.getByRole('button', { name: /Iniciar sesión/ }));
+    expect(screen.getByText('Introduce un correo electrónico válido.')).toBeVisible();
+    expect(authApi.login).not.toHaveBeenCalled();
+  });
 });
