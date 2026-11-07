@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { AppRoutes } from '../routes/AppRoutes';
-import { authApi } from '../services/api';
+import { ApiError, authApi } from '../services/api';
 import { driverProfileApi } from '../services/driver-profile-api';
 const auth = vi.hoisted(() => ({ session: { user: { usuario_id: 'account', email: 'driver@test', rol: { rol_id: 'role', nombre: 'Usuario Final / Conductor' } }, expiresAt: Date.now() + 900000 }, restoring: false, restoreError: '', acceptSession: vi.fn(), logout: vi.fn() }));
 vi.mock('../hooks/useAuth', () => ({ useAuth: () => auth }));
@@ -18,3 +18,19 @@ it('muestra rutas reales y detalle de entregas propias', async () => { open(); e
 it('actualiza una entrega usando la versiÃ³n visible y refresca la ruta', async () => { open(); await userEvent.click(await screen.findByRole('button', { name: 'Ver entregas' })); await userEvent.click(await screen.findByRole('button', { name: 'Marcar entregada' })); await waitFor(() => expect(driverProfileApi.updateDelivery).toHaveBeenCalledWith('stop', { estado: 'ENTREGADA', expected_version: 0 })); expect(await screen.findByRole('status')).toHaveTextContent('Estado de entrega actualizado correctamente.'); });
 it('exige causa antes de registrar no entregada', async () => { open(); await userEvent.click(await screen.findByRole('button', { name: 'Ver entregas' })); await userEvent.click(await screen.findByRole('button', { name: 'Registrar no entregada' })); expect(await screen.findByRole('alert')).toHaveTextContent('Escribe la causa'); expect(driverProfileApi.updateDelivery).not.toHaveBeenCalled(); });
 it('muestra estado vacÃ­o sin inventar rutas', async () => { vi.mocked(driverProfileApi.routes).mockResolvedValue([]); open(); expect(await screen.findByText('No tienes rutas asignadas.')).toBeVisible(); });
+it('muestra el rechazo real del backend, mantiene la entrega PENDIENTE y no reintenta', async () => {
+  const message = 'El pedido debe estar EN_RUTA antes de registrarse como entregado.';
+  vi.mocked(driverProfileApi.updateDelivery).mockRejectedValue(new ApiError(message, 409));
+  open();
+  await userEvent.click(await screen.findByRole('button', { name: 'Ver entregas' }));
+  await userEvent.click(await screen.findByRole('button', { name: 'Marcar entregada' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent(message);
+  expect(screen.queryByText('Ya existe un usuario con ese correo electrónico.')).not.toBeInTheDocument();
+  expect(screen.getByText(/Estado: PENDIENTE/)).toBeVisible();
+  expect(screen.getByText('Progreso: 0/1 (0%)')).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Marcar entregada' })).toBeEnabled();
+  await new Promise(resolve => setTimeout(resolve, 50));
+  expect(driverProfileApi.updateDelivery).toHaveBeenCalledTimes(1);
+  expect(driverProfileApi.route).toHaveBeenCalledTimes(1);
+  expect(auth.acceptSession).not.toHaveBeenCalled();
+});

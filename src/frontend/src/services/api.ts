@@ -68,6 +68,12 @@ export async function request<T>(path: string, options: RequestInit): Promise<T>
       );
     }
 
+    if (/^\/driver\/(?:routes|deliveries)(?:\/|$)/.test(path) && response.status !== 401) {
+      const payload = await response.json().catch(() => null) as { message?: unknown } | null;
+      const fallback: Record<number, string> = { 400: 'Revisa el estado y la causa de la entrega.', 403: 'La entrega no existe o no está asignada a tu cuenta.', 404: 'Ruta o entrega no encontrada.', 409: 'La entrega cambió. Recarga la ruta antes de reintentar.' };
+      throw new ApiError(typeof payload?.message === 'string' ? payload.message : fallback[response.status] ?? 'No se pudo completar la operación de la ruta.', response.status);
+    }
+
     const orderRead = /^\/orders(?:\?|\/)/.test(path);
     if (response.status === 401) throw new ApiError('Credenciales incorrectas o usuario no habilitado.', 401);
     if (response.status === 403) throw new ApiError(orderRead ? 'No tienes permisos para consultar pedidos.' : path === '/orders' ? 'No tienes permisos para registrar pedidos.' : 'No tienes permisos para administrar usuarios y roles.', 403);
@@ -76,7 +82,7 @@ export async function request<T>(path: string, options: RequestInit): Promise<T>
       throw new ApiError('No se pudo registrar el pedido. Revisa los campos obligatorios, coordenadas, peso, volumen y ventana de entrega.', 400);
     }
     if (path === '/orders' && response.status === 503) throw new ApiError('La cobertura geográfica no está disponible o no pudo verificarse. No se puede registrar el pedido.', 503);
-    if (response.status === 409) throw new ApiError('Ya existe un usuario con ese correo electrónico.', 409);
+    if (response.status === 409 && /^\/users(?:[/?]|$)/.test(path)) throw new ApiError('Ya existe un usuario con ese correo electrónico.', 409);
     if (response.status === 404) {
       if (orderRead) throw new ApiError('Pedido no encontrado.', 404);
       const userDetail = /^\/users\/[^/]+$/.test(path);

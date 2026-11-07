@@ -37,3 +37,14 @@ it('registro HTTP 503 informa cobertura no disponible sin fingir éxito', async 
   vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:503}));
   try { await expect(request('/orders',{method:'POST'})).rejects.toEqual(new ApiError('La cobertura geográfica no está disponible o no pudo verificarse. No se puede registrar el pedido.',503)); } finally { vi.unstubAllGlobals(); }
 });
+describe('409 de usuarios limitado a /users', () => {
+  afterEach(() => vi.unstubAllGlobals());
+  it.each(['/users', '/users/id'])('%s conserva el mensaje de correo duplicado', async (path) => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 409 }));
+    await expect(request(path, { method: 'POST' })).rejects.toEqual(new ApiError('Ya existe un usuario con ese correo electrónico.', 409));
+  });
+  it.each(['/roles', '/vehicles', '/orders/id/status'])('409 de %s no se presenta como usuario duplicado', async (path) => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 409 }));
+    await expect(request(path, { method: 'PATCH' })).rejects.toEqual(new ApiError('No se pudo completar la solicitud. Inténtalo de nuevo.', 409));
+  });
+});
