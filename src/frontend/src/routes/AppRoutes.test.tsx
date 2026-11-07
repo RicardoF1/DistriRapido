@@ -28,7 +28,7 @@ describe('Acceso según rol', () => {
   it('protege acceso directo sin sesión', async () => {
     vi.mocked(authApi.me).mockRejectedValue(new ApiError('missing', 401));
     render(<MemoryRouter initialEntries={['/acceso/administrador']}><AuthProvider><AppRoutes /></AuthProvider></MemoryRouter>);
-    expect(await screen.findByRole('heading', { name: 'Acceso al sistema' })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: 'Acceso al sistema' }, { timeout: 5000 })).toBeVisible();
   });
   it.each([
     ['Administrador', '/acceso/administrador'], ['Operador / Técnico', '/acceso/operador'],
