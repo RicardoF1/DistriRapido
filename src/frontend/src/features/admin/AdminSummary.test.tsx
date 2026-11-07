@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { StrictMode } from 'react';
@@ -90,4 +90,21 @@ it('mantiene una lista de definición válida con el icono decorativo dentro de 
   }
   expect(within(metrics as HTMLElement).getAllByRole('term').map(term => term.textContent)).toEqual(['Pedidos registrados', 'Pedidos pendientes', 'Usuarios registrados']);
   expect(within(metrics as HTMLElement).getAllByRole('definition').map(value => value.textContent)).toEqual(['6', '2', '3']);
+});
+it('valor de métrica: error, pendiente de carga y cantidad con formato es-PE', async () => {
+  let resolve!: (value: Awaited<ReturnType<typeof adminApi.summary>>) => void;
+  vi.mocked(adminApi.summary).mockReturnValueOnce(new Promise(done => { resolve = done; })).mockRejectedValueOnce(new Error('offline'));
+  const { container } = view();
+  const values = () => [...container.querySelectorAll('dl.admin-metrics dd')];
+  // Sin datos todavía: guion con nombre accesible.
+  for (const value of values()) { expect(value).toHaveTextContent('—'); expect(value.querySelector('span')).toHaveAttribute('aria-label', 'Cantidad pendiente de carga'); }
+  // Con datos: cantidades con formato es-PE.
+  await act(async () => resolve({ totalOrders: 1234567, pendingOrders: 2500, totalUsers: 7, ordersByState: [] }));
+  await screen.findByText('Pedidos por estado');
+  expect(values().map(value => value.textContent)).toEqual([(1234567).toLocaleString('es-PE'), (2500).toLocaleString('es-PE'), '7']);
+  expect(values()[0].textContent).not.toBe('1234567');
+  // Con error: «No disponible» sin cantidades.
+  await userEvent.click(screen.getByRole('button', { name: 'Actualizar resumen' }));
+  expect(await screen.findByRole('alert')).toBeVisible();
+  expect(values().map(value => value.textContent)).toEqual(['No disponible', 'No disponible', 'No disponible']);
 });

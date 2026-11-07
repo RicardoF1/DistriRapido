@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react';
 import { adminApi, type AdminSummary as Summary } from '../../services/admin-api';
 import { ApiError } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
+/** Valor visible de una métrica: no disponible por error, pendiente de carga o cantidad con formato es-PE. */
+function metricValue(error: string, value: number | undefined) {
+  if (error) return 'No disponible';
+  if (value === undefined) return <span aria-label="Cantidad pendiente de carga">—</span>;
+  return value.toLocaleString('es-PE');
+}
 export function AdminSummary() {
   const { session, acceptSession } = useAuth();
   const [data, setData] = useState<Summary | null>(null);
@@ -31,7 +37,7 @@ export function AdminSummary() {
     <div className="admin-summary-heading"><h2 id="admin-summary-title">Resumen general</h2>{data && !error && <button type="button" className="button button-secondary" onClick={reload}>Actualizar resumen</button>}</div>
     {error ? <div className="admin-summary-error"><p role="alert">{error}</p><button type="button" className="button button-primary" onClick={reload}>Reintentar resumen</button></div> : !data && <p role="status">Cargando indicadores…</p>}
     <dl className="admin-metrics">{metrics.map(metric => <div className="admin-metric" key={metric.label}>
-      <dt><span className="admin-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{metric.icon}</svg></span>{metric.label}</dt><dd className={!data || error ? "admin-metric-value-muted" : undefined}>{error ? 'No disponible' : metric.value === undefined ? <span aria-label="Cantidad pendiente de carga">—</span> : metric.value.toLocaleString('es-PE')}</dd>
+      <dt><span className="admin-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{metric.icon}</svg></span>{metric.label}</dt><dd className={!data || error ? "admin-metric-value-muted" : undefined}>{metricValue(error, metric.value)}</dd>
     </div>)}</dl>
     {data && !error && <>
       <div className="admin-state-summary"><h3>Pedidos por estado</h3>{data.ordersByState.length ? <dl>{data.ordersByState.map(group => <div key={group.state}><dt>{group.state}</dt><dd>{group.count.toLocaleString('es-PE')}</dd></div>)}</dl> : <p>No hay pedidos registrados.</p>}</div>

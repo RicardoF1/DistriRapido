@@ -4,7 +4,12 @@ import { vi } from 'vitest';
 import { DeliveryMap } from './DeliveryMap';
 import L from 'leaflet';
 import { districtAt, loadCoverage } from '../../services/coverage';
-async function ready() { await waitFor(() => expect(screen.getByRole('button', { name: 'Ver cobertura' })).toBeEnabled()); }
+// El botón se habilita al recibir la cobertura, pero los distritos y coverageRef se aplican en un efecto posterior:
+// esperar a los cinco trazados SVG garantiza que el mapa ya puede validar y seleccionar puntos.
+async function ready() {
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Ver cobertura' })).toBeEnabled());
+  await waitFor(() => expect(screen.getByRole('region', { name: 'Mapa de ubicación de entrega' }).querySelectorAll('.leaflet-overlay-pane path')).toHaveLength(5));
+}
 it('sugerencia centra mapa; dragend fuera de cobertura invalida selección', async () => {
   const markerSpy = vi.spyOn(L, 'marker'); const viewSpy = vi.spyOn(L.Map.prototype, 'setView');
   const onChange = vi.fn();
