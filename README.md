@@ -72,15 +72,15 @@ La línea base del cierre permanece en los informes anteriores. Las mejoras sigu
 Documentación vigente:
 
 - [Mejoras posteriores al Sprint 1 V_1_1_0](docs/03%20Implementación/05%20Mejoras%20posteriores%20al%20Sprint%201%20V_1_1_0.md): arquitectura, requisitos y reglas complementarias, con trazabilidad.
-- [Verificación y preparación de entrega V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/01%20Verificación%20y%20entrega%20V_1_1_0.md): evidencia de la fase inicial; sus 54 archivos son un inventario histórico, no la selección final actual.
+- «Verificación y preparación de entrega V_1_1_0» (documento retirado en 19d6c45; disponible en el historial de Git): evidencia de la fase inicial; sus 54 archivos son un inventario histórico, no la selección final actual.
 - [Frontend](src/frontend/README.md), [geodata](geodata/README.md), [integración de cobertura](geodata/FRONTEND-INTEGRATION.md) y [sincronización del marcador](geodata/MARKER-SYNC.md).
 
 La fuente INEI es provisional: su portal etiqueta los límites como actualizados al 2023. El `last_change` interno de 2026 no demuestra vigencia administrativa a 2026. No se verificó una licencia explícita de redistribución del archivo; revisar ese permiso antes de incorporar los GeoJSON al repositorio público. RAR y GeoPackage fuente no se incluyen.
 
 Frontend y backend utilizan el paquete privado `geodata/coverage/v1/`, con metadatos aprobados en `geodata/coverage-release.json` y política única en `geodata/coverage.ts`. Docker usa contexto raíz y copias selectivas con `.dockerignore`; la disponibilidad del paquete se comprueba antes de construir. Las imágenes contienen derivados INEI y no están autorizadas para publicación.
 
-- [Resumen administrativo V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/02%20Resumen%20administrativo%20V_1_1_0.md).
-- [Reconciliación sobre main V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliación%20sobre%20main%20V_1_1_0.md): rutas vigentes, verificaciones e inventario final.
+- «Resumen administrativo V_1_1_0» (documento retirado en 19d6c45; disponible en el historial de Git).
+- «Reconciliación sobre main V_1_1_0» (documento retirado en 19d6c45; disponible en el historial de Git): rutas vigentes, verificaciones e inventario final.
 
 ## Validación backend y empaquetado privado
 
@@ -94,7 +94,7 @@ node scripts/check-geodata-publication.cjs
 
 El aprovisionamiento compara versión, cinco UBIGEO y hashes; no sobrescribe recursos existentes diferentes. El paquete privado y los artefactos TypeScript generados están excluidos de Git. La comprobación del índice detecta recursos geográficos incluidos accidentalmente; ejecutarla nuevamente después de cualquier selección manual de archivos. No se equipara descarga gratuita con permiso de redistribución.
 
-El perfil de mantenimiento de `docker-compose.migrations.yml` sustituye el antiguo `prisma migrate deploy` automático. Solo para inicialización o actualización expresamente autorizada, con respaldo y revisión previa, ejecutar `docker compose -f docker-compose.yml -f docker-compose.migrations.yml --profile maintenance run --rm migrate` antes de arrancar la API. No se ejecutó esta operación sobre la base existente. Procedimiento completo, errores, pruebas y limitaciones: [Validación backend y empaquetado V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md).
+El perfil de mantenimiento de `docker-compose.migrations.yml` sustituye el antiguo `prisma migrate deploy` automático. Solo para inicialización o actualización expresamente autorizada, con respaldo y revisión previa, ejecutar `docker compose -f docker-compose.yml -f docker-compose.migrations.yml --profile maintenance run --rm migrate` antes de arrancar la API. No se ejecutó esta operación sobre la base existente. Procedimiento completo, errores, pruebas y limitaciones: «Validación backend y empaquetado V_1_1_0» (documento retirado en 19d6c45; disponible en el historial de Git).
 
 ## Rama compartida para desarrollo
 
@@ -108,13 +108,13 @@ Los fixtures de `test-fixtures/coverage-synthetic.json` contienen únicamente re
 
 Vite carga recursos privados solo si están aprovisionados y su SHA-256 coincide con el release. Sin el paquete, compila sin emitir cobertura; la carga en navegador falla cerrada. Los E2E que ejercitan el mapa de producción necesitan un entorno privado autorizado; no forman parte del workflow actual ni se declara que hayan sido ejecutados en esta corrección.
 
-La corrección y sus verificaciones están documentadas en [Corrección CI y fixtures sintéticos V_1_1_0](docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/06%20Corrección%20CI%20y%20fixtures%20sintéticos%20V_1_1_0.md).
+La corrección y sus verificaciones están documentadas en «Corrección CI y fixtures sintéticos V_1_1_0» (documento retirado en 19d6c45; disponible en el historial de Git).
 
 ## Avances compartidos del Sprint 3
 
 La rama `feature/sprint-3-avances` incorpora el panel del conductor, cuentas vinculadas, restablecimiento/cambio de contraseñas con revocación de sesiones y el incremento parcial de planificación/consulta HGR-32 / US-013. Consulta [el informe de entrega](docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Sprint-3/08%20Entrega%20p%C3%BAblica%20de%20avances%20V_1_1_0.md) y los informes técnicos originales de esa carpeta.
 
-La migración de rutas está aplicada y OSRM local (v26.10.0, grafo MLD de Huancayo, perfil driving) fue aprovisionado y validado funcionalmente el 2026-11-06 desde el navegador: el recorrido de referencia se calculó por vías con OSRM y quedó registrado con su procedencia y revisión. El procedimiento está en [Aprovisionamiento local de OSRM](infra/osrm/README.md) y el resultado en la [evidencia técnica de cierre](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/06%20Evidencia%20técnica%20de%20cierre%20del%20Sprint%203%20V_1_0_0.md). La asignación de rutas a conductores está implementada y probada en el backend (`PATCH /routes/:id/assignment`, con control de versión), pero su integración en la interfaz sigue pendiente: la interfaz no ofrece esa acción en este incremento y ninguna ruta está asignada. No hay optimización genética ni tráfico en tiempo real. Las credenciales, respaldos, datos geográficos privados, el PBF y el grafo OSRM se aprovisionan por separado y no están en GitHub. Antes de actualizar una base existente, revisar las migraciones pendientes: `migrate deploy` aplicaría todas.
+La migración de rutas está aplicada y OSRM local (v26.10.0, grafo MLD de Huancayo, perfil driving) fue aprovisionado y validado funcionalmente el 2026-11-06 desde el navegador: el recorrido de referencia se calculó por vías con OSRM y quedó registrado con su procedencia y revisión. El procedimiento está en [Aprovisionamiento local de OSRM](infra/osrm/README.md) y el resultado en la [evidencia técnica de cierre](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/06%20Evidencia%20técnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md). La asignación de rutas a conductores está implementada y probada en el backend (`PATCH /routes/:id/assignment`, con control de versión), pero su integración en la interfaz sigue pendiente: la interfaz no ofrece esa acción en este incremento y ninguna ruta está asignada. No hay optimización genética ni tráfico en tiempo real. Las credenciales, respaldos, datos geográficos privados, el PBF y el grafo OSRM se aprovisionan por separado y no están en GitHub. Antes de actualizar una base existente, revisar las migraciones pendientes: `migrate deploy` aplicaría todas.
 
 ## Siguiente documento / Siguiente trabajo recomendado
 
@@ -126,9 +126,9 @@ Resolver y documentar los permisos de redistribución INEI antes de publicar dat
 <!-- SPRINT3-CIERRE -->
 ## Cierre del Sprint 3
 
-- [Revisión del Sprint](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/01%20Revisión%20del%20Sprint%20V_1_0_0.md)
-- [Retrospectiva del Sprint](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
-- [Calidad de código](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/03%20Calidad%20de%20código%20V_1_0_0.md)
-- [OWASP](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/04%20OWASP%20V_1_0_0.md)
-- [WCAG](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/05%20WCAG%20V_1_0_0.md)
-- [Evidencia técnica](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/06%20Evidencia%20técnica%20de%20cierre%20del%20Sprint%203%20V_1_0_0.md)
+- [Revisión del Sprint](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/01%20Revisión%20del%20Sprint%20V_1_1_0.md)
+- [Retrospectiva del Sprint](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/02%20Retrospectiva%20del%20Sprint%20V_1_1_0.md)
+- [Calidad de código](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/03%20Calidad%20de%20código%20V_1_1_0.md)
+- [OWASP](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/04%20OWASP%20V_1_1_0.md)
+- [WCAG](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/05%20WCAG%20V_1_1_0.md)
+- [Evidencia técnica](docs/03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/06%20Evidencia%20técnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md)
