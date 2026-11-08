@@ -238,7 +238,7 @@ HGR-43 recoge la deuda de reprogramación y replanificación posterior a NO_ENTR
 
 ![HGR-36 Finalizada y vinculada con HGR-43](./evidencias/jira/04-hgr-36-cierre-y-vinculo.png)
 
-*Figura 1. HGR-36 / US-017 en Finalizada, resolución Listo (2026-11-07 22:31 -05:00), 5 Story Points, SCRUM Sprint 3 cerrado, vinculada (relates to) con HGR-43 en Tareas por hacer, y con 3 comentarios. Imagen generada con Microsoft Edge desde la consulta de solo lectura de Jira mediante acli del 2026-11-07; no es una captura de la interfaz web. Se omitieron responsables, correos, identificadores de cuenta y avatares. Sin escrituras en Jira.*
+*Figura 1. Vista de HGR-36 / US-017 en Jira: Finalizada, resolución Listo, Story point estimate 5, vínculo «relates to» con HGR-43 y los tres comentarios (el tercero, recortado tras su título). Captura directa de la interfaz web de Jira, tomada el 2026-11-07. Los datos personales fueron ocultados: nombres, avatares e iconos de imagen aparecen tapados en gris. Datos contrastados de forma independiente con acli en solo lectura; sin cambios en los datos de Jira.*
 
 ## Restricciones
 
