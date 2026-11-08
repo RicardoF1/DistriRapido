@@ -47,15 +47,15 @@ El estado técnico corresponde a lo demostrado en el entorno local. El estado ad
 | HGR-35 | Consulta de rutas propias del conductor | Validada con un conductor de prueba | Finalizada, resolución Listo |
 | HGR-36 | Registro de entregas y progreso | ENTREGADA validada en dos rutas completadas (2 entregas cada una); rechazo 409 sin cambios parciales validado; NO_ENTREGADA validada con causa, con deuda funcional abierta (ver «Deuda funcional») | Finalizada, resolución Listo, con comentarios 10000 (validación y bloqueo), 10001 (decisión del equipo) y 10002 (comentario final) |
 
-![HGR-32 a HGR-36 en Finalizada, resolución Listo](./evidencias/jira/02-historias-finalizadas.png)
+![Cronograma de Jira con HGR-32 a HGR-36 en Finalizada](./evidencias/jira/02-historias-finalizadas.png)
 
-*Figura 1. Búsqueda de actividades de Jira filtrada por SCRUM Sprint 3: HGR-32 a HGR-36 en Finalizada, resolución Listo. Captura directa de la interfaz web de Jira, tomada el 2026-11-07. Los datos personales fueron ocultados: nombres, avatares e iconos de imagen aparecen tapados en gris. Datos contrastados de forma independiente con acli en solo lectura; sin cambios en los datos de Jira.*
+*Figura 1. Cronograma de Jira con las épicas HGR-8 y HGR-9 desplegadas: HGR-32 a HGR-36 en Finalizada (claves tachadas por estar resueltas) y HGR-43 en Tareas por hacer; la resolución Listo de las cinco historias se contrastó con acli. Captura directa y sin alteraciones de la interfaz web de Jira, tomada el 2026-11-08. El encuadre excluye datos personales. Datos contrastados mediante acli en modo de solo lectura.*
 
 El Sprint «SCRUM Sprint 3» se activó y se cerró administrativamente en Jira el 2026-11-07, con fechas administrativas del 2026-10-15 al 2026-11-07 (-05:00). Terminó con HGR-32 a HGR-36 en Finalizada, resolución Listo, y 23 Story Points finalizados. La épica HGR-8 se retiró del Sprint 3 antes del cierre y continúa En curso. La deuda de NO_ENTREGADA quedó registrada como HGR-43, en el backlog y pendiente.
 
 ![Informe de trabajo completado de SCRUM Sprint 3 con 23 puntos](./evidencias/jira/01-sprint-3-cerrado.png)
 
-*Figura 2. Informe de trabajo completado de SCRUM Sprint 3: periodo del 15 de octubre al 7 de noviembre de 2026, meta del Sprint, alcance y trabajo completado de 23 puntos de historia, retirada de HGR-8 y evento «Sprint completado» del 2026-11-07 22:32. Captura directa de la interfaz web de Jira, tomada el 2026-11-07. Los datos personales fueron ocultados: nombres, avatares e iconos de imagen aparecen tapados en gris. Datos contrastados de forma independiente con acli en solo lectura; sin cambios en los datos de Jira.*
+*Figura 2. Informe de trabajo completado de SCRUM Sprint 3: periodo del 15 de octubre al 7 de noviembre de 2026, meta del Sprint, alcance y trabajo completado de 23 puntos de historia, retirada de HGR-8 y evento «Sprint completado» del 2026-11-07 22:32. Captura directa y sin alteraciones de la interfaz web de Jira, tomada el 2026-11-08. El encuadre excluye datos personales. Datos contrastados mediante acli en modo de solo lectura.*
 
 ## Validación
 
@@ -83,7 +83,7 @@ Los checks de backend, frontend, CodeQL y code scanning aprobaron antes de la in
 
 ![HGR-43 en Tareas por hacer dentro del Backlog](./evidencias/jira/03-hgr-43-backlog.png)
 
-*Figura 3. Backlog del tablero: HGR-43 / US-024: Reprogramar y replanificar pedidos no entregados, en Tareas por hacer y fuera de cualquier Sprint. Captura directa de la interfaz web de Jira, tomada el 2026-11-07. Los datos personales fueron ocultados: nombres, avatares e iconos de imagen aparecen tapados en gris. Datos contrastados de forma independiente con acli en solo lectura; sin cambios en los datos de Jira.*
+*Figura 3. Backlog del tablero: HGR-43 / US-024: Reprogramar y replanificar pedidos no entregados, en Tareas por hacer y fuera de cualquier Sprint. Captura directa y sin alteraciones de la interfaz web de Jira, tomada el 2026-11-08. El encuadre excluye datos personales. Datos contrastados mediante acli en modo de solo lectura.*
 - **Placa histórica (RN-020):** las versiones de ruta guardan solo el identificador del vehículo; si la placa del vehículo cambia, la ruta muestra la placa actual y no la usada al planificar.
 - **H1, revalidación de sesión:** al recuperar el foco de la ventana se revalida la sesión y se vuelve a montar la vista; se pierde la contraseña escrita en el inicio de sesión y se cierra la lista de entregas abierta.
 - **Rotación de flechas del mapa:** la CSP `style-src 'self'` bloquea el estilo en línea de las flechas de sentido; pendiente de resolver con clases CSS predefinidas, sin debilitar la CSP.

@@ -238,7 +238,7 @@ HGR-43 recoge la deuda de reprogramación y replanificación posterior a NO_ENTR
 
 ![HGR-36 Finalizada y vinculada con HGR-43](./evidencias/jira/04-hgr-36-cierre-y-vinculo.png)
 
-*Figura 1. Vista de HGR-36 / US-017 en Jira: Finalizada, resolución Listo, Story point estimate 5, vínculo «relates to» con HGR-43 y los tres comentarios (el tercero, recortado tras su título). Captura directa de la interfaz web de Jira, tomada el 2026-11-07. Los datos personales fueron ocultados: nombres, avatares e iconos de imagen aparecen tapados en gris. Datos contrastados de forma independiente con acli en solo lectura; sin cambios en los datos de Jira.*
+*Figura 1. Vista de HGR-36 / US-017 en Jira: Finalizada, resolución Listo, «Story Points: 5» en la descripción y vínculo «relates to» con HGR-43. Los comentarios quedan fuera del encuadre porque muestran a sus autores; acli confirma los tres comentarios. Captura directa y sin alteraciones de la interfaz web de Jira, tomada el 2026-11-08. El encuadre excluye datos personales. Datos contrastados mediante acli en modo de solo lectura.*
 
 ## Restricciones
 
@@ -296,6 +296,40 @@ En esa fecha existían tres rutas, generadas en tres ejecuciones manuales en la 
 En la validación del 06/11, antes del commit 7745ef3, la interfaz todavía no ofrecía asignación; por eso las tres rutas estaban entonces en estado GENERADA y sin conductor. La asignación desde la interfaz se habilitó después con `7745ef3`; el estado actual está en «Estado de los datos locales (2026-11-07, consulta BEGIN READ ONLY)». El cálculo es secuencial sobre el orden confirmado (`optimized=false`), no una ruta óptima global, y no considera tráfico en tiempo real. OSRM no devuelve `data_version`; la trazabilidad se apoya en la revisión del grafo.
 
 El procedimiento completo, la procedencia de los datos y los comandos están en `infra/osrm/README.md`. El PBF, el recorte, el grafo y su manifiesto permanecen en `.local/osrm-data`, fuera de Git.
+
+### Evidencia visual en la interfaz (2026-11-08)
+
+Consulta en modo de solo lectura con la sesión iniciada personalmente por el equipo, primero como administrador y después como conductor. Una consulta `BEGIN READ ONLY` del 2026-11-08 registra 10 rutas (1 ASIGNADA, 3 COMPLETADA, 6 GENERADA), 15 paradas (4 ENTREGADA, 1 NO_ENTREGADA, 10 PENDIENTE), 8 pedidos y 2 vehículos; incluye dos rutas calculadas el 2026-11-07 después de la consulta de «Estado de los datos locales». Las huellas md5 de rutas, paradas, pedidos, vehículos y estados de entrega fueron idénticas antes y después de las capturas, y la red registró solo consultas GET a la API.
+
+Ruta calculada con OSRM: el detalle de una ruta GENERADA con la estrategia «Ventana más próxima» muestra el mapa con el trazado, 14.44 km, 22.4 min de viaje, 152.7 min con atención y esperas, la procedencia «Proveedor: OSRM · Perfil: driving» con la misma revisión del grafo y la restricción de capacidad de volumen que impide confirmarla.
+
+![Detalle de una ruta calculada con OSRM](./evidencias/funcional/01-ruta-osrm-calculada.png)
+
+*Figura 2. Detalle de recorrido de una ruta GENERADA: mapa del trazado OSRM, distancia, viaje estimado, procedencia y revisión del grafo, y restricción CAPACIDAD_VOLUMEN. Se excluyeron la cabecera con el correo y la tabla de paradas con identificadores y direcciones. Captura directa y sin alteraciones de la interfaz web de EcoRuta, tomada el 2026-11-08. Los datos personales fueron excluidos mediante encuadre. Navegación en modo de consulta, sin escrituras funcionales.*
+
+Asignación (HGR-34): la ruta asignada desde la interfaz muestra el estado ASIGNADA, el conductor y la fecha de asignación, y la interfaz indica que no permite reasignar.
+
+![Ruta asignada a un conductor](./evidencias/funcional/02-asignacion-conductor.png)
+
+*Figura 3. Detalle de una ruta ASIGNADA el 7/11/2026 a las 3:39:56 p. m., con 6.51 km y 9.4 min. El conductor figura solo con su nombre de pila. Se excluyeron la cabecera con el correo y la tabla de paradas. Captura directa y sin alteraciones de la interfaz web de EcoRuta, tomada el 2026-11-08. Los datos personales fueron excluidos mediante encuadre. Navegación en modo de consulta, sin escrituras funcionales.*
+
+Consulta del conductor (HGR-35): el panel del conductor muestra «Mi cuenta», «Mi jornada» (1 ruta activa asignada), «Mis rutas» con la ruta, su distancia, duración y progreso, y «Mis entregas», con la navegación lateral por secciones.
+
+![Panel del conductor](./evidencias/funcional/03-panel-conductor.png)
+
+*Figura 4. Panel del conductor con la navegación por secciones y la ruta activa ASIGNADA (6.51 km, 9.4 min, progreso 0/1). Se excluyó la cabecera con el correo de la cuenta. Captura directa y sin alteraciones de la interfaz web de EcoRuta, tomada el 2026-11-08. Los datos personales fueron excluidos mediante encuadre. Navegación en modo de consulta, sin escrituras funcionales.*
+
+Entregas y progreso (HGR-36): «Ver entregas» consulta la ruta activa mediante GET y muestra el progreso 0/1 (0%) y la parada en PENDIENTE. El panel del conductor solo lista rutas activas; las paradas ENTREGADA y NO_ENTREGADA pertenecen a las rutas completadas descritas en «Estado de los datos locales».
+
+![Entregas y progreso de la ruta activa](./evidencias/funcional/04-entregas-y-progreso.png)
+
+*Figura 5. «Mis rutas» y «Mis entregas» del conductor: ruta ASIGNADA no iniciada, progreso 0/1 (0%) y parada 1 en PENDIENTE. La dirección visible no incluye número; el recorte termina antes de los controles de registro, que no se usaron. Captura directa y sin alteraciones de la interfaz web de EcoRuta, tomada el 2026-11-08. Los datos personales fueron excluidos mediante encuadre. Navegación en modo de consulta, sin escrituras funcionales.*
+
+Ruta completada: la ruta de referencia validada con OSRM (3.89 km, 5.9 min, «Secuencial OSRM») corresponde a la ruta A y figura COMPLETADA, asignada el 2026-11-06 a las 23:14; sus dos paradas constan como ENTREGADA en «Estado de los datos locales».
+
+![Ruta de referencia completada](./evidencias/funcional/05-ruta-completada.png)
+
+*Figura 6. Detalle de la ruta de referencia en estado COMPLETADA, con el mapa OSRM, 3.89 km, 5.9 min y la procedencia del grafo. El progreso final y el estado de cada entrega aparecen en la tabla de paradas, que se excluyó porque contiene identificadores y direcciones de clientes. Captura directa y sin alteraciones de la interfaz web de EcoRuta, tomada el 2026-11-08. Los datos personales fueron excluidos mediante encuadre. Navegación en modo de consulta, sin escrituras funcionales.*
 
 ## Conclusión
 
