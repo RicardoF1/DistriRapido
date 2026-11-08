@@ -236,6 +236,10 @@ Consulta en solo lectura después del cierre, 2026-11-07.
 
 HGR-43 recoge la deuda de reprogramación y replanificación posterior a NO_ENTREGADA y sigue pendiente; no se presenta como resuelta.
 
+![HGR-36 Finalizada y vinculada con HGR-43](./evidencias/jira/04-hgr-36-cierre-y-vinculo.png)
+
+*Figura 1. HGR-36 / US-017 en Finalizada, resolución Listo (2026-11-07 22:31 -05:00), 5 Story Points, SCRUM Sprint 3 cerrado, vinculada (relates to) con HGR-43 en Tareas por hacer, y con 3 comentarios. Imagen generada con Microsoft Edge desde la consulta de solo lectura de Jira mediante acli del 2026-11-07; no es una captura de la interfaz web. Se omitieron responsables, correos, identificadores de cuenta y avatares. Sin escrituras en Jira.*
+
 ## Restricciones
 
 - El paquete de geocobertura no debe publicarse en Git.
