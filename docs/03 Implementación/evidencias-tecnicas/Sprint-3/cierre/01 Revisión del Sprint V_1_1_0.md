@@ -41,13 +41,13 @@ El estado técnico corresponde a lo demostrado en el entorno local. El estado ad
 
 | Historia | Implementación | Estado técnico demostrado | Estado administrativo en Jira |
 |---|---|---|---|
-| HGR-32 | Consulta y detalle de rutas | Validada con OSRM local (2026-11-06) y E2E con API simulada | En curso |
-| HGR-33 | Alternativas y comparación | Validada con OSRM local (2026-11-06) | En curso |
-| HGR-34 | Backend y, desde `7745ef3`, interfaz de asignación | Asignación validada desde la interfaz; 3 rutas asignadas y completadas en la base local. Pendiente: comprobar a mano el rechazo 409 en otra ruta GENERADA | En curso |
-| HGR-35 | Consulta de rutas propias del conductor | Validada con un conductor de prueba | En curso |
-| HGR-36 | Registro de entregas y progreso | ENTREGADA validada en dos rutas completadas (2 entregas cada una); rechazo 409 sin cambios parciales validado; NO_ENTREGADA validada con causa, con deuda funcional abierta (ver «Deuda funcional») | En curso, con comentarios 10000 (validación y bloqueo) y 10001 (decisión del equipo) |
+| HGR-32 | Consulta y detalle de rutas | Validada con OSRM local (2026-11-06) y E2E con API simulada | Finalizada, resolución Listo |
+| HGR-33 | Alternativas y comparación | Validada con OSRM local (2026-11-06) | Finalizada, resolución Listo |
+| HGR-34 | Backend y, desde `7745ef3`, interfaz de asignación | Asignación validada desde la interfaz; 3 rutas asignadas y completadas en la base local. Rechazo de conductor no disponible cubierto por pruebas automatizadas. Verificación manual complementaria pendiente: comprobar a mano el rechazo 409 en otra ruta GENERADA | Finalizada, resolución Listo |
+| HGR-35 | Consulta de rutas propias del conductor | Validada con un conductor de prueba | Finalizada, resolución Listo |
+| HGR-36 | Registro de entregas y progreso | ENTREGADA validada en dos rutas completadas (2 entregas cada una); rechazo 409 sin cambios parciales validado; NO_ENTREGADA validada con causa, con deuda funcional abierta (ver «Deuda funcional») | Finalizada, resolución Listo, con comentarios 10000 (validación y bloqueo), 10001 (decisión del equipo) y 10002 (comentario final) |
 
-Las cinco historias siguen «En curso» en Jira, en el Sprint «SCRUM Sprint 3», que el tablero muestra con estado `future`. Ninguna figura como Finalizada en Jira. El cierre técnico no modificó Jira; el cambio de estado queda a decisión del equipo.
+El Sprint «SCRUM Sprint 3» se activó y se cerró administrativamente en Jira el 2026-11-07, con fechas administrativas del 2026-10-15 al 2026-11-07 (-05:00). Terminó con HGR-32 a HGR-36 en Finalizada, resolución Listo, y 23 Story Points finalizados. La épica HGR-8 se retiró del Sprint 3 antes del cierre y continúa En curso. La deuda de NO_ENTREGADA quedó registrada como HGR-43, en el backlog y pendiente.
 
 ## Validación
 
@@ -71,7 +71,7 @@ Los checks de backend, frontend, CodeQL y code scanning aprobaron antes de la in
 
 ## Deuda funcional
 
-- **NO_ENTREGADA y replanificación (no resuelta):** se validó en local una parada NO_ENTREGADA con causa obligatoria; la ruta quedó COMPLETADA y el pedido quedó PENDIENTE, como establece la decisión del equipo en HGR-36. El backend acepta NO_ENTREGADA aunque el pedido no esté EN_RUTA, la ventana de entrega del pedido está vencida y no existe un flujo para reprogramarla ni un flujo funcional completo de replanificación. Permanece como deuda funcional (detalle en 06).
+- **NO_ENTREGADA y replanificación (no resuelta):** se validó en local una parada NO_ENTREGADA con causa obligatoria; la ruta quedó COMPLETADA y el pedido quedó PENDIENTE, como establece la decisión del equipo en HGR-36. El backend acepta NO_ENTREGADA aunque el pedido no esté EN_RUTA, la ventana de entrega del pedido está vencida y no existe un flujo para reprogramarla ni un flujo funcional completo de replanificación. Permanece como deuda funcional (detalle en 06). La deuda se registró en Jira como HGR-43 / US-024: Reprogramar y replanificar pedidos no entregados. HGR-43 sigue pendiente en el backlog.
 - **Placa histórica (RN-020):** las versiones de ruta guardan solo el identificador del vehículo; si la placa del vehículo cambia, la ruta muestra la placa actual y no la usada al planificar.
 - **H1, revalidación de sesión:** al recuperar el foco de la ventana se revalida la sesión y se vuelve a montar la vista; se pierde la contraseña escrita en el inicio de sesión y se cierra la lista de entregas abierta.
 - **Rotación de flechas del mapa:** la CSP `style-src 'self'` bloquea el estilo en línea de las flechas de sentido; pendiente de resolver con clases CSS predefinidas, sin debilitar la CSP.
@@ -91,7 +91,7 @@ El incremento del Sprint 3 está integrado en main hasta `33e7601`, con el flujo
 
 El 2026-11-06 se aprovisionó OSRM local y se validó el cálculo vial real desde la interfaz sobre `600564f`: la ruta de referencia midió 3.89 km, 5.9 min de viaje y 130 min con atención y esperas, con procedencia OSRM y revisión `geofabrik-peru-261105-sha256:70cce1d0a42c-car-mld-osrm-v26.10.0` (detalle en 06 Evidencia técnica de cierre del Sprint 3 V_1_1_0). En la validación del 06/11, antes del commit 7745ef3, la interfaz todavía no ofrecía asignación; la asignación se habilitó después con `7745ef3`.
 
-La calidad final cumple el Quality Gate y la auditoría automática de accesibilidad no registra violaciones. Quedan como deuda la definición de NO_ENTREGADA y su replanificación, la trazabilidad de la placa, la revalidación de sesión (H1), la rotación de las flechas y las comprobaciones manuales de WCAG. Las historias continúan «En curso» en Jira hasta su revisión por el equipo. La deuda de NO_ENTREGADA no se presenta como resuelta.
+La calidad final cumple el Quality Gate y la auditoría automática de accesibilidad no registra violaciones. Quedan como deuda la definición de NO_ENTREGADA y su replanificación, la trazabilidad de la placa, la revalidación de sesión (H1), la rotación de las flechas y las comprobaciones manuales de WCAG. En Jira, el Sprint 3 quedó cerrado administrativamente con HGR-32 a HGR-36 en Finalizada y 23 Story Points finalizados; la deuda de NO_ENTREGADA queda pendiente en HGR-43. La deuda de NO_ENTREGADA no se presenta como resuelta.
 
 ---
 

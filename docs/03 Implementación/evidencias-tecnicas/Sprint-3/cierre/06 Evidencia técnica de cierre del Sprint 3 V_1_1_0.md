@@ -210,12 +210,31 @@ Hora de Lima (-05:00). No se registran identificadores completos ni datos person
 - No existe un flujo para reprogramar la ventana del pedido.
 - No existe un flujo funcional completo de replanificación: el pedido solo vuelve a ser candidato en un periodo que se solape con su ventana vencida.
 - Esta situación permanece como deuda funcional y no debe presentarse como resuelta.
+- La deuda funcional quedó trazada en Jira como HGR-43 / US-024: Reprogramar y replanificar pedidos no entregados, pendiente en el backlog.
 
 ### Placa histórica del vehículo (RN-020)
 
 - Las versiones de ruta guardan solo el identificador del vehículo. Un vehículo cambió su placa de W6A-123 a W6A-124; sus 3 versiones de ruta muestran ahora W6A-124 y ninguna conserva la placa usada al planificar.
 - `infra/osrm/README.md:245` todavía menciona W6A-123 en la validación del 2026-11-06.
 - El vehículo W6A-125 es distinto y no está afectado.
+
+## Cierre administrativo en Jira
+
+Consulta en solo lectura después del cierre, 2026-11-07.
+
+| Elemento | Valor |
+|---|---|
+| Sprint | SCRUM Sprint 3, id 36 |
+| Estado final | closed; activado y cerrado administrativamente el 2026-11-07 |
+| Periodo administrativo | 2026-10-15 00:00 a 2026-11-07 23:59 (-05:00) |
+| Objetivo registrado | «Consolidar el flujo de planificación y operación de última milla, desde la generación de alternativas de ruta hasta la asignación al conductor y la actualización del estado de las entregas. Activación administrativa realizada al cierre del periodo académico.» |
+| HGR-32 a HGR-36 | Finalizada, resolución Listo |
+| Story Points finalizados | 23 (5 + 5 + 5 + 3 + 5) |
+| HGR-8 (épica EP-03) | En curso; retirada del Sprint 3 antes del cierre; conserva solo el Sprint 2 |
+| HGR-43 (US-024) | Tareas por hacer, sin Sprint, en el backlog; vinculada con HGR-36 (Relates) |
+| Comentario final de HGR-36 | Registrado como comentario 10002 |
+
+HGR-43 recoge la deuda de reprogramación y replanificación posterior a NO_ENTREGADA y sigue pendiente; no se presenta como resuelta.
 
 ## Restricciones
 
@@ -276,7 +295,7 @@ El procedimiento completo, la procedencia de los datos y los comandos están en 
 
 ## Conclusión
 
-La evidencia final corresponde a `33e7601`: backend 498/498, frontend 362/362, Quality Gate OK en el análisis 9 (`new_violations` = 0, `new_coverage` = 96.3%, duplicación nueva 0.0%), 0 bugs, 0 vulnerabilidades, 0 hotspots pendientes y 3 REVIEWED / SAFE; axe sin violaciones en 54/54 combinaciones, Lighthouse Accessibility 100 en 18/18 y 112/112 E2E sobre la imagen desplegada. Los datos locales muestran tres rutas completadas desde la interfaz. Permanecen abiertas la deuda de NO_ENTREGADA, la placa histórica (RN-020), H1, la rotación de las flechas por la CSP y las verificaciones manuales de WCAG; no se declara conformidad WCAG 2.1 AA.
+La evidencia final corresponde a `33e7601`: backend 498/498, frontend 362/362, Quality Gate OK en el análisis 9 (`new_violations` = 0, `new_coverage` = 96.3%, duplicación nueva 0.0%), 0 bugs, 0 vulnerabilidades, 0 hotspots pendientes y 3 REVIEWED / SAFE; axe sin violaciones en 54/54 combinaciones, Lighthouse Accessibility 100 en 18/18 y 112/112 E2E sobre la imagen desplegada. Los datos locales muestran tres rutas completadas desde la interfaz. En Jira, SCRUM Sprint 3 se activó y se cerró administrativamente el 2026-11-07, con periodo del 2026-10-15 al 2026-11-07, HGR-32 a HGR-36 en Finalizada, resolución Listo, y 23 Story Points finalizados. Permanecen abiertas la deuda de NO_ENTREGADA (HGR-43), la placa histórica (RN-020), H1, la rotación de las flechas por la CSP y las verificaciones manuales de WCAG; no se declara conformidad WCAG 2.1 AA.
 
 ---
 
