@@ -8,7 +8,7 @@ import { driverProfileApi, type DriverRouteSummary } from '../services/driver-pr
 const auth = vi.hoisted(() => ({ session: { user: { usuario_id: 'account', email: 'driver@test', rol: { rol_id: 'role', nombre: 'Usuario Final / Conductor' } }, expiresAt: Date.now() + 900000 }, restoring: false, restoreError: '', acceptSession: vi.fn(), logout: vi.fn() }));
 vi.mock('../hooks/useAuth', () => ({ useAuth: () => auth }));
 vi.mock('../services/api', async () => ({ ...await vi.importActual<typeof import('../services/api')>('../services/api'), authApi: { me: vi.fn() } }));
-vi.mock('../services/driver-profile-api', () => ({ driverProfileApi: { me: vi.fn(), routes: vi.fn(), route: vi.fn(), updateDelivery: vi.fn() } }));
+vi.mock('../services/driver-profile-api', async () => ({ ...await vi.importActual<typeof import('../services/driver-profile-api')>('../services/driver-profile-api'), driverProfileApi: { me: vi.fn(), routes: vi.fn(), route: vi.fn(), updateDelivery: vi.fn(), createIncident: vi.fn() } }));
 const profile = { conductor_id: 'driver', nombre_completo: 'Conductor de prueba', estado: 'ACTIVO' };
 const summary = { ruta_id: 'route', estado: 'ASIGNADA' as const, asignado_en: '2030-01-01T12:00:00Z', iniciado_en: null, current_version: 1, version: { ruta_version_id: 'v', numero: 1, distancia_m: '1000', duracion_s: '600', resultado: {}, vehiculo: { vehiculo_id: 'veh', placa: 'ABC-123', tipo: 'VAN' } }, progress: { total: 1, processed: 0, percentage: 0 } };
 const detail = { ...summary, finalizado_en: null, version: { ...summary.version!, paradas: [{ parada_id: 'stop', pedido_id: 'order', secuencia: 1, datos: { direccion: 'Destino de prueba' }, estado_entrega: 'PENDIENTE' as const, causa_no_entrega: null, atendido_en: null, actualizado_en: '2030-01-01T12:00:00Z', version_entrega: 0 }] } };
@@ -17,6 +17,19 @@ beforeEach(() => { vi.clearAllMocks(); vi.mocked(authApi.me).mockResolvedValue({
 it('muestra rutas reales y detalle de entregas propias', async () => { open(); expect(await screen.findByText('ABC-123')).toBeVisible(); await userEvent.click(screen.getByRole('button', { name: 'Ver entregas' })); expect(await screen.findByText(/Destino de prueba/)).toBeVisible(); expect(driverProfileApi.routes).toHaveBeenCalled(); expect(driverProfileApi.route).toHaveBeenCalledWith('route'); });
 it('actualiza una entrega usando la versión visible y refresca la ruta', async () => { open(); await userEvent.click(await screen.findByRole('button', { name: 'Ver entregas' })); await userEvent.click(await screen.findByRole('button', { name: 'Marcar entregada' })); await waitFor(() => expect(driverProfileApi.updateDelivery).toHaveBeenCalledWith('stop', { estado: 'ENTREGADA', expected_version: 0 })); expect(await screen.findByRole('status')).toHaveTextContent('Estado de entrega actualizado correctamente.'); });
 it('exige causa antes de registrar no entregada', async () => { open(); await userEvent.click(await screen.findByRole('button', { name: 'Ver entregas' })); await userEvent.click(await screen.findByRole('button', { name: 'Registrar no entregada' })); expect(await screen.findByRole('alert')).toHaveTextContent('Escribe la causa'); expect(driverProfileApi.updateDelivery).not.toHaveBeenCalled(); });
+it('US-018: registra una incidencia, la muestra en la entrega y no cambia su estado', async () => {
+  vi.mocked(driverProfileApi.createIncident).mockResolvedValue({ parada_id: 'stop', incidencia: { incidencia_id: 'inc', tipo: 'CLIENTE_AUSENTE', descripcion: 'Nadie atiende', detalle_complementario: null, registrado_en: '2030-01-01T13:00:00Z' } });
+  open();
+  await userEvent.click(await screen.findByRole('button', { name: 'Ver entregas' }));
+  await userEvent.click(await screen.findByRole('button', { name: 'Registrar incidencia' }));
+  await userEvent.selectOptions(screen.getByLabelText('Tipo de incidencia *'), 'Cliente ausente');
+  await userEvent.type(screen.getByLabelText('Descripción *'), 'Nadie atiende');
+  await userEvent.click(screen.getByRole('button', { name: 'Guardar incidencia' }));
+  expect(await screen.findByRole('status')).toHaveTextContent('Incidencia registrada y asociada a la entrega.');
+  expect(screen.getByRole('region', { name: 'Incidencias registradas (1)' })).toHaveTextContent('Nadie atiende');
+  expect(screen.getByText(/Estado: PENDIENTE/)).toBeVisible();
+  expect(driverProfileApi.updateDelivery).not.toHaveBeenCalled();
+});
 it('muestra estado vacío sin inventar rutas', async () => { vi.mocked(driverProfileApi.routes).mockResolvedValue([]); open(); expect(await screen.findByText('No tienes rutas asignadas.')).toBeVisible(); });
 it('muestra el rechazo real del backend, mantiene la entrega PENDIENTE y no reintenta', async () => {
   const message = 'El pedido debe estar EN_RUTA antes de registrarse como entregado.';

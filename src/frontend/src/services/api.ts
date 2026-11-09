@@ -70,8 +70,11 @@ export async function request<T>(path: string, options: RequestInit): Promise<T>
 
     if (/^\/driver\/(?:routes|deliveries)(?:\/|$)/.test(path) && response.status !== 401) {
       const payload = await response.json().catch(() => null) as { message?: unknown } | null;
-      const fallback: Record<number, string> = { 400: 'Revisa el estado y la causa de la entrega.', 403: 'La entrega no existe o no está asignada a tu cuenta.', 404: 'Ruta o entrega no encontrada.', 409: 'La entrega cambió. Recarga la ruta antes de reintentar.' };
-      throw new ApiError(typeof payload?.message === 'string' ? payload.message : fallback[response.status] ?? 'No se pudo completar la operación de la ruta.', response.status);
+      const incident = /\/incidents$/.test(path);
+      const fallback: Record<number, string> = { 400: incident ? 'Revisa el tipo y la descripción de la incidencia.' : 'Revisa el estado y la causa de la entrega.', 403: 'La entrega no existe o no está asignada a tu cuenta.', 404: 'Ruta o entrega no encontrada.', 409: 'La entrega cambió. Recarga la ruta antes de reintentar.' };
+      // US-018: la validación de incidencias devuelve un mensaje por campo («campo: detalle»).
+      const fieldMessages = incident && Array.isArray(payload?.message) && payload.message.every(item => typeof item === 'string') ? payload.message as string[] : null;
+      throw new ApiError(typeof payload?.message === 'string' ? payload.message : fieldMessages?.length ? fieldMessages.join('\n') : fallback[response.status] ?? 'No se pudo completar la operación de la ruta.', response.status);
     }
 
     const orderRead = /^\/orders(?:\?|\/)/.test(path);

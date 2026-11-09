@@ -282,6 +282,19 @@ th { background: var(--color-surface-low); white-space: nowrap; }
 .driver-detail dt { font-weight: 600; }
 .driver-detail dd { margin: 0 0 var(--space-md); }
 
+/* US-018: incidencias de entrega en el panel del conductor */
+.delivery-incidents { display: grid; gap: var(--space-md); margin: var(--space-md) 0 var(--space-lg); min-width: 0; }
+.delivery-incidents-title { font-size: 1rem; margin: 0 0 var(--space-xs); }
+.delivery-incidents-list { display: grid; gap: var(--space-sm); padding-left: 0; list-style: none; margin: 0; }
+.delivery-incidents-list li { border-left: 3px solid var(--color-border-subtle); padding: var(--space-xs) var(--space-md); overflow-wrap: anywhere; }
+.delivery-incidents-list p { margin: var(--space-2xs) 0 0; }
+.delivery-incident-form fieldset { display: grid; gap: var(--space-md); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: var(--space-lg); margin: 0; min-width: 0; }
+.delivery-incident-form legend { font-weight: 600; padding: 0 var(--space-xs); }
+.delivery-incident-form select, .delivery-incident-form textarea { width: 100%; max-width: 100%; font: inherit; }
+.delivery-incident-form textarea { resize: vertical; }
+.delivery-incident-form .driver-actions { margin: var(--space-md) 0 0; }
+.delivery-incident-hint { color: var(--color-text-muted); font-size: .8125rem; margin: 0; }
+
 /* US-009: disponibilidad operativa */
 .availability-panel {
   display: grid;

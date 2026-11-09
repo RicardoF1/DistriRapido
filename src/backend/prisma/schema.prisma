@@ -168,23 +168,41 @@ model RutaVersion {
 }
 
 model ParadaRuta {
-  parada_id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  ruta_version_id  String      @db.Uuid
-  pedido_id        String      @db.Uuid
+  parada_id        String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ruta_version_id  String              @db.Uuid
+  pedido_id        String              @db.Uuid
   secuencia        Int
-  datos            Json        @db.JsonB
-  estado_entrega   String      @default("PENDIENTE") @db.VarChar(20)
-  causa_no_entrega String?     @db.VarChar(255)
-  atendido_en      DateTime?   @db.Timestamptz(6)
-  actualizado_en   DateTime    @updatedAt @db.Timestamptz(6)
-  version_entrega  Int         @default(0)
-  ruta_version     RutaVersion @relation(fields: [ruta_version_id], references: [ruta_version_id], onDelete: Restrict)
-  pedido           Pedido      @relation(fields: [pedido_id], references: [pedido_id], onDelete: Restrict)
+  datos            Json                @db.JsonB
+  estado_entrega   String              @default("PENDIENTE") @db.VarChar(20)
+  causa_no_entrega String?             @db.VarChar(255)
+  atendido_en      DateTime?           @db.Timestamptz(6)
+  actualizado_en   DateTime            @updatedAt @db.Timestamptz(6)
+  version_entrega  Int                 @default(0)
+  ruta_version     RutaVersion         @relation(fields: [ruta_version_id], references: [ruta_version_id], onDelete: Restrict)
+  pedido           Pedido              @relation(fields: [pedido_id], references: [pedido_id], onDelete: Restrict)
+  incidencias      IncidenciaEntrega[]
 
   @@unique([ruta_version_id, secuencia])
   @@unique([ruta_version_id, pedido_id])
   @@index([estado_entrega], map: "idx_paradas_ruta_estado_entrega")
   @@map("paradas_ruta")
+}
+
+// US-018 / RF-015: incidencias de entrega registradas por el conductor asignado.
+model IncidenciaEntrega {
+  incidencia_id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  parada_id              String     @db.Uuid
+  conductor_id           String     @db.Uuid
+  tipo                   String     @db.VarChar(30)
+  descripcion            String     @db.VarChar(500)
+  detalle_complementario String?    @db.VarChar(500)
+  registrado_en          DateTime   @default(now()) @db.Timestamptz(6)
+  parada                 ParadaRuta @relation(fields: [parada_id], references: [parada_id], onDelete: Restrict)
+  conductor              Conductor  @relation(fields: [conductor_id], references: [conductor_id], onDelete: Restrict)
+
+  @@index([parada_id, registrado_en], map: "idx_incidencias_parada_registro")
+  @@index([conductor_id], map: "idx_incidencias_conductor")
+  @@map("incidencias_entrega")
 }
 
 model Vehiculo {
@@ -218,6 +236,7 @@ model Conductor {
   usuario            Usuario?                  @relation(fields: [usuario_id], references: [usuario_id], onDelete: Restrict)
   disponibilidades   DisponibilidadConductor[]
   rutas              Ruta[]
+  incidencias        IncidenciaEntrega[]
 
   @@index([estado], map: "idx_conductores_estado")
   @@map("conductores")

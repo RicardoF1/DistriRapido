@@ -1,5 +1,6 @@
-import { BadRequestException, Body, Controller, Get, Header, Param, ParseUUIDPipe, Patch, Query, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiCookieAuth, ApiForbiddenResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { BadRequestException, Body, Controller, Get, Header, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiCookieAuth, ApiCreatedResponse, ApiForbiddenResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { CreateDeliveryIncidentDto } from './dto/create-delivery-incident.dto';
 import { JwtAuthGuard, type AuthRequest } from '../auth/jwt-auth.guard';
 import { DriverProfileService } from './driver-profile.service';
 import { UpdateDeliveryStatusDto } from './dto/update-delivery-status.dto';
@@ -19,6 +20,17 @@ export class DriverProfileController {
     @Body() dto: UpdateDeliveryStatusDto,
   ) {
     return this.profiles.updateDelivery(request.user, id, dto);
+  }
+
+  @Post('deliveries/:id/incidents') @Header('Cache-Control', 'no-store')
+  @ApiCreatedResponse({ description: 'US-018: incidencia registrada y asociada a la entrega propia.' })
+  @ApiBadRequestResponse({ description: 'Faltan datos obligatorios o tienen un formato inválido; se indica cada campo.' })
+  createIncident(
+    @Req() request: AuthRequest,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: CreateDeliveryIncidentDto,
+  ) {
+    return this.profiles.createIncident(request.user, id, dto);
   }
   @Get('routes') @Header('Cache-Control', 'no-store')
   routes(@Req() request: AuthRequest, @Query() query: Record<string, unknown>) {
