@@ -15,13 +15,15 @@ function view() {
   return { ...result, acceptSession };
 }
 beforeEach(() => vi.resetAllMocks());
+// El resumen reserva su espacio desde el inicio (CLS); los datos llegaron cuando «Actualizar resumen» se habilita.
+const loaded = () => waitFor(() => expect(screen.getByRole('button', { name: 'Actualizar resumen' })).toBeEnabled());
 it('muestra carga sin cantidades fabricadas', () => {
   vi.mocked(adminApi.summary).mockReturnValue(new Promise(() => {})); view();
   expect(screen.getByRole('status')).toHaveTextContent('Cargando indicadores'); expect(screen.queryByText('0')).not.toBeInTheDocument();
 });
 it.each([0, 1, 251])('muestra totales y vacío reales: %s', async count => {
   vi.mocked(adminApi.summary).mockResolvedValue({ totalOrders: count, pendingOrders: count, totalUsers: 7, ordersByState: count ? [{ state: 'PENDIENTE', count }] : [] });
-  view(); await screen.findByText('Pedidos por estado');
+  view(); await loaded();
   expect(within(screen.getByText('Pedidos registrados').parentElement!).getByText(String(count))).toBeVisible();
   expect(screen.queryByText('No hay pedidos registrados.') !== null).toBe(count === 0); expect(adminApi.summary).toHaveBeenCalledTimes(1);
 });
@@ -33,7 +35,7 @@ it('distribución no iguala pendientes y total', async () => {
 it('error no muestra cero y reintento recupera indicadores', async () => {
   vi.mocked(adminApi.summary).mockRejectedValueOnce(new Error('offline')).mockResolvedValue({ totalOrders: 1, pendingOrders: 1, totalUsers: 1, ordersByState: [{ state: 'PENDIENTE', count: 1 }] });
   view(); expect(await screen.findByRole('alert')).toHaveTextContent('No se pudo cargar'); expect(screen.queryByText('0')).not.toBeInTheDocument();
-  await userEvent.click(screen.getByRole('button', { name: 'Reintentar resumen' })); await screen.findByText('Pedidos por estado'); expect(adminApi.summary).toHaveBeenCalledTimes(2);
+  await userEvent.click(screen.getByRole('button', { name: 'Reintentar resumen' })); await loaded(); expect(adminApi.summary).toHaveBeenCalledTimes(2);
 });
 it('401 descarta sesión y 403 no muestra cantidades', async () => {
   vi.mocked(adminApi.summary).mockRejectedValue(new ApiError('expired', 401)); const result = view();
@@ -48,7 +50,7 @@ it('StrictMode descarta su primer efecto sin duplicar la consulta', async () => 
   vi.mocked(adminApi.summary).mockResolvedValue({ totalOrders: 0, pendingOrders: 0, totalUsers: 0, ordersByState: [] });
   const session = { user: loginResponse.user, expiresAt: Date.now() + 900000 };
   render(<StrictMode><AuthContext.Provider value={{ session, acceptSession: vi.fn(), restoring: false, restoreError: '', retryRestore: vi.fn(), logout: vi.fn() }}><AdminSummary /></AuthContext.Provider></StrictMode>);
-  await screen.findByText('Pedidos por estado'); expect(adminApi.summary).toHaveBeenCalledTimes(1);
+  await loaded(); expect(adminApi.summary).toHaveBeenCalledTimes(1);
 });
 it('403 muestra denegación sin cantidades ni sesión alterada', async () => {
   vi.mocked(adminApi.summary).mockRejectedValue(new ApiError('forbidden', 403)); const result=view();
@@ -65,7 +67,7 @@ it('tarjetas de cantidades permanecen visibles durante carga y error', async () 
 });
 it('permite actualizar totales sin reemplazar registros ni mostrar datos anteriores durante carga', async () => {
   vi.mocked(adminApi.summary).mockResolvedValueOnce({totalOrders:2,pendingOrders:2,totalUsers:1,ordersByState:[{state:'PENDIENTE',count:2}]}).mockResolvedValueOnce({totalOrders:3,pendingOrders:3,totalUsers:1,ordersByState:[{state:'PENDIENTE',count:3}]});
-  view(); await screen.findByText('Pedidos por estado');
+  view(); await loaded();
   await userEvent.click(screen.getByRole('button',{name:'Actualizar resumen'}));
   await waitFor(()=>expect(screen.getByText('Pedidos registrados').parentElement).toHaveTextContent('3'));
   expect(adminApi.summary).toHaveBeenCalledTimes(2);
@@ -100,7 +102,7 @@ it('valor de métrica: error, pendiente de carga y cantidad con formato es-PE', 
   for (const value of values()) { expect(value).toHaveTextContent('—'); expect(value.querySelector('span')).toHaveAttribute('aria-label', 'Cantidad pendiente de carga'); }
   // Con datos: cantidades con formato es-PE.
   await act(async () => resolve({ totalOrders: 1234567, pendingOrders: 2500, totalUsers: 7, ordersByState: [] }));
-  await screen.findByText('Pedidos por estado');
+  await loaded();
   expect(values().map(value => value.textContent)).toEqual([(1234567).toLocaleString('es-PE'), (2500).toLocaleString('es-PE'), '7']);
   expect(values()[0].textContent).not.toBe('1234567');
   // Con error: «No disponible» sin cantidades.
