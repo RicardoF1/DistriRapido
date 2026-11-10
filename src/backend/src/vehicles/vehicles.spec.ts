@@ -7,24 +7,28 @@ import { ROLE_NAMES } from '../roles/roles';
 import { VehiclesGuard } from './vehicles.guard';
 import { CreateVehicleDto } from './vehicle.dto';
 import { VehiclesService } from './vehicles.service';
+import { PaginationQueryDto } from '../common/pagination';
 
 describe('US-007 gestionar vehículos', () => {
   const valid = { placa: 'ABC-123', tipo: 'Furgón', capacidad_carga_kg: 1000, capacidad_volumen_m3: 12, consumo_km_l: 8, factor_emision_kg_co2_km: 0.25, anio_fabricacion: 2022, estado: 'DISPONIBLE' };
   const vehicle = { vehiculo_id: 'vehicle-id', ...valid };
-  const prisma = { vehiculo: { findMany: jest.fn(), findUnique: jest.fn(), create: jest.fn(), update: jest.fn() } };
+  const prisma = { vehiculo: { findMany: jest.fn(), count: jest.fn(), findUnique: jest.fn(), create: jest.fn(), update: jest.fn() }, $transaction: jest.fn() };
   let service: VehiclesService;
 
   beforeEach(() => {
     jest.resetAllMocks();
     service = new VehiclesService(prisma as unknown as PrismaService);
     prisma.vehiculo.findMany.mockResolvedValue([vehicle]);
+    prisma.vehiculo.count.mockResolvedValue(13);
+    prisma.$transaction.mockImplementation((operations: unknown[]) => Promise.all(operations));
     prisma.vehiculo.findUnique.mockResolvedValue(vehicle);
     prisma.vehiculo.create.mockResolvedValue(vehicle);
     prisma.vehiculo.update.mockResolvedValue({ ...vehicle, estado: 'MANTENIMIENTO' });
   });
 
   it('lista, registra y edita datos y estado', async () => {
-    await expect(service.list()).resolves.toEqual([vehicle]);
+    await expect(service.list(Object.assign(new PaginationQueryDto(), { page: 2 }))).resolves.toEqual({ items: [vehicle], total: 13, page: 2, pageSize: 12 });
+    expect(prisma.vehiculo.findMany).toHaveBeenCalledWith(expect.objectContaining({ skip: 12, take: 12 }));
     await expect(service.create(valid)).resolves.toEqual(vehicle);
     await expect(service.update(vehicle.vehiculo_id, { tipo: 'Camión', estado: 'MANTENIMIENTO' })).resolves.toMatchObject({ estado: 'MANTENIMIENTO' });
     expect(prisma.vehiculo.create).toHaveBeenCalledWith({ data: { ...valid, capacidad_volumen_m3: 12 } });

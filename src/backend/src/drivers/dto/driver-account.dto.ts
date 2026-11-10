@@ -1,10 +1,11 @@
 import { Transform, Type } from 'class-transformer';
 import { IsBoolean, IsEmail, IsInt, IsOptional, IsString, IsUUID, Max, MaxLength, Min, MinLength, ValidateIf } from 'class-validator';
+import { DEFAULT_PAGE_SIZE } from '../../common/pagination';
 export class DriverAccountOptionsDto {
   @IsOptional() @IsUUID() conductor_id?: string;
   @IsOptional() @IsString() @MaxLength(255) search?: string;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(1000000) page = 1;
-  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) pageSize = 20;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) pageSize = DEFAULT_PAGE_SIZE;
 }
 export class LinkDriverAccountDto {
   @IsUUID() usuario_id!: string;

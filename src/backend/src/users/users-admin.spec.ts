@@ -4,16 +4,18 @@ import * as argon2 from 'argon2';
 import { UsersService, PUBLIC_USER_SELECT } from './users.service';
 import { UsersController } from './users.controller';
 import { PrismaService } from '../prisma/prisma.service';
+import { PaginationQueryDto } from '../common/pagination';
 describe('US-003 usuarios', () => {
   const rol_id = randomUUID(); const usuario_id = randomUUID();
   const dto = { email: 'new@example.com', password: 'test-password-1234', rol_id };
   const publicUser = { usuario_id, email: dto.email, rol_id, estado: 'ACTIVO', creado_en: new Date(), rol: { rol_id, nombre: 'Administrador' } };
-  const prisma = { usuario: { findMany: jest.fn(), findUnique: jest.fn(), create: jest.fn(), update: jest.fn() }, rol: { findUnique: jest.fn() }, conductor: { findUnique: jest.fn() }, $transaction: jest.fn() };
+  const prisma = { usuario: { findMany: jest.fn(), count: jest.fn(), findUnique: jest.fn(), create: jest.fn(), update: jest.fn() }, rol: { findUnique: jest.fn() }, conductor: { findUnique: jest.fn() }, $transaction: jest.fn() };
   let service: UsersService;
   beforeEach(() => { jest.resetAllMocks(); prisma.conductor.findUnique.mockResolvedValue(null); prisma.$transaction.mockImplementation((operation: (tx: unknown) => unknown) => operation(prisma)); service = new UsersService(prisma as unknown as PrismaService); prisma.rol.findUnique.mockResolvedValue(publicUser.rol); prisma.usuario.findUnique.mockResolvedValue(publicUser); prisma.usuario.findMany.mockResolvedValue([publicUser]); prisma.usuario.create.mockResolvedValue(publicUser); prisma.usuario.update.mockResolvedValue(publicUser); });
   it('lista y consulta sin seleccionar hash', async () => {
-    expect(await service.list()).toEqual([publicUser]); expect(await service.get(usuario_id)).toEqual(publicUser);
-    expect(prisma.usuario.findMany).toHaveBeenCalledWith(expect.objectContaining({ select: PUBLIC_USER_SELECT }));
+    prisma.usuario.count.mockResolvedValue(1); prisma.$transaction.mockImplementationOnce((operations: unknown[]) => Promise.all(operations));
+    expect(await service.list(new PaginationQueryDto())).toEqual({ items: [publicUser], total: 1, page: 1, pageSize: 12 }); expect(await service.get(usuario_id)).toEqual(publicUser);
+    expect(prisma.usuario.findMany).toHaveBeenCalledWith(expect.objectContaining({ select: PUBLIC_USER_SELECT, skip: 0, take: 12 }));
     expect(PUBLIC_USER_SELECT).not.toHaveProperty('password_hash');
   });
   it('crea con Argon2id, estado predeterminado y proyección pública', async () => {
@@ -49,6 +51,6 @@ describe('US-003 usuarios', () => {
   });
   it('controller delega las cuatro operaciones', async () => {
     const controller = new UsersController(service);
-    await controller.list(); await controller.get(usuario_id); await controller.create(dto); await controller.update(usuario_id, { estado: 'ACTIVO' });
+    prisma.$transaction.mockImplementationOnce((operations: unknown[]) => Promise.all(operations)); await controller.list(new PaginationQueryDto()); await controller.get(usuario_id); await controller.create(dto); await controller.update(usuario_id, { estado: 'ACTIVO' });
   });
 });

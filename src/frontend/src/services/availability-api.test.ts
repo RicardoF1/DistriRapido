@@ -39,7 +39,7 @@ describe('availabilityApi', () => {
 
     expect(url).toContain('/availability?');
     expect(url).toContain('page=2');
-    expect(url).toContain('pageSize=20');
+    expect(url).toContain('pageSize=12');
     expect(url).toContain('estado=DISPONIBLE');
     expect(url).toContain(
       'inicio=2026-10-10T13%3A00%3A00.000Z',

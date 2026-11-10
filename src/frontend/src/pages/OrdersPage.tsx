@@ -6,7 +6,8 @@ import { useAuth } from '../hooks/useAuth';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { ORDER_PRIORITIES, ORDER_STATES, PRODUCT_TYPES, type OrderPage, type OrderQuery } from '../types/orders';
 import { formatOrderDate, orderLabel } from '../features/orders/order-display';
-const initial: OrderQuery = { search: '', estado: '', prioridad: '', tipo_producto: '', page: 1, pageSize: 20 };
+import { PAGE_SIZE } from '../services/pagination';
+const initial: OrderQuery = { search: '', estado: '', prioridad: '', tipo_producto: '', page: 1, pageSize: PAGE_SIZE };
 export function OrdersPage() {
   const [query, setQuery] = useState(initial); const [search, setSearch] = useState('');
   const [result, setResult] = useState<OrderPage | null>(null); const [loading, setLoading] = useState(true);

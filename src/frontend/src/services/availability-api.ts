@@ -1,4 +1,5 @@
 ﻿import { request } from './api';
+import { PAGE_SIZE } from './pagination';
 import type {
   AvailabilityPage,
   AvailabilityRecord,
@@ -17,7 +18,7 @@ export const availabilityApi = {
       '/availability?' +
         new URLSearchParams({
           page: String(page),
-          pageSize: '20',
+          pageSize: String(PAGE_SIZE),
           ...(estado ? { estado } : {}),
           ...(inicio ? { inicio } : {}),
           ...(fin ? { fin } : {}),

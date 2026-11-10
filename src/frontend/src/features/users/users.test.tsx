@@ -8,6 +8,7 @@ import { usersApi } from '../../services/users-api';
 import { authApi, ApiError } from '../../services/api';
 import { loginResponse } from '../../test/fixtures';
 import type { RoleOption, UserAccount } from '../../types/users';
+import type { Page } from '../../services/pagination';
 vi.mock('../../services/users-api', () => ({ usersApi: { list: vi.fn(), get: vi.fn(), roles: vi.fn(), create: vi.fn(), update: vi.fn() } }));
 vi.mock('../../services/api', async () => ({ ...await vi.importActual<typeof import('../../services/api')>('../../services/api'), authApi: { me: vi.fn(), login: vi.fn(), logout: vi.fn() } }));
 const roles: RoleOption[] = [{ rol_id: 'admin', nombre: 'Administrador', descripcion: 'Administrador' }, { rol_id: 'audit', nombre: 'Auditor Externo', descripcion: 'Auditor' }];
@@ -15,7 +16,7 @@ const account: UserAccount = { usuario_id: 'user-id', email: 'account@example.co
 function setup(path = '/usuarios') { return render(<MemoryRouter initialEntries={[path]}><AuthProvider><AppRoutes /></AuthProvider></MemoryRouter>); }
 beforeEach(() => {
   vi.resetAllMocks(); vi.mocked(authApi.me).mockResolvedValue({ ...loginResponse.user, expiresAt: Date.now() + 900000 });
-  vi.mocked(usersApi.list).mockResolvedValue([account]); vi.mocked(usersApi.roles).mockResolvedValue(roles); vi.mocked(usersApi.get).mockResolvedValue(account);
+  vi.mocked(usersApi.list).mockResolvedValue({ items: [account], total: [account].length, page: 1, pageSize: 12 }); vi.mocked(usersApi.roles).mockResolvedValue(roles); vi.mocked(usersApi.get).mockResolvedValue(account);
 });
 describe('US-003 interfaz', () => {
   it('Administrador navega desde Usuarios a Registrar pedido mediante el menú común', async () => {
@@ -96,10 +97,10 @@ describe('US-003 interfaz', () => {
     expect(screen.getByRole('button', { name: 'Cerrar sesión' })).toBeVisible();
   });
   it('muestra carga y estado vacío', async () => {
-    let resolve!: (items: UserAccount[]) => void;
+    let resolve!: (items: Page<UserAccount>) => void;
     vi.mocked(usersApi.list).mockReturnValue(new Promise((done) => { resolve = done; })); setup();
     expect(await screen.findByText('Cargando usuarios…')).toBeVisible();
-    await act(async () => resolve([])); expect(screen.getByText('No hay usuarios registrados.')).toBeVisible();
+    await act(async () => resolve({ items: [], total: 0, page: 1, pageSize: 12 })); expect(screen.getByText('No hay usuarios registrados.')).toBeVisible();
   });
   it.each([new Error('Falló consulta'), 'unexpected'])('muestra error y reintenta consulta: %s', async (cause) => {
     vi.mocked(usersApi.list).mockRejectedValueOnce(cause); setup();
@@ -122,7 +123,7 @@ describe('US-003 interfaz', () => {
     expect(screen.getByText('Selecciona un rol permitido.')).toBeVisible(); expect(usersApi.create).not.toHaveBeenCalled();
   });
   it('crea usuario normalizado y lo muestra en el listado', async () => {
-    vi.mocked(usersApi.create).mockImplementation(async (values) => { const user = { ...account, email: values.email, estado: values.estado }; vi.mocked(usersApi.list).mockResolvedValue([user]); return user; });
+    vi.mocked(usersApi.create).mockImplementation(async (values) => { const user = { ...account, email: values.email, estado: values.estado }; vi.mocked(usersApi.list).mockResolvedValue({ items: [user], total: [user].length, page: 1, pageSize: 12 }); return user; });
     setup(); await screen.findByRole('table'); await userEvent.click(screen.getByRole('link', { name: 'Crear usuario' }));
     await userEvent.type(await screen.findByLabelText('Correo electrónico'), 'NEW@EXAMPLE.COM'); await userEvent.type(screen.getByLabelText('Contraseña'), 'initial-password-123');
     expect(screen.getByLabelText('Contraseña')).toHaveAttribute('autocomplete', 'new-password');
@@ -132,7 +133,7 @@ describe('US-003 interfaz', () => {
     expect(usersApi.create).toHaveBeenCalledWith({ email: 'new@example.com', password: 'initial-password-123', rol_id: 'admin', estado: 'INACTIVO' });
   });
   it('edita email, rol y estado sin campo contraseña; refleja cambios', async () => {
-    vi.mocked(usersApi.update).mockImplementation(async (_id, values) => { const user = { ...account, ...values, rol: roles[1] }; vi.mocked(usersApi.list).mockResolvedValue([user]); return user; });
+    vi.mocked(usersApi.update).mockImplementation(async (_id, values) => { const user = { ...account, ...values, rol: roles[1] }; vi.mocked(usersApi.list).mockResolvedValue({ items: [user], total: [user].length, page: 1, pageSize: 12 }); return user; });
     setup('/usuarios/user-id/editar'); const email = await screen.findByLabelText('Correo electrónico');
     expect(email).toHaveValue(account.email); expect(screen.queryByLabelText('Contraseña')).not.toBeInTheDocument();
     await userEvent.clear(email); await userEvent.type(email, 'changed@example.com'); await userEvent.selectOptions(screen.getByLabelText('Rol'), 'audit'); await userEvent.selectOptions(screen.getByLabelText('Estado'), 'BLOQUEADO');

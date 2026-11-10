@@ -2,11 +2,19 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException }
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateVehicleDto, UpdateVehicleDto } from './vehicle.dto';
+import { DEFAULT_PAGE_SIZE, PaginationQueryDto, pageWindow } from '../common/pagination';
 
 @Injectable()
 export class VehiclesService {
   constructor(private readonly prisma: PrismaService) {}
-  list() { return this.prisma.vehiculo.findMany({ orderBy: [{ placa: 'asc' }, { vehiculo_id: 'asc' }] }); }
+  // Green IT (área 2): listado paginado en bloques de DEFAULT_PAGE_SIZE.
+  async list({ page = 1, pageSize = DEFAULT_PAGE_SIZE }: PaginationQueryDto = new PaginationQueryDto()) {
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.vehiculo.findMany({ orderBy: [{ placa: 'asc' }, { vehiculo_id: 'asc' }], ...pageWindow(page, pageSize) }),
+      this.prisma.vehiculo.count(),
+    ]);
+    return { items, total, page, pageSize };
+  }
   async get(id: string) {
     const vehicle = await this.prisma.vehiculo.findUnique({ where: { vehiculo_id: id } });
     if (!vehicle) throw new NotFoundException('Vehículo no encontrado.');

@@ -6,6 +6,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './order.dto';
 import { isAllowedOrderTransition, ORDER_STATES } from './order-status';
 import { CoverageService } from '../coverage/coverage.service';
+export const ORDER_LIST_SELECT = {
+  pedido_id: true, estado: true, creado_en: true, ventana_inicio: true, ventana_fin: true,
+  prioridad: true, tipo_producto: true, peso_kg: true, volumen_m3: true,
+  cliente: { select: { nombre: true, direccion: true } },
+} satisfies Prisma.PedidoSelect;
+
 @Injectable()
 export class OrdersService {
   constructor(private readonly prisma: PrismaService, private readonly coverage: CoverageService) {}
@@ -20,7 +26,8 @@ export class OrdersService {
       ] } : {}),
     };
     const [items, total] = await this.prisma.$transaction([
-      this.prisma.pedido.findMany({ where, include: { cliente: true }, orderBy: [{ creado_en: 'desc' }, { pedido_id: 'desc' }], skip: (page - 1) * pageSize, take: pageSize }),
+      // Green IT (área 1): solo las columnas que muestra el listado; el detalle conserva el pedido completo.
+      this.prisma.pedido.findMany({ where, select: ORDER_LIST_SELECT, orderBy: [{ creado_en: 'desc' }, { pedido_id: 'desc' }], skip: (page - 1) * pageSize, take: pageSize }),
       this.prisma.pedido.count({ where }),
     ], { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
     return { items, total, page, pageSize };

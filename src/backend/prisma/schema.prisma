@@ -64,6 +64,8 @@ model Pedido {
   cliente           Cliente      @relation(fields: [cliente_id], references: [cliente_id], onDelete: Restrict)
 
   @@index([cliente_id], map: "idx_pedidos_cliente")
+  @@index([estado, creado_en(sort: Desc)], map: "idx_pedidos_estado_creado")
+  @@index([creado_en(sort: Desc)], map: "idx_pedidos_creado")
   @@map("pedidos")
 }
 
@@ -112,6 +114,7 @@ model EjecucionCalculo {
 
   @@unique([actor_id, idempotency_key])
   @@index([estado, vence_en])
+  @@index([version_id], map: "idx_ejecuciones_calculo_version")
   @@map("ejecuciones_calculo")
 }
 
@@ -145,6 +148,7 @@ model Ruta {
 
   @@unique([alternativa_id, indice_recorrido])
   @@index([conductor_id, estado], map: "idx_rutas_conductor_estado")
+  @@index([asignado_en(sort: Desc)], map: "idx_rutas_asignado")
   @@index([estado], map: "idx_rutas_estado")
   @@map("rutas")
 }
@@ -164,6 +168,7 @@ model RutaVersion {
   paradas         ParadaRuta[]
 
   @@unique([ruta_id, numero])
+  @@index([vehiculo_id], map: "idx_rutas_versiones_vehiculo")
   @@map("rutas_versiones")
 }
 
@@ -185,6 +190,7 @@ model ParadaRuta {
   @@unique([ruta_version_id, secuencia])
   @@unique([ruta_version_id, pedido_id])
   @@index([estado_entrega], map: "idx_paradas_ruta_estado_entrega")
+  @@index([pedido_id], map: "idx_paradas_ruta_pedido")
   @@map("paradas_ruta")
 }
 

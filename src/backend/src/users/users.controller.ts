@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Header, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Header, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { PaginationQueryDto } from '../common/pagination';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiConflictResponse, ApiCookieAuth, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -15,8 +16,8 @@ import { CreateUserDto, PublicUserDto, UpdateUserDto } from './dto/user.dto';
 @Controller('users')
 export class UsersController {
   constructor(private readonly users: UsersService) {}
-  @Get() @Header('Cache-Control', 'no-store') @ApiOkResponse({ type: PublicUserDto, isArray: true })
-  list() { return this.users.list(); }
+  @Get() @Header('Cache-Control', 'no-store') @ApiOkResponse({ description: 'Página de cuentas: { items: PublicUserDto[], total, page, pageSize }.' })
+  list(@Query() query: PaginationQueryDto) { return this.users.list(query); }
   @Get(':id') @Header('Cache-Control', 'no-store') @ApiOkResponse({ type: PublicUserDto }) @ApiNotFoundResponse() @ApiBadRequestResponse()
   get(@Param('id', ParseUUIDPipe) id: string) { return this.users.get(id); }
   @Post() @Header('Cache-Control', 'no-store') @ApiCreatedResponse({ type: PublicUserDto }) @ApiBadRequestResponse() @ApiConflictResponse({ description: 'Correo duplicado.' })

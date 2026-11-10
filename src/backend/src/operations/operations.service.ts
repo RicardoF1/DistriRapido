@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { DELIVERY_STATES, OPERATIONAL_ROUTE_STATES, OperationsQueryDto } from './dto/operations-query.dto';
+import { DEFAULT_PAGE_SIZE } from '../common/pagination';
 
 // US-019 / RF-016: consulta de solo lectura del estado de rutas en ejecución y sus entregas.
 // Las rutas GENERADA pertenecen a la planificación (US-013) y no forman parte de la operación.
@@ -38,7 +39,7 @@ export class OperationsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async list(query: OperationsQueryDto) {
-    const { page = 1, pageSize = 10 } = query;
+    const { page = 1, pageSize = DEFAULT_PAGE_SIZE } = query;
     const from = query.desde ? limaDay(query.desde, 'desde') : undefined;
     const to = query.hasta ? new Date(+limaDay(query.hasta, 'hasta') + DAY_MS) : undefined;
     if (from && to && +to <= +from) throw new BadRequestException('El rango de fechas no es válido: «desde» es posterior a «hasta».');
