@@ -1,5 +1,29 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { coverageAssets } from './coverage-assets';
 import { fileURLToPath } from 'node:url';
-export default defineConfig({ plugins: [react(), coverageAssets()], envDir: '../..', server: { port: 5173, strictPort: true, fs: { allow: [fileURLToPath(new URL('../..', import.meta.url))] } } });
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { constants, gzipSync } from 'node:zlib';
+
+// Green IT (área 8): precompresión gzip (nivel 9) en el build de los recursos de texto mayores de 1 KB.
+// nginx los sirve con gzip_static, sin coste de CPU por petición. Las imágenes ya están comprimidas.
+const COMPRESSIBLE = /\.(js|css|html|svg|json|geojson)$/;
+function precompressAssets(): Plugin {
+  return {
+    name: 'green-it-precompress',
+    apply: 'build',
+    writeBundle(options, bundle) {
+      const outDir = options.dir ?? 'dist';
+      for (const [fileName, output] of Object.entries(bundle)) {
+        if (!COMPRESSIBLE.test(fileName)) continue;
+        const source = output.type === 'chunk' ? output.code : output.source;
+        const bytes = typeof source === 'string' ? Buffer.from(source) : Buffer.from(source);
+        if (bytes.length < 1024) continue;
+        writeFileSync(join(outDir, `${fileName}.gz`), gzipSync(bytes, { level: constants.Z_BEST_COMPRESSION }));
+      }
+    },
+  };
+}
+
+export default defineConfig({ plugins: [react(), coverageAssets(), precompressAssets()], envDir: '../..', server: { port: 5173, strictPort: true, fs: { allow: [fileURLToPath(new URL('../..', import.meta.url))] } } });

@@ -14,12 +14,13 @@ for (const width of [390, 768, 1366, 1440]) {
     await page.goto('/login');
     const email = page.getByLabel('Correo electrónico');
     await expect(email).toBeVisible();
-    const background = page.locator('.login-background');
-    await expect(background).toHaveCSS('background-size', 'cover');
-    expect(await background.evaluate(element => getComputedStyle(element).backgroundImage)).not.toContain('gradient(');
-    const imageUrl = await background.evaluate(element => getComputedStyle(element).backgroundImage.match(/url\("?(.*?)"?\)/)?.[1]);
-    expect(imageUrl).toBeTruthy();
-    expect((await page.request.get(imageUrl!)).ok()).toBe(true);
+    // Green IT (área 3): paisaje en <picture> AVIF/WebP adaptativo que cubre el fondo.
+    const backdrop = page.locator('.login-backdrop img');
+    await expect(backdrop).toHaveCSS('object-fit', 'cover');
+    await expect(backdrop).toHaveAttribute('alt', '');
+    const imageUrl = await backdrop.evaluate(element => (element as HTMLImageElement).currentSrc);
+    expect(imageUrl).toMatch(/\.(avif|webp)$/);
+    expect((await page.request.get(imageUrl)).ok()).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(page.getByRole('heading', { name: 'EcoRuta Huancayo' })).toHaveCount(1);
     await expect(page.locator('.brand-header')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');

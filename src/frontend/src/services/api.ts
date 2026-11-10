@@ -7,7 +7,8 @@ const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
 export async function request<T>(path: string, options: RequestInit): Promise<T> {
   let response: Response;
-  try { response = await fetch(`${baseUrl}${path}`, { ...options, credentials: 'include', cache: 'no-store' }); }
+  // Green IT (área 7): por defecto sin caché; los catálogos piden 'no-cache' para revalidar con ETag (304).
+  try { response = await fetch(`${baseUrl}${path}`, { ...options, credentials: 'include', cache: options.cache ?? 'no-store' }); }
   catch { throw new ApiError('No se pudo conectar al servidor. Inténtalo de nuevo.', 0); }
   if (!response.ok) {
     if (/^\/(?:drivers\/[^/]+\/account\/(?:credentials|reset-password)|driver\/account\/password)$/.test(path) && response.status !== 401) {

@@ -15,3 +15,5 @@ beforeAll(async () => {
   } finally { globalThis.fetch = original; }
 });
 afterEach(cleanup);
+// La caché de catálogos (TanStack Query) no debe filtrar datos entre pruebas.
+afterEach(async () => { (await import('../services/query-client')).queryClient.clear(); });
