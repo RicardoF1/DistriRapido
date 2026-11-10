@@ -77,7 +77,7 @@ it('informa de API desactualizada sin fabricar totales', async () => {
 });
 it('mantiene una lista de definición válida con el icono decorativo dentro de cada término', async () => {
   vi.mocked(adminApi.summary).mockResolvedValue({ totalOrders: 6, pendingOrders: 2, totalUsers: 3, ordersByState: [{ state: 'PENDIENTE', count: 2 }] });
-  const { container } = view(); await screen.findByText('Pedidos por estado');
+  const { container } = view(); await waitFor(() => expect(screen.getByRole('button', { name: 'Actualizar resumen' })).toBeEnabled());
   const metrics = container.querySelector('dl.admin-metrics')!;
   const groups = [...metrics.children];
   expect(groups.map(group => group.tagName)).toEqual(['DIV', 'DIV', 'DIV']);

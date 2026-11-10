@@ -26,4 +26,23 @@ function precompressAssets(): Plugin {
   };
 }
 
-export default defineConfig({ plugins: [react(), coverageAssets(), precompressAssets()], envDir: '../..', server: { port: 5173, strictPort: true, fs: { allow: [fileURLToPath(new URL('../..', import.meta.url))] } } });
+// Green IT / estabilidad visual (CLS): precarga de las dos fuentes de título (woff2) para que no
+// lleguen después del primer pintado y desplacen el contenido al sustituir la fuente de respaldo.
+const PRELOAD_FONTS = /outfit-latin-(600|700)-normal-[\w-]+\.woff2$/;
+function preloadHeadingFonts(): Plugin {
+  return {
+    name: 'green-it-preload-fonts',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(_html, context) {
+        return Object.keys(context.bundle ?? {}).filter(fileName => PRELOAD_FONTS.test(fileName)).sort().map(fileName => ({
+          tag: 'link', injectTo: 'head' as const,
+          attrs: { rel: 'preload', href: `/${fileName}`, as: 'font', type: 'font/woff2', crossorigin: '' },
+        }));
+      },
+    },
+  };
+}
+
+export default defineConfig({ plugins: [react(), coverageAssets(), preloadHeadingFonts(), precompressAssets()], envDir: '../..', server: { port: 5173, strictPort: true, fs: { allow: [fileURLToPath(new URL('../..', import.meta.url))] } } });
