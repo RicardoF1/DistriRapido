@@ -43,6 +43,15 @@ describe('errores reales de rutas y entregas del conductor', () => {
     reply(400);
     await expect(realRequest('/driver/deliveries/stop/incidents')).rejects.toMatchObject({ status: 400, message: 'Revisa el tipo y la descripción de la incidencia.' });
   });
+  it('US-019: /operations conserva mensajes por filtro y usa respaldos propios', async () => {
+    const operationsRequest = async (path: string) => (await vi.importActual<typeof import('./api')>('./api')).request(path, {});
+    reply(400, { statusCode: 400, message: ['estado: usa ASIGNADA, EN_CURSO o COMPLETADA.', 'desde debe tener el formato AAAA-MM-DD.'] });
+    await expect(operationsRequest('/operations/routes?estado=X')).rejects.toMatchObject({ status: 400, message: 'estado: usa ASIGNADA, EN_CURSO o COMPLETADA.\ndesde debe tener el formato AAAA-MM-DD.' });
+    reply(403);
+    await expect(operationsRequest('/operations/summary')).rejects.toMatchObject({ status: 403, message: 'No tienes permisos para consultar el seguimiento operativo.' });
+    reply(404, { message: 'La ruta no existe o todavía no está en operación.' });
+    await expect(operationsRequest('/operations/routes/r1')).rejects.toMatchObject({ status: 404, message: 'La ruta no existe o todavía no está en operación.' });
+  });
   it('aplica el mismo tratamiento a /driver/routes', async () => {
     reply(404, { message: 'La ruta no existe o no esta asignada a tu cuenta.' });
     await expect(realRequest('/driver/routes/route')).rejects.toMatchObject({ status: 404, message: 'La ruta no existe o no esta asignada a tu cuenta.' });

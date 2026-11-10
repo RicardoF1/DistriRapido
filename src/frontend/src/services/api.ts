@@ -77,6 +77,14 @@ export async function request<T>(path: string, options: RequestInit): Promise<T>
       throw new ApiError(typeof payload?.message === 'string' ? payload.message : fieldMessages?.length ? fieldMessages.join('\n') : fallback[response.status] ?? 'No se pudo completar la operación de la ruta.', response.status);
     }
 
+    // US-019: seguimiento operativo; conserva los mensajes del backend y uno por filtro inválido.
+    if (/^\/operations(?:\?|\/|$)/.test(path) && response.status !== 401) {
+      const payload = await response.json().catch(() => null) as { message?: unknown } | null;
+      const fallback: Record<number, string> = { 400: 'Revisa los filtros del seguimiento operativo.', 403: 'No tienes permisos para consultar el seguimiento operativo.', 404: 'La ruta no existe o todavía no está en operación.' };
+      const messages = Array.isArray(payload?.message) && payload.message.every(item => typeof item === 'string') ? payload.message as string[] : null;
+      throw new ApiError(typeof payload?.message === 'string' ? payload.message : messages?.length ? messages.join('\n') : fallback[response.status] ?? 'No se pudo consultar el seguimiento operativo.', response.status);
+    }
+
     const orderRead = /^\/orders(?:\?|\/)/.test(path);
     if (response.status === 401) throw new ApiError('Credenciales incorrectas o usuario no habilitado.', 401);
     if (response.status === 403) throw new ApiError(orderRead ? 'No tienes permisos para consultar pedidos.' : path === '/orders' ? 'No tienes permisos para registrar pedidos.' : 'No tienes permisos para administrar usuarios y roles.', 403);
