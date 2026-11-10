@@ -23,6 +23,7 @@ import { PlanningPage } from '../pages/PlanningPage';
 import { RoutesPage } from '../pages/RoutesPage';
 import { RouteDetailPage } from '../pages/RouteDetailPage';
 import { RoutesLayout } from '../layouts/RoutesLayout';
+import { OperationsPage } from '../pages/OperationsPage';
 
 export function AppRoutes() {
   return (
@@ -63,6 +64,7 @@ export function AppRoutes() {
           <Route path="/rutas" element={<RoutesPage />} />
           <Route path="/rutas/:id" element={<RouteDetailPage />} />
         </Route>
+        <Route path="/seguimiento" element={<OperationsPage />} />
         <Route element={<DriversLayout />}>
           <Route
             path="/conductores"

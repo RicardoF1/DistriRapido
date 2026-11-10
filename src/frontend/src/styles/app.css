@@ -295,6 +295,33 @@ th { background: var(--color-surface-low); white-space: nowrap; }
 .delivery-incident-form .driver-actions { margin: var(--space-md) 0 0; }
 .delivery-incident-hint { color: var(--color-text-muted); font-size: .8125rem; margin: 0; }
 
+/* US-019: seguimiento operativo */
+.operations-panel > p { margin-top: 0; }
+.operations-summary .operations-metrics { grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); }
+.operations-summary .admin-metric dd { font-size: 1.6rem; }
+.operations-filters { border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: var(--space-lg); margin: 0 0 var(--space-xl); min-width: 0; }
+.operations-filters h2 { font-size: 1.1rem; margin: 0 0 var(--space-md); }
+.operations-filter-grid { display: grid; gap: var(--space-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); align-items: end; }
+.operations-filter-grid select, .operations-filter-grid input:not([type="checkbox"]) { width: 100%; max-width: 100%; }
+.operations-checkbox { display: flex; gap: var(--space-xs); align-items: center; font-weight: 600; font-size: .875rem; min-height: 2.75rem; }
+.operations-checkbox input { width: 1.125rem; height: 1.125rem; }
+.operations-empty { padding: var(--space-md); border: 1px dashed var(--color-border-subtle); border-radius: var(--radius-lg); color: var(--color-text-muted); }
+.operations-panel tr[aria-current="true"] td { background: var(--color-in-transit-bg); }
+/* Contiene el texto .sr-only de la cabecera para que no ensanche la página en móvil. */
+.operations-panel .table-scroll { position: relative; }
+.route-asignada, .delivery-pendiente { background: var(--color-planned-bg); color: var(--color-planned-text); }
+.route-en_curso, .route-completada, .delivery-entregada { background: var(--color-in-transit-bg); color: var(--color-in-transit-text); }
+.delivery-no_entregada { background: var(--color-error-surface); color: var(--color-error); }
+.operations-detail { margin-top: var(--space-xl); }
+.operations-detail h2:focus { outline: none; }
+.operations-detail h2:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.operations-facts { display: grid; gap: var(--space-sm) var(--space-lg); grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr)); margin: 0 0 var(--space-lg); }
+.operations-facts dt { color: var(--color-text-muted); font-size: .8125rem; }
+.operations-facts dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.operations-stops { display: grid; gap: var(--space-md); padding-left: var(--space-lg); }
+.operations-stops > li { overflow-wrap: anywhere; }
+.operations-stops p { margin: var(--space-2xs) 0; }
+
 /* US-009: disponibilidad operativa */
 .availability-panel {
   display: grid;

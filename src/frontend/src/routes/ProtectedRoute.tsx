@@ -44,6 +44,7 @@ export function ProtectedRoute() {
   const operationalRoute =
     location.pathname === '/planificacion' ||
     location.pathname === '/rutas' ||
+    location.pathname === '/seguimiento' ||
     location.pathname.startsWith('/rutas/') ||
     location.pathname === '/conductores' ||
     location.pathname.startsWith('/conductores/') ||
