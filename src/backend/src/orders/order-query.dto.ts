@@ -2,6 +2,7 @@ import { Transform, Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ORDER_PRIORITIES, PRODUCT_TYPES, RegisteredOrderDto } from './order.dto';
+import { DEFAULT_PAGE_SIZE } from '../common/pagination';
 export const ORDER_STATES = ['PENDIENTE'] as const;
 export class OrderQueryDto {
   @ApiPropertyOptional({ description: 'Nombre de cliente, dirección o UUID exacto del pedido.', maxLength: 255 })
@@ -10,7 +11,7 @@ export class OrderQueryDto {
   @ApiPropertyOptional({ enum: ORDER_PRIORITIES }) @IsOptional() @IsIn(ORDER_PRIORITIES) prioridad?: string;
   @ApiPropertyOptional({ enum: PRODUCT_TYPES }) @IsOptional() @IsIn(PRODUCT_TYPES) tipo_producto?: string;
   @ApiPropertyOptional({ default: 1, minimum: 1, maximum: 100000 }) @Type(() => Number) @IsInt() @Min(1) @Max(100000) page = 1;
-  @ApiPropertyOptional({ default: 20, minimum: 1, maximum: 100 }) @Type(() => Number) @IsInt() @Min(1) @Max(100) pageSize = 20;
+  @ApiPropertyOptional({ default: DEFAULT_PAGE_SIZE, minimum: 1, maximum: 100 }) @Type(() => Number) @IsInt() @Min(1) @Max(100) pageSize = DEFAULT_PAGE_SIZE;
 }
 export class OrderReadClientDto {
   @ApiProperty({ format: 'uuid' }) cliente_id!: string;

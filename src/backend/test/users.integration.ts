@@ -29,8 +29,10 @@ describe('RF-002 → US-003 HTTP + PostgreSQL', () => {
   });
   afterAll(async () => { if (app) await app.close(); if (prisma) { await prisma.usuario.deleteMany({ where: { usuario_id: { in: [adminId, operatorId, createdId].filter(Boolean) } } }); await prisma.$disconnect(); } });
   it('Administrador lista/consulta cuentas y roles sin hashes', async () => {
-    const users = await admin.get('/users').expect(200); const one = await admin.get(`/users/${adminId}`).expect(200); const roles = await admin.get('/roles').expect(200);
-    expect(users.body.some((item: { usuario_id: string }) => item.usuario_id === adminId)).toBe(true);
+    const users = await admin.get('/users?pageSize=100').expect(200); const one = await admin.get(`/users/${adminId}`).expect(200); const roles = await admin.get('/roles').expect(200);
+    expect(users.body).toMatchObject({ page: 1, pageSize: 100 }); expect(users.body.total).toBeGreaterThanOrEqual(users.body.items.length);
+    expect(users.body.items.some((item: { usuario_id: string }) => item.usuario_id === adminId)).toBe(true);
+    expect((await admin.get('/users').expect(200)).body.pageSize).toBe(12);
     expect(one.body.email).toBe(`admin-${email}`); expect(roles.body.map((role: { nombre: string }) => role.nombre).sort()).toEqual(Object.values(ROLE_NAMES).sort());
     expect(JSON.stringify([users.body, one.body, roles.body])).not.toMatch(/password|hash|accessToken|JWT_SECRET|DATABASE_URL/);
   });
@@ -49,7 +51,7 @@ describe('RF-002 → US-003 HTTP + PostgreSQL', () => {
   it('edita email, rol y estado y confirma la consulta', async () => {
     const changed = await admin.patch(`/users/${createdId}`).send({ email: `edited-${email}`, rol_id: adminRole, estado: 'BLOQUEADO' }).expect(200);
     expect(changed.body).toMatchObject({ email: `edited-${email}`, rol_id: adminRole, estado: 'BLOQUEADO' }); expect(changed.body).not.toHaveProperty('password_hash');
-    const listed = await admin.get('/users').expect(200); expect(listed.body.some((item: { email: string }) => item.email === `edited-${email}`)).toBe(true);
+    const listed = await admin.get('/users?pageSize=100').expect(200); expect(listed.body.items.some((item: { email: string }) => item.email === `edited-${email}`)).toBe(true);
   });
   it('rechaza PATCH vacío, rol/estado inválidos, contraseña y correo duplicado', async () => {
     for (const body of [{}, { estado: 'bad' }, { rol_id: randomUUID() }, { password }, { email: null }]) await admin.patch(`/users/${createdId}`).send(body).expect(400);

@@ -6,7 +6,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import request from 'supertest';
 import { OrdersController } from './orders.controller';
-import { OrdersService } from './orders.service';
+import { ORDER_LIST_SELECT, OrdersService } from './orders.service';
 import { CoverageService } from '../coverage/coverage.service';
 const coverage = { assertDelivery: (point: { latitud: number; longitud: number }) => ({ latitud: point.latitud, longitud: point.longitud }) } as CoverageService;
 import { OrderQueryDto } from './order-query.dto';
@@ -32,12 +32,12 @@ describe('US-005 consultas Prisma', () => {
     const result = await service.list(plainToInstance(OrderQueryDto, { search, estado: 'PENDIENTE', prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO', page: 2, pageSize: 10 }));
     expect(result).toEqual({ items: [order], total: 1, page: 2, pageSize: 10 });
     const args = prisma.pedido.findMany.mock.calls[0][0];
-    expect(args).toMatchObject({ include: { cliente: true }, skip: 10, take: 10, where: { estado: 'PENDIENTE', prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO', OR: [{ cliente: { nombre: { contains: search, mode: 'insensitive' } } }, { cliente: { direccion: { contains: search, mode: 'insensitive' } } }, ...(search === id ? [{ pedido_id: id }] : [])] } });
+    expect(args).toMatchObject({ select: ORDER_LIST_SELECT, skip: 10, take: 10, where: { estado: 'PENDIENTE', prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO', OR: [{ cliente: { nombre: { contains: search, mode: 'insensitive' } } }, { cliente: { direccion: { contains: search, mode: 'insensitive' } } }, ...(search === id ? [{ pedido_id: id }] : [])] } });
     expect(prisma.pedido.count).toHaveBeenCalledWith({ where: args.where });
   });
   it('sin filtros, orden estable y lista vacía', async () => {
     prisma.pedido.findMany.mockResolvedValue([]); prisma.pedido.count.mockResolvedValue(0);
-    expect(await service.list(new OrderQueryDto())).toEqual({ items: [], total: 0, page: 1, pageSize: 20 });
+    expect(await service.list(new OrderQueryDto())).toEqual({ items: [], total: 0, page: 1, pageSize: 12 });
     expect(prisma.pedido.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: {}, orderBy: [{ creado_en: 'desc' }, { pedido_id: 'desc' }] }));
   });
   it('detalle con cliente y 404', async () => {
@@ -70,7 +70,7 @@ describe('US-005 HTTP con Prisma simulado', () => {
   afterAll(async () => { await app.close(); });
   it('GET listado serializa cliente, decimales y volumen NULL', async () => {
     const response = await request(app.getHttpServer()).get('/orders').set('Cookie', 'distrirapido_session=Administrador').expect(200);
-    expect(response.body).toEqual({ items: [{ ...order, ventana_inicio: order.ventana_inicio.toISOString(), ventana_fin: order.ventana_fin.toISOString(), creado_en: order.creado_en.toISOString() }], total: 1, page: 1, pageSize: 20 });
+    expect(response.body).toEqual({ items: [{ ...order, ventana_inicio: order.ventana_inicio.toISOString(), ventana_fin: order.ventana_fin.toISOString(), creado_en: order.creado_en.toISOString() }], total: 1, page: 1, pageSize: 12 });
     expect(response.headers['cache-control']).toBe('no-store');
   });
   it.each(['/orders', `/orders/${id}`])('sin sesión devuelve 401: %s', async path => { await request(app.getHttpServer()).get(path).expect(401); });

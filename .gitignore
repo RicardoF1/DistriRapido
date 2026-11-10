@@ -24,3 +24,6 @@ LEVANTAR.md
 # Private administrative resources: publication permission is unconfirmed.
 /geodata/coverage/v1/
 /src/backend/src/coverage/generated/
+
+# Informes locales de Lighthouse CI (Green IT); en CI se guardan como artefacto.
+.lighthouseci/

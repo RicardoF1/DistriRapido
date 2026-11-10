@@ -4,26 +4,30 @@
   Routes,
 } from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
-import { AccessPage } from '../pages/AccessPage';
-import { DriverAccessPage } from '../pages/DriverAccessPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminLayout } from '../layouts/AdminLayout';
-import { UsersPage } from '../pages/UsersPage';
-import { UserEditorPage } from '../pages/UserEditorPage';
-import { OrderRegistrationPage } from '../pages/OrderRegistrationPage';
 import { OrderLayout } from '../layouts/OrderLayout';
-import { OrdersPage } from '../pages/OrdersPage';
-import { OrderDetailPage } from '../pages/OrderDetailPage';
-import { VehiclesPage } from '../pages/VehiclesPage';
 import { DriversLayout } from '../layouts/DriversLayout';
-import { DriversPage } from '../pages/DriversPage';
 import { AvailabilityLayout } from '../layouts/AvailabilityLayout';
-import { AvailabilityPage } from '../pages/AvailabilityPage';
-import { PlanningPage } from '../pages/PlanningPage';
-import { RoutesPage } from '../pages/RoutesPage';
-import { RouteDetailPage } from '../pages/RouteDetailPage';
 import { RoutesLayout } from '../layouts/RoutesLayout';
-import { OperationsPage } from '../pages/OperationsPage';
+import { lazyPage } from './lazy-page';
+
+// Green IT (área 4): cada página se descarga bajo demanda (code splitting con React.lazy y Suspense).
+// Leaflet y los mapas solo se cargan al visitar las páginas que los usan.
+const AccessPage = lazyPage(() => import('../pages/AccessPage'), 'AccessPage');
+const DriverAccessPage = lazyPage(() => import('../pages/DriverAccessPage'), 'DriverAccessPage');
+const UsersPage = lazyPage(() => import('../pages/UsersPage'), 'UsersPage');
+const UserEditorPage = lazyPage(() => import('../pages/UserEditorPage'), 'UserEditorPage');
+const OrderRegistrationPage = lazyPage(() => import('../pages/OrderRegistrationPage'), 'OrderRegistrationPage');
+const OrdersPage = lazyPage(() => import('../pages/OrdersPage'), 'OrdersPage');
+const OrderDetailPage = lazyPage(() => import('../pages/OrderDetailPage'), 'OrderDetailPage');
+const VehiclesPage = lazyPage(() => import('../pages/VehiclesPage'), 'VehiclesPage');
+const DriversPage = lazyPage(() => import('../pages/DriversPage'), 'DriversPage');
+const AvailabilityPage = lazyPage(() => import('../pages/AvailabilityPage'), 'AvailabilityPage');
+const PlanningPage = lazyPage(() => import('../pages/PlanningPage'), 'PlanningPage');
+const RoutesPage = lazyPage(() => import('../pages/RoutesPage'), 'RoutesPage');
+const RouteDetailPage = lazyPage(() => import('../pages/RouteDetailPage'), 'RouteDetailPage');
+const OperationsPage = lazyPage(() => import('../pages/OperationsPage'), 'OperationsPage');
 
 export function AppRoutes() {
   return (

@@ -34,11 +34,13 @@ export function AdminSummary() {
   ];
   const reload = () => { setData(null); setError(''); setAttempt(value => value + 1); };
   return <section className="admin-summary" aria-labelledby="admin-summary-title" aria-busy={!data && !error}>
-    <div className="admin-summary-heading"><h2 id="admin-summary-title">Resumen general</h2>{data && !error && <button type="button" className="button button-secondary" onClick={reload}>Actualizar resumen</button>}</div>
-    {error ? <div className="admin-summary-error"><p role="alert">{error}</p><button type="button" className="button button-primary" onClick={reload}>Reintentar resumen</button></div> : !data && <p role="status">Cargando indicadores…</p>}
+    <div className="admin-summary-heading"><h2 id="admin-summary-title">Resumen general</h2>{!error && <button type="button" className="button button-secondary" onClick={reload} disabled={!data}>Actualizar resumen</button>}</div>
+    {error ? <div className="admin-summary-error"><p role="alert">{error}</p><button type="button" className="button button-primary" onClick={reload}>Reintentar resumen</button></div> : !data && <p role="status" className="sr-only">Cargando indicadores…</p>}
     <dl className="admin-metrics">{metrics.map(metric => <div className="admin-metric" key={metric.label}>
-      <dt><span className="admin-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{metric.icon}</svg></span>{metric.label}</dt><dd className={!data || error ? "admin-metric-value-muted" : undefined}>{metricValue(error, metric.value)}</dd>
+      <dt><span className="admin-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{metric.icon}</svg></span>{metric.label}</dt><dd className={error ? "admin-metric-value-muted" : !data ? "admin-metric-value-pending" : undefined}>{metricValue(error, metric.value)}</dd>
     </div>)}</dl>
+    {/* Estabilidad visual (CLS): el bloque por estado ocupa su lugar desde el inicio. */}
+    {!data && !error && <div className="admin-state-summary" aria-hidden="true"><h3>Pedidos por estado</h3><p>…</p></div>}
     {data && !error && <>
       <div className="admin-state-summary"><h3>Pedidos por estado</h3>{data.ordersByState.length ? <dl>{data.ordersByState.map(group => <div key={group.state}><dt>{group.state}</dt><dd>{group.count.toLocaleString('es-PE')}</dd></div>)}</dl> : <p>No hay pedidos registrados.</p>}</div>
       {data.totalUsers === 0 && <p className="admin-summary-empty">No hay usuarios registrados.</p>}

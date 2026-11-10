@@ -1,5 +1,6 @@
 import { request } from './api';
 import type { DeliveryIncident } from './driver-profile-api';
+import { PAGE_SIZE } from './pagination';
 
 // US-019 / RF-016: seguimiento operativo de rutas y entregas (solo lectura).
 export const OPERATIONAL_ROUTE_STATES = ['ASIGNADA', 'EN_CURSO', 'COMPLETADA'] as const;
@@ -51,7 +52,7 @@ export interface OperationalRouteDetail extends RouteBase {
 export interface OperationsPage { items: OperationalRoute[]; total: number; page: number; pageSize: number }
 export interface OperationsSummary { routes: Record<OperationalRouteState, number>; deliveries: Record<DeliveryState, number>; incidents: number }
 
-export function operationsQuery(filters: OperationsFilters, page: number, pageSize = 10) {
+export function operationsQuery(filters: OperationsFilters, page: number, pageSize = PAGE_SIZE) {
   const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
   if (filters.estado) params.set('estado', filters.estado);
   if (filters.estado_entrega) params.set('estado_entrega', filters.estado_entrega);

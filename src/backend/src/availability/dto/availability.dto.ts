@@ -13,6 +13,7 @@ import {
   ApiPropertyOptional,
   PartialType,
 } from '@nestjs/swagger';
+import { DEFAULT_PAGE_SIZE } from '../../common/pagination';
 
 const trim = ({ value }: { value: unknown }) =>
   typeof value === 'string' ? value.trim() : value;
@@ -92,7 +93,7 @@ export class AvailabilityQueryDto {
   @ApiPropertyOptional({
     minimum: 1,
     maximum: 100,
-    default: 20,
+    default: DEFAULT_PAGE_SIZE,
   })
   @IsOptional()
   @Type(() => Number)

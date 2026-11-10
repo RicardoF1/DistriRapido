@@ -5,6 +5,7 @@ import { UsersService } from '../users/users.service';
 import { ROLE_NAMES } from '../roles/roles';
 import { ACCOUNT_FIELDS, driverSelection, driverView } from './driver-view';
 import { CreateDriverAccountDto, DriverAccountOptionsDto, LinkDriverAccountDto } from './dto/driver-account.dto';
+import { DEFAULT_PAGE_SIZE } from '../common/pagination';
 
 @Injectable()
 export class DriverAccountsService {
@@ -32,7 +33,7 @@ export class DriverAccountsService {
       ...(query.search?.trim() ? { email: { contains: query.search.trim(), mode: 'insensitive' } } : {}),
       OR: [{ conductor: { is: null } }, ...(query.conductor_id ? [{ conductor: { is: { conductor_id: query.conductor_id } } }] : [])],
     };
-    const { page = 1, pageSize = 20 } = query;
+    const { page = 1, pageSize = DEFAULT_PAGE_SIZE } = query;
     const [items, total] = await this.prisma.$transaction([
       this.prisma.usuario.findMany({ where, select: ACCOUNT_FIELDS, orderBy: [{ email: 'asc' }, { usuario_id: 'asc' }], skip: (page - 1) * pageSize, take: pageSize }),
       this.prisma.usuario.count({ where }),

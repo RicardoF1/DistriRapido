@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ROLE_NAMES } from '../roles/roles';
 import { CreateDriverDto, DriverQueryDto, UpdateDriverDto } from './dto/driver.dto';
 import { driverSelection, driverView } from './driver-view';
+import { DEFAULT_PAGE_SIZE } from '../common/pagination';
 @Injectable()
 export class DriversService {
  constructor(private readonly prisma: PrismaService) {}
@@ -16,7 +17,7 @@ export class DriversService {
   } throw error;
  }
  async list(query: DriverQueryDto, role: string = ROLE_NAMES.administrator) {
-  const {page=1,pageSize=20,search,estado}=query;
+  const {page=1,pageSize=DEFAULT_PAGE_SIZE,search,estado}=query;
   const where: Prisma.ConductorWhereInput = { ...(estado ? {estado} : {}), ...(search?.trim() ? {OR:[{nombre_completo:{contains:search.trim(),mode:'insensitive'}},{dni:{contains:search.trim()}}]} : {}) };
   const administrator = role === ROLE_NAMES.administrator;
   try {const [items,total]=await this.prisma.$transaction([this.prisma.conductor.findMany({where,select:driverSelection(administrator),skip:(page-1)*pageSize,take:pageSize,orderBy:[{nombre_completo:'asc'},{conductor_id:'asc'}]}),this.prisma.conductor.count({where})]);return {items:items.map(item=>driverView(item,administrator)),total,page,pageSize};} catch(e){this.fail(e);}

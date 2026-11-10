@@ -6,12 +6,15 @@ import { useAuth } from '../hooks/useAuth';
 import type { RoleOption, UserAccount, UserValues } from '../types/users';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { UserForm } from '../features/users/UserForm';
+import { catalogKeys, queryClient } from '../services/query-client';
 export function UserEditorPage() {
   const { id } = useParams(); const navigate = useNavigate(); const { acceptSession } = useAuth();
   const [roles, setRoles] = useState<RoleOption[]>([]); const [user, setUser] = useState<UserAccount>(); const [loading, setLoading] = useState(true); const [error, setError] = useState(''); const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     const controller = new AbortController(); setLoading(true); setError('');
-    Promise.all([usersApi.roles(controller.signal), id ? usersApi.get(id, controller.signal) : Promise.resolve(undefined)]).then(([items, account]) => {
+    // Green IT (área 7): el catálogo de roles se reutiliza desde la caché del cliente durante 5 minutos.
+    const roles = queryClient.fetchQuery({ queryKey: catalogKeys.roles, queryFn: ({ signal }) => usersApi.roles(signal) });
+    Promise.all([roles, id ? usersApi.get(id, controller.signal) : Promise.resolve(undefined)]).then(([items, account]) => {
       if (!controller.signal.aborted) { setRoles(items); setUser(account); }
     }).catch((cause: unknown) => {
       if (controller.signal.aborted) return;

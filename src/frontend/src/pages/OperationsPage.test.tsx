@@ -52,8 +52,8 @@ describe('US-019 / RF-016: seguimiento operativo', () => {
   it('muestra el resumen y las rutas en operación con su progreso', async () => {
     renderPage();
     const summary = await screen.findByRole('region', { name: 'Resumen general de la operación' });
-    expect(await within(summary).findByText('Rutas en curso')).toBeVisible();
-    expect(within(summary).getByText('Incidencias registradas').nextSibling).toHaveTextContent('3');
+    expect(within(summary).getByText('Rutas en curso')).toBeVisible();
+    await waitFor(() => expect(within(summary).getByText('Incidencias registradas').nextSibling).toHaveTextContent('3'));
     const table = await screen.findByRole('region', { name: 'Rutas en operación' });
     const row = within(table).getByRole('row', { name: /Ana Operativa/ });
     expect(row).toHaveTextContent('ABC-123');

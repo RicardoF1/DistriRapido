@@ -58,10 +58,10 @@ describe('US-019: consulta de rutas en operación', () => {
     prisma.ruta.findMany.mockResolvedValue([route([{ estado_entrega: 'ENTREGADA', incidents: 2 }, { estado_entrega: 'NO_ENTREGADA' }, { estado_entrega: 'PENDIENTE', incidents: 1 }])]);
     prisma.ruta.count.mockResolvedValue(1);
     const result = await service.list(plainToInstance(OperationsQueryDto, {}));
-    expect(prisma.ruta.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: { estado: { in: ['ASIGNADA', 'EN_CURSO', 'COMPLETADA'] } }, skip: 0, take: 10 }));
+    expect(prisma.ruta.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: { estado: { in: ['ASIGNADA', 'EN_CURSO', 'COMPLETADA'] } }, skip: 0, take: 12 }));
     expect(result.items[0]).toMatchObject({ deliveries: { total: 3, delivered: 1, not_delivered: 1, pending: 1, processed: 2, percentage: 66.67 }, incidents: 3, version: { vehiculo: { placa: 'ABC-123' } } });
     expect(result.items[0]).not.toHaveProperty('versiones');
-    expect(result).toMatchObject({ total: 1, page: 1, pageSize: 10 });
+    expect(result).toMatchObject({ total: 1, page: 1, pageSize: 12 });
   });
 
   it('aplica estado, conductor, búsqueda y fechas en America/Lima', async () => {

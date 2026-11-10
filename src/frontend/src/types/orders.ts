@@ -5,7 +5,9 @@ export interface OrderQuery { search: string; estado: string; prioridad: string;
 export interface OrderRead extends RegisteredOrder {
   cliente: { cliente_id: string; nombre: string; telefono: string | null; email: string | null; direccion: string; referencia: string | null; latitud: string; longitud: string; estado: string };
 }
-export interface OrderPage { items: OrderRead[]; total: number; page: number; pageSize: number }
+// Green IT (área 1): el listado recibe solo las columnas que muestra; el detalle usa OrderRead.
+export type OrderListItem = Pick<RegisteredOrder, 'pedido_id' | 'estado' | 'creado_en' | 'ventana_inicio' | 'ventana_fin' | 'prioridad' | 'tipo_producto' | 'peso_kg' | 'volumen_m3'> & { cliente: Pick<OrderRead['cliente'], 'nombre' | 'direccion'> };
+export interface OrderPage { items: OrderListItem[]; total: number; page: number; pageSize: number }
 export interface OrderValues {
   cliente: { nombre: string; direccion: string; referencia?: string; latitud: number; longitud: number };
   descripcion_carga?: string;

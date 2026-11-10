@@ -43,16 +43,16 @@ function paramsFrom(filters: OperationsFilters, page: number) {
 const hasFilters = (filters: OperationsFilters) => Object.keys(filters).length > 0;
 
 function SummaryPanel({ summary, error, onRefresh }: Readonly<{ summary: OperationsSummary | null; error: string; onRefresh: () => void }>) {
-  const metrics = summary ? [
-    ['Rutas asignadas', summary.routes.ASIGNADA], ['Rutas en curso', summary.routes.EN_CURSO], ['Rutas completadas', summary.routes.COMPLETADA],
-    ['Entregas pendientes', summary.deliveries.PENDIENTE], ['Entregas realizadas', summary.deliveries.ENTREGADA], ['Entregas no realizadas', summary.deliveries.NO_ENTREGADA],
-    ['Incidencias registradas', summary.incidents],
-  ] as const : [];
+  // Las tarjetas se pintan desde el inicio con «…» para reservar su espacio y evitar desplazamientos (CLS).
+  const metrics = [
+    ['Rutas asignadas', summary?.routes.ASIGNADA], ['Rutas en curso', summary?.routes.EN_CURSO], ['Rutas completadas', summary?.routes.COMPLETADA],
+    ['Entregas pendientes', summary?.deliveries.PENDIENTE], ['Entregas realizadas', summary?.deliveries.ENTREGADA], ['Entregas no realizadas', summary?.deliveries.NO_ENTREGADA],
+    ['Incidencias registradas', summary?.incidents],
+  ] as const;
   return <section className="admin-summary operations-summary" aria-labelledby="operations-summary-title">
     <div className="admin-summary-heading"><h2 id="operations-summary-title">Resumen general de la operación</h2><button type="button" className="button button-secondary" onClick={onRefresh}>Actualizar resumen</button></div>
     {error ? <p role="alert" className="admin-summary-error">{error}</p>
-      : !summary ? <p role="status">Cargando resumen…</p>
-      : <dl className="admin-metrics operations-metrics">{metrics.map(([label, value]) => <div className="admin-metric" key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>}
+      : <>{!summary && <p role="status" className="sr-only">Cargando resumen…</p>}<dl className="admin-metrics operations-metrics" aria-busy={!summary}>{metrics.map(([label, value]) => <div className="admin-metric" key={label}><dt>{label}</dt><dd>{value ?? '…'}</dd></div>)}</dl></>}
   </section>;
 }
 

@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, IsString, IsUUID, Matches, Max, MaxLength, Min } from 'class-validator';
+import { DEFAULT_PAGE_SIZE } from '../../common/pagination';
 
 // US-019 / RF-016: filtros permitidos del seguimiento operativo.
 export const OPERATIONAL_ROUTE_STATES = ['ASIGNADA', 'EN_CURSO', 'COMPLETADA'] as const;
@@ -16,9 +17,9 @@ export class OperationsQueryDto {
   @IsOptional() @Type(() => Number) @IsInt({ message: 'page debe ser un entero.' }) @Min(1, { message: 'page debe ser mayor o igual a 1.' }) @Max(1000000)
   page = 1;
 
-  @ApiPropertyOptional({ minimum: 1, maximum: 50, default: 10 })
+  @ApiPropertyOptional({ minimum: 1, maximum: 50, default: DEFAULT_PAGE_SIZE })
   @IsOptional() @Type(() => Number) @IsInt({ message: 'pageSize debe ser un entero.' }) @Min(1, { message: 'pageSize debe estar entre 1 y 50.' }) @Max(50, { message: 'pageSize debe estar entre 1 y 50.' })
-  pageSize = 10;
+  pageSize = DEFAULT_PAGE_SIZE;
 
   @ApiPropertyOptional({ enum: OPERATIONAL_ROUTE_STATES })
   @IsOptional() @IsIn(OPERATIONAL_ROUTE_STATES, { message: 'estado: usa ASIGNADA, EN_CURSO o COMPLETADA.' })

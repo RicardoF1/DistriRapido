@@ -64,7 +64,7 @@ describe('Acceso según rol', () => {
   it('el panel monta el resumen obtenido de la API antes de los accesos rápidos', async () => {
     vi.mocked(adminApi.summary).mockResolvedValue({totalOrders:123,pendingOrders:20,totalUsers:4,ordersByState:[{state:'PENDIENTE',count:20},{state:'OTRO_ESTADO_EXISTENTE',count:103}]});
     renderRoutes('/acceso/administrador');
-    await screen.findByText('Pedidos por estado');
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Actualizar resumen' })).toBeEnabled());
     expect(screen.getByText('Pedidos registrados').parentElement).toHaveTextContent('123');
     expect(screen.getByText('Pedidos pendientes').parentElement).toHaveTextContent('20');
     expect(screen.getByRole('navigation',{name:'Accesos rápidos'}).querySelectorAll('a')).toHaveLength(3);
