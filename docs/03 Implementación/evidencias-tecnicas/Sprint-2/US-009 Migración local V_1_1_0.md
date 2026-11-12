@@ -88,3 +88,5 @@ La detección de intervalos parcialmente superpuestos se realiza en Availability
 La disponibilidad de vehículos se integrará cuando US-007 proporcione el modelo oficial de vehículos.
 
 El bloqueo de modificaciones después de iniciar la planificación se integrará cuando US-010 proporcione el estado oficial de planificación.
+
+[← Volver al README principal](../../../../README.md)

@@ -57,3 +57,5 @@ No se repitió auditoría de dependencias: no hubo cambios de dependencias o loc
 10. Con una cuenta ACTIVO no Administrador, /users y /roles devuelven 403; sin sesión devuelven 401. Para probarlo, usar una cuenta secundaria, sin alterar el administrador principal.
 
 US-004 y US-005 no se iniciaron.
+
+[← Volver al README principal](../../../../README.md)

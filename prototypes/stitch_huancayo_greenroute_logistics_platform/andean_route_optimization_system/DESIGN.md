@@ -226,3 +226,5 @@ The design system adopts a **Soft (Level 1)** geometric standard. This delivers 
 ### Form Inputs & High-Contrast Touch Controls
 - **Dispatch Inputs**: 36px height, `#FFFFFF` surface, `#E2E8F0` border, `#0F172A` text. Focus: 2px ring `#059669` with `#ECFDF5` background tint.
 - **Driver PWA Inputs**: 48px minimum height, large checkboxes (24px x 24px) for POD (Proof of Delivery) checklist items with crisp green check marks (`#059669`).
+
+[← Volver al README principal](../../../README.md)

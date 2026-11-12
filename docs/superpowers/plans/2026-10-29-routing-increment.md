@@ -60,3 +60,5 @@ Files: PlanningPage, RoutesPage, RouteDetailPage, RouteMap, API/tipos, navegaci�
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Informe del primer incremento y revisión de la migración pendiente. Solicitar autorización específica antes de aplicarla a desarrollo o generar rutas allí.
+
+[← Volver al README principal](../../../README.md)

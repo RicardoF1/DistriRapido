@@ -72,3 +72,5 @@ Módulo nuevo `operations`, sin migraciones:
 
 - Revisión del equipo y aceptación de la historia en Jira.
 - Si el equipo decide crear un rol «Supervisor» propio, basta con añadirlo a `OPERATIONS_ROLES` en el backend y a las rutas operativas del frontend.
+
+[← Volver al README principal](../../../../README.md)

@@ -131,3 +131,5 @@ No se necesita migración para la etapa 1. Las pruebas con mutación real no val
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Revisar esta etapa en la interfaz local y aprobar separadamente el diseño `03 Diseño de restablecimiento de credenciales V_1_1_0.md`. No implementar el reset, la versión de credenciales JWT ni su migración hasta recibir esa aprobación adicional.
+
+[← Volver al README principal](../../../../README.md)

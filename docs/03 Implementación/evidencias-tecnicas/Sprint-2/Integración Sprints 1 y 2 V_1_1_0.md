@@ -116,3 +116,5 @@ Para repetir pruebas que escriben, configurar TEST_DATABASE_URL para una base _t
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Preparar la estabilización previa al Sprint 3: resolver auditorías con cambios acotados, corregir filtros de estado y diseñar pruebas de concurrencia. Actualizar los criterios de aceptación y la trazabilidad de Sprint 2 antes de declarar su cierre funcional.
+
+[← Volver al README principal](../../../../README.md)

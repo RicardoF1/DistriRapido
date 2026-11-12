@@ -40,3 +40,5 @@
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Informe de correcciones y preparación de infraestructura con resultados reales y autorización específica pendiente antes de aplicar la migración o escribir datos de desarrollo.
+
+[← Volver al README principal](../../../README.md)

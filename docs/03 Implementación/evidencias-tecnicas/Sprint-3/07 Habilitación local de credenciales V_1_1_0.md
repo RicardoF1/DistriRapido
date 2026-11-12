@@ -103,3 +103,5 @@ Pendientes: cambio manual de la contraseña de Juan cuando lo decida el usuario;
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Utilizar el formulario administrativo y comprobar la revocación con Juan desde un perfil separado. Registrar solo el resultado, nunca la contraseña. La continuación de US-013 y cualquier publicación siguen siendo tareas independientes.
+
+[← Volver al README principal](../../../../README.md)

@@ -1,5 +1,8 @@
 # Backend
 
+> Contexto: este README conserva procedimientos y resultados históricos del Sprint 1. Para capacidades vigentes (flota, OSRM, asignación y entregas), consultar el [README principal](../../README.md). Corrección documental: 2026-11-12. Las instrucciones de migración requieren revisión/autorización y no se ejecutaron en esta tarea. La referencia histórica a .env.example no corresponde a un archivo versionado en el HEAD inspeccionado.
+
+
 API NestJS + TypeScript, PostgreSQL y Prisma. Alcance: US-001, US-002 y US-003. Administración de cuentas y asignación de roles existentes; sin eliminación física.
 
 Desde la raíz, copia `.env.example` a `.env`, configura valores propios y aprovisiona la cobertura privada con `node scripts/provision-coverage.cjs --source "/directorio/privado/autorizado/v1"`. El procedimiento siguiente de migración y bootstrap corresponde exclusivamente a un entorno nuevo autorizado; no repetirlo sobre la base existente. Desde esta carpeta:
@@ -48,7 +51,7 @@ docker compose -f docker-compose.yml -f docker-compose.migrations.yml --profile 
 
 Revisar proyecto Compose y base de destino antes de hacerlo. En una actualización, revisar migraciones pendientes y disponer de respaldo primero. Arrancar API/frontend solo tras una migración correcta. La operación se ofrece como procedimiento y no se ejecutó durante esta fase. `prisma migrate deploy` continúa disponible en el perfil; no se sustituyó por reset, recreación o bootstrap.
 
-Pruebas de esta fase: Jest ejecuta HTTP Nest/Supertest con Prisma simulado y paquete GeoJSON real. Las pruebas de integración contra una base aislada siguen siendo un procedimiento independiente, no un resultado acreditado aquí. Véase [informe 05](../../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md).
+Pruebas de esta fase: Jest ejecuta HTTP Nest/Supertest con Prisma simulado y paquete GeoJSON real. Las pruebas de integración contra una base aislada siguen siendo un procedimiento independiente, no un resultado acreditado aquí. Véase [informe 05 — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/05%20Validaci%C3%B3n%20backend%20y%20empaquetado%20V_1_1_0.md).
 
 ## Inyección de datos solo en pruebas
 

@@ -1,5 +1,9 @@
 # 03 Calidad de código V_1_1_0
 
+> Sprint 3 · Informe histórico V_1_1_0. Resultados sobre `33e7601` (noviembre de 2026), no sobre el HEAD actual. Traslado documental a la ruta oficial el 2026-11-12; no se repitieron pruebas, auditorías ni reuniones.
+
+[Evidencia técnica conservada](../evidencias-tecnicas/Sprint-3/cierre/06%20Evidencia%20técnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md) · [Otros informes del Sprint 3](../../README.md#sprint-3--ubicación-oficial)
+
 ## Identificación
 
 - Versión del documento: V_1_1_0 (sustituye a V_1_0_0, disponible en el historial de Git)
@@ -19,11 +23,11 @@
 | Backend | 43/43 | 498/498 | 90.76% | 81.46% | 87.53% | 94.01% |
 | Frontend | 38/38 | 362/362 | 87.89% | 81.16% | 84.97% | 92.94% |
 
-![Backend: 43/43 suites y 498/498 pruebas](./evidencias/calidad/02-backend-498-pruebas.png)
+![Backend: 43/43 suites y 498/498 pruebas](../evidencias-tecnicas/Sprint-3/cierre/evidencias/calidad/02-backend-498-pruebas.png)
 
 *Figura 1. Backend: 43/43 suites y 498/498 pruebas con cobertura (Jest), commit `33e7601`, 2026-11-07 14:58 -05:00. Extracto del log real de la ejecución.*
 
-![Frontend: 38/38 archivos y 362/362 pruebas](./evidencias/calidad/03-frontend-362-pruebas.png)
+![Frontend: 38/38 archivos y 362/362 pruebas](../evidencias-tecnicas/Sprint-3/cierre/evidencias/calidad/03-frontend-362-pruebas.png)
 
 *Figura 2. Frontend: 38/38 archivos y 362/362 pruebas con cobertura (Vitest, `--testTimeout=15000`), commit `33e7601`, 2026-11-07 14:58 -05:00. Extracto del log real; la ruta local del repositorio se sustituyó por [repositorio].*
 
@@ -95,7 +99,7 @@
 | NCLOC | 5850 | 6077 |
 | Reliability / Security / Maintainability / Security review | A / A / A / A | A / A / A / A |
 
-![SonarQube: Quality Gate Passed tras el análisis 9](./evidencias/calidad/01-sonarqube-quality-gate.png)
+![SonarQube: Quality Gate Passed tras el análisis 9](../evidencias-tecnicas/Sprint-3/cierre/evidencias/calidad/01-sonarqube-quality-gate.png)
 
 *Figura 3. SonarQube 10.5.1, resumen del proyecto tras el análisis 9 sobre `33e7601` (2026-11-07 14:59 -05:00): Quality Gate Passed, 0 issues de seguridad, cobertura 86.8%, duplicación 0.0% y 0 Security Hotspots. Esta versión agrupa los issues por calidad de software: los 17 de Reliability son code smells con impacto en fiabilidad, no bugs (bugs = 0). Se recortó la barra superior con el avatar de la cuenta.*
 
@@ -175,4 +179,12 @@ El incremento cumple lint, typecheck, pruebas (backend 498/498, frontend 362/362
 
 ---
 
-[← Volver al README principal](../../../../../README.md) · [Índice documental](../../../../README.md)
+## Historial documental de ubicación
+
+| Versión | Fecha | Cambio |
+|---|---|---|
+| V_1_0_0 | Véase historial Git | Versión inicial anterior, no recreada ni duplicada. |
+| V_1_1_0 | Actualización técnica registrada: 2026-11-07; evidencias posteriores: 2026-11-08 | Se mantiene la justificación y el detalle histórico del informe. |
+| V_1_1_0, corrección de ubicación | 2026-11-12 | Traslado desde `evidencias-tecnicas/Sprint-3/cierre/` a `Sprint 03/`, enlaces ajustados. No es una nueva medición. |
+
+[← Volver al README principal](../../../README.md) · [Índice documental](../../README.md)

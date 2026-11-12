@@ -217,3 +217,5 @@ Revisión independiente de diseño: identificó ambigüedades sobre vehículo ú
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Revisar/aprobar el diseño y sus decisiones operativas. Una vez aprobado, preparar el plan ejecutable y pruebas RED del primer incremento, incluyendo SQL aditivo solo para revisión; cualquier aplicación de migración necesita autorización específica adicional.
+
+[← Volver al README principal](../../../README.md)

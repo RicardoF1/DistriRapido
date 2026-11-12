@@ -171,3 +171,5 @@ La compilación frontend que encuentra cobertura emite una copia en dist/geodata
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Cada integrante debe registrar descarga individual, hashes y resultado de instalación. Obtener de INEI una aclaración documentada sobre extracción, derivados y redistribución dentro del equipo antes de preparar un paquete compartido. Si la fuente actual difiere de v1, auditarla antes de autorizar una versión nueva.
+
+[← Volver al README principal](../README.md)

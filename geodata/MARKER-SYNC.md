@@ -44,7 +44,7 @@ Informe: `geodata/MARKER-SYNC.md`. Se preservan los cambios pendientes anteriore
 
 ## Verificación
 
-Los resultados siguientes corresponden al cierre de esta corrección de sincronización, antes de reorganizar el formulario y mejorar el panel. La verificación actual del conjunto se encuentra en [el informe posterior al Sprint 1](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/01%20Verificación%20y%20entrega%20V_1_1_0.md).
+Los resultados siguientes corresponden al cierre de esta corrección de sincronización, antes de reorganizar el formulario y mejorar el panel. La verificación actual del conjunto se encuentra en [el informe posterior al Sprint 1 — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/01%20Verificaci%C3%B3n%20y%20entrega%20V_1_1_0.md).
 
 - ESLint y TypeScript `tsc --noEmit`: exit 0.
 - Suite Vitest completa: 15 archivos y 192 pruebas aprobadas, 61.05 s.
@@ -67,8 +67,10 @@ La imagen del login y las mejoras de administración se documentan en el [addend
 
 ## Reconciliación de estructura posterior
 
-La entrega preparada desde origin/main conserva geodata/ en la raíz y usa src/frontend y src/backend. Las rutas y comandos antiguos de este informe corresponden a su fase original. La carga frontend y los tests se adaptaron al nivel adicional de src; Docker mantiene su contexto limitado a src/frontend y no incluye geodata. La validación geográfica backend y los permisos INEI continúan pendientes. Véase [la evidencia vigente](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliación%20sobre%20main%20V_1_1_0.md).
+La entrega preparada desde origin/main conserva geodata/ en la raíz y usa src/frontend y src/backend. Las rutas y comandos antiguos de este informe corresponden a su fase original. La carga frontend y los tests se adaptaron al nivel adicional de src; Docker mantiene su contexto limitado a src/frontend y no incluye geodata. La validación geográfica backend y los permisos INEI continúan pendientes. Véase [la evidencia vigente — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliaci%C3%B3n%20sobre%20main%20V_1_1_0.md).
 
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Completar la validación en backend una vez aclarada la distribución de los recursos. Reutilizar la misma política de seis decimales y bordes evita discrepancias entre marcador confirmado y persistencia del pedido.
+
+[← Volver al README principal](../README.md)

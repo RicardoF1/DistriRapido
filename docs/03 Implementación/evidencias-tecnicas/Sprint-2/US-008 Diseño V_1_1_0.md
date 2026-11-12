@@ -40,3 +40,5 @@ No se modificaron backend/ o frontend/ antiguos, recursos geográficos, PostgreS
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Registrar aprobación explícita de permisos, estados, relación con usuarios y alcance de coordenadas/horarios; después completar API, Prisma y React y adjuntar evidencias de aceptación HGR-26.
+
+[← Volver al README principal](../../../../README.md)

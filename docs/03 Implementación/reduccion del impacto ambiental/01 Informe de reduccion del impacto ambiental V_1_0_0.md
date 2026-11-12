@@ -23,7 +23,7 @@ Los objetivos son:
 
 ## 2. Alcance y adaptación al stack del proyecto
 
-La consigna describe las 8 áreas en términos del stack MERN (MongoDB, Express, React y Node.js). DistriRapido se construye con **NestJS + Prisma + PostgreSQL** en el backend y **React + Vite** servido por **nginx** en el frontend. Cada área se aplicó con la tecnología equivalente del proyecto real; no se añadió código de MongoDB ni de Express que el sistema no utiliza.
+La consigna describe las 8 áreas en términos del stack MERN (MongoDB, Express, React y Node.js). DistriRapido se construye con **NestJS + Prisma + PostgreSQL** en el backend y **React + Vite** servido por **nginx** en el frontend. Cada área se documenta con la tecnología equivalente del proyecto real; no se sustituyó la persistencia por MongoDB/Mongoose. NestJS utiliza el adaptador Express. La adaptación técnica no equivale a aprobación docente: **Pendiente de aportar por el equipo**.
 
 | # | Área de la consigna (MERN) | Equivalente aplicado en DistriRapido |
 |---|---|---|
@@ -41,7 +41,7 @@ La consigna describe las 8 áreas en términos del stack MERN (MongoDB, Express,
 - **Herramienta:** Google Lighthouse 12.6.1 en Chrome sin interfaz gráfica, categoría *Performance*.
 - **Entorno:** imagen de producción del frontend (build de Vite servido por `nginx:1.28-alpine` con `src/frontend/nginx.conf`), API NestJS y PostgreSQL locales. No se midió el servidor de desarrollo de Vite.
 - **Páginas auditadas:** inicio de sesión (`/login`), panel de administración (`/acceso/administrador`), seguimiento operativo (`/seguimiento`) y registro de pedidos con mapa (`/pedidos/nuevo`). Las páginas autenticadas se midieron con una sesión de administrador de prueba y se comprobó que la URL final correspondía a la página auditada.
-- **Perfiles:** escritorio y móvil. **El perfil de escritorio es la referencia para los umbrales de la consigna** (score ≥ 90, FCP ≤ 1,0 s, LCP ≤ 1,4 s, TBT ≤ 85 ms, CLS ≤ 0,02 y peso ≤ 1,1 MB). En el perfil móvil Lighthouse simula una red 4G lenta y una CPU 4 veces más lenta, condiciones en las que un FCP de 1,0 s no es alcanzable para una aplicación de página única; los resultados móviles se informan como complemento.
+- **Perfiles:** escritorio y móvil. El equipo usó escritorio como referencia técnica (score ≥ 90, FCP ≤ 1,0 s, LCP ≤ 1,4 s, TBT ≤ 85 ms, CLS ≤ 0,02 y transferencia ≤ 1,1 MB). No se corroboró una exención oficial del perfil móvil. Los resultados móviles también se contrastan con los seis umbrales; las diferencias de emulación no justifican declarar cumplimiento ni imposibilidad de mejora.
 - **Medición ANTES:** commit `853653c` (`sprint-4` con US-018 y US-019), previo a cualquier optimización.
 - **Medición DESPUÉS:** build final de la rama `feature/green-it`, medido en las mismas condiciones.
 
@@ -395,7 +395,7 @@ En el frontend, el build genera archivos `.gz` con nivel 9 mediante un plugin de
 
 **Las cuatro páginas cumplen todos los umbrales de la consigna en el perfil de referencia.**
 
-### 6.2 Móvil (complementario)
+### 6.2 Móvil (cumplimiento parcial)
 
 | Página | Score | FCP | LCP | TBT | CLS | Peso |
 |---|---:|---:|---:|---:|---:|---:|
@@ -404,7 +404,7 @@ En el frontend, el build genera archivos `.gz` con nivel 9 mediante un plugin de
 | Seguimiento operativo | 70 → 98 | 4,43 → 1,52 s | 5,07 → 2,16 s | 31 → 0 ms | 0,001 → 0 | 691,9 → 138,8 KB |
 | Registrar pedido | 66 → 92 | 4,40 → 1,75 s | 6,35 → 2,94 s | 89 → 139 ms | 0,001 → 0 | 1.071,8 → 341,0 KB |
 
-El TBT móvil de «Registrar pedido» aumenta porque Leaflet y las geometrías de cobertura se procesan ahora al visitar la página, en lugar de durante la carga inicial de toda la aplicación. El coste se traslada a la única página que lo necesita, y el resto de páginas deja de pagarlo.
+El TBT móvil de «Registrar pedido» aumenta de 89 a 139 ms y supera 85 ms. La carga diferida de Leaflet es una hipótesis explicativa, no una causa aislada por estas mediciones. Las cuatro páginas móviles superan FCP de 1 s y LCP de 1,4 s, aunque cumplen score, CLS y transferencia. No se declara cumplimiento global ni se extrapolan estos resultados a otros dispositivos.
 
 ### 6.3 Composición del peso del login (escritorio)
 
@@ -504,11 +504,11 @@ En visitas recurrentes el ahorro es mayor: los recursos con hash se sirven desde
 | Auditoría continua | Workflow «Green IT & Performance Audit» ([`.github/workflows/green-audit.yml`](../../../.github/workflows/green-audit.yml)), ejecución #2 aprobada; informes en el artefacto `lighthouse-reports` |
 | Pruebas automatizadas | Backend: `src/common/green-it.spec.ts` (9 pruebas). Frontend: `src/test/green-it.test.tsx` (7 pruebas). Batería completa: 547 unitarias y 139 de integración en backend, 396 en frontend |
 
-Los 32 informes completos (16 ANTES y 16 DESPUÉS) se conservan en la carpeta local `.local/lighthouse/`, excluida del repositorio por su tamaño (8,5 MB).
+El informe original declaraba 32 informes completos (16 ANTES y 16 DESPUÉS) en `.local/lighthouse/`, carpeta privada no incluida en Git. Su existencia y contenido no se corroboran en este clon. Se encontraron **cuatro HTML originales versionados**, todos de login: escritorio/móvil antes y después. Para panel administrativo, seguimiento y registro de pedidos solo se encontraron los resúmenes JSON: faltan los 12 originales correspondientes a sus mediciones resumidas (3 páginas × 2 perfiles × 2 fases). El resto del inventario declarado de 32 requiere aportación del equipo; no se reconstruyeron informes ni capturas.
 
 ## 9. Limitaciones y decisiones
 
-1. **Perfil de referencia:** los umbrales se evalúan en escritorio por la razón expuesta en la sección 3. En móvil todas las páginas mejoran de forma sustancial (scores de 92 a 98), aunque FCP y LCP superan 1,0 s y 1,4 s.
+1. **Perfiles:** escritorio cumple los seis umbrales en los resúmenes históricos. Móvil no cumple FCP/LCP en ninguna de las cuatro páginas y Registrar pedido tampoco cumple TBT. No consta aceptación docente de limitar los umbrales a escritorio.
 2. **Mosaicos del mapa:** el peso de «Registrar pedido» incluye mosaicos de OpenStreetMap servidos por un tercero, cuya cantidad varía entre mediciones (entre unos 437 y 627 KB en total). No dependen del proyecto.
 3. **Brotli en estáticos:** la imagen oficial de nginx no incluye el módulo Brotli; se aplica Gzip precomprimido a los estáticos y Brotli a la API.
 4. **Seguridad frente a caché:** la caché privada se limita a catálogos de baja sensibilidad; los datos personales y operativos conservan `no-store`, conforme al análisis OWASP del proyecto.
@@ -518,10 +518,27 @@ Los 32 informes completos (16 ANTES y 16 DESPUÉS) se conservan en la carpeta lo
 
 ## 10. Conclusiones
 
-Las 8 optimizaciones se implementaron sobre el stack real del proyecto, con código comparativo, pruebas automatizadas y mediciones reproducibles. En el perfil de referencia, las cuatro páginas auditadas alcanzan 100/100 y cumplen todos los umbrales de la consigna. El peso del login se reduce un 92,3 % y sus emisiones por visita pasan de 0,3945 a 0,0302 g CO2e según SWDM v4. Con una base de 500.000 visitas anuales, esto supone un ahorro estimado de 182,18 kg CO2e al año en la página de entrada. La auditoría queda automatizada en GitHub Actions para impedir regresiones.
+Las 8 optimizaciones se implementaron sobre el stack real del proyecto, con código comparativo, pruebas automatizadas y mediciones reproducibles. En el perfil de referencia, las cuatro páginas auditadas alcanzan 100/100 y cumplen todos los umbrales de la consigna. El peso del login se reduce un 92,3 % y sus emisiones por visita pasan de 0,3945 a 0,0302 g CO2e según SWDM v4. Con una base de 500.000 visitas anuales, esto supone un ahorro estimado de 182,18 kg CO2e al año en la página de entrada. Lighthouse CI detecta incumplimientos en escritorio mediante el fallo del job; no se acreditó que sea un check obligatorio de integración. El workflow comprueba la fórmula SWDM con pruebas, pero no invoca el cálculo sobre cada nueva auditoría ni actualiza automáticamente el JSON de emisiones. Estas cifras son históricas y estimadas, no mediciones continuas de CO₂ ni resultados nuevos sobre main.
 
 ## Referencias
 
 - Sustainable Web Design. *Estimating digital emissions* (SWDM v4). <https://sustainablewebdesign.org/estimating-digital-emissions/>
 - W3C Sustainable Web Design Community Group. *Web Sustainability Guidelines (WSG)*. <https://www.w3.org/TR/web-sustainability-guidelines/>
 - Google. *Lighthouse* y *Lighthouse CI*. <https://github.com/GoogleChrome/lighthouse-ci>
+
+## Correcciones documentales y trazabilidad (2026-11-12)
+
+Se mantiene el nombre exigido V_1_0_0 y el registro original del 10/11. Esta fe de erratas no crea una medición ni una nueva entrega funcional. Base actual revisada: `7cdde3b765aa4898ef61789640900bad4910d386`.
+
+| Versión / revisión | Fecha | Cambio y límite |
+|---|---|---|
+| V_1_0_0 | 2026-11-10 | Informe histórico de la rama Green IT, con código antes/después y resultados de esa fase. |
+| V_1_0_0, fe de erratas documental | 2026-11-12 | Corrige visibilidad pública, alcance real de CI, ausencia de bloqueo obligatorio corroborado, perfil móvil y evidencia disponible. No se repitieron auditorías ni pruebas de aplicación. |
+
+La consulta de protección clásica de main respondió 404 y el único ruleset visible (`Aprobar`) está desactivado. No se demuestra una regla activa que exija este check; la consulta no autoriza a configurar protecciones.
+
+La aceptación docente de NestJS/Prisma/PostgreSQL como adaptación MERN permanece **Pendiente de aportar por el equipo**. La justificación es la conservación de módulos/validación de NestJS y relaciones/restricciones de Prisma/PostgreSQL; no se modifica el stack.
+
+Los presupuestos de transferencia necesitan unidad explícita: los resúmenes llaman `peso_KB` a valores tratados como KiB (×1024 en SWDM), y CI fija 1.153.434 B. La transcripción exige 1,1 MB sin precisar conversión; los pesos finales resumidos también quedan por debajo de 1.100.000 B, de modo que esa ambigüedad no cambia la conclusión de peso en esta evidencia. Confirmar la unidad oficial.
+
+[Inventario, fuentes y pendientes de evaluación](../../INFORME-EVALUACION-TP2.md) · [← Volver al README principal](../../../README.md)

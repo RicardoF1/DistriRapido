@@ -43,7 +43,7 @@ La GSF plantea la **eficiencia de carbono** como objetivo general: emitir la men
 
 | Principio GSF | Significado | Aplicación en DistriRapido | Grado |
 |---|---|---|---|
-| Eficiencia de carbono | Mínimas emisiones por unidad de trabajo | Emisiones por visita al login de 0,3945 a 0,0302 g CO2e (−92,3 %) según SWDM v4; el resultado se mide de forma continua en CI | Aplicado y medido |
+| Eficiencia de carbono | Mínimas emisiones por unidad de trabajo | Emisiones por visita al login de 0,3945 a 0,0302 g CO2e (−92,3 %) según SWDM v4; estimación histórica; CI comprueba la fórmula con pruebas, no recalcula emisiones de cada nueva auditoría | Aplicado y medido |
 | Eficiencia energética | Consumir la menor electricidad posible eliminando código y recursos innecesarios | Menos bytes transferidos y procesados: imágenes AVIF/WebP, división de código, fuentes nativas y compresión. La precompresión se hace una vez en el build y no en cada petición | Aplicado |
 | Eficiencia del hardware (carbono incorporado) | Reducir la demanda de hardware y prolongar su vida útil | Menos JavaScript que interpretar en los dispositivos (−83,9 % en el login) y menos datos por petición, lo que favorece equipos de gama baja y reduce la presión sobre servidores. SWDM v4 incluye explícitamente la energía incorporada (0,106 kWh/GB) | Aplicado |
 | Conciencia del carbono | Hacer más cuando la electricidad es más limpia y menos cuando es más sucia | No se desplazan cargas según la intensidad de la red: DistriRapido es una herramienta operativa que debe responder cuando el usuario la necesita. El cálculo usa la intensidad media mundial (494 g/kWh) y admite intensidades regionales. Los trabajos diferibles, como la auditoría Lighthouse, se cancelan si llega una ejecución más reciente (`concurrency`) | Parcial; ver sección 8 |
@@ -73,7 +73,7 @@ Las pautas que la WSG numera realmente como 2.4 y 3.1 también se cumplen:
 | 2.4 | Design efficient and streamlined user journeys | Paginación de 12 y carga por página |
 | 2.9 | Optimize media to reduce resource use | Imagen del login de 1.911 KB a 69,8 KB transferidos |
 | 2.11 | Use optimized web typography | Fuentes del sistema para el texto; dos archivos `woff2` precargados para los títulos |
-| 3.1 | Set goals based on performance and energy impact | Presupuesto Lighthouse obligatorio y cálculo SWDM v4 en CI |
+| 3.1 | Set goals based on performance and energy impact | Aserciones Lighthouse de escritorio y pruebas de la fórmula SWDM v4 en CI; obligatoriedad del check no acreditada |
 | 3.2 | Minify and remove unused code | Build minificado; eliminación de la PNG, del SVG externo y de `@fontsource/inter` |
 | 3.3 | Modularize bandwidth-heavy components | Mapa (Leaflet) y páginas en módulos independientes |
 | 3.7 | Defer the loading of non-critical resources | `React.lazy` y `Suspense` |
@@ -113,7 +113,7 @@ Las reglas siguientes son obligatorias para las nuevas historias de usuario. Cad
 
 ### 5.3 Revisión antes de integrar
 
-1. El workflow «Green IT & Performance Audit» debe pasar: un umbral incumplido bloquea la integración.
+1. El workflow «Green IT & Performance Audit» debe revisarse antes de integrar: un umbral incumplido hace fallar el job. No se acreditó que ese check sea obligatorio para fusionar; la política de bloqueo efectiva requiere configuración y validación del equipo.
 2. Las pruebas de `green-it.spec.ts` y `green-it.test.tsx` deben pasar.
 3. Toda dependencia nueva se justifica en el pull request con su peso y su alternativa nativa.
 
@@ -155,7 +155,7 @@ jobs:
           lhci collect --url=http://localhost:5173/login
           lhci assert
           lhci upload --upload.outputDir=.lighthouseci/reports/publicas
-      - name: Upload Lighthouse reports (private workflow artifact)
+      - name: Upload Lighthouse reports (workflow artifact)
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -178,7 +178,7 @@ Presupuesto de rendimiento en [`lighthouserc.json`](../../../lighthouserc.json):
 **Decisiones respecto al ejemplo de la consigna:**
 
 - **Sin `|| true`:** el incumplimiento de un umbral hace fallar el job. Se comprobó en local que con un umbral imposible `lhci assert` termina con código 1.
-- **Sin `temporary-public-storage`:** los informes se guardan como artefacto privado del workflow. El repositorio es privado y sus datos de cobertura no están autorizados para publicación.
+- **Sin `temporary-public-storage`:** los informes se cargan como artefactos del workflow con retención de 14 días. El repositorio es **público**, verificado en la API de GitHub el 2026-11-12; no se debe prometer confidencialidad por llamarlos «privados». Los datos de cobertura siguen sujetos a restricciones de redistribución.
 - **Versiones fijadas:** `@lhci/cli@0.15.1` y `actions/*@v4`, en lugar de versiones flotantes.
 
 **Resultado:** la ejecución #2 del workflow sobre `feature/green-it` (commit `f8327fc`) se aprobó en 3 minutos, junto con la CI general «DistriRapido checks» #113.
@@ -246,3 +246,20 @@ git push -u origin feature/green-it
 - W3C Sustainable Web Design Community Group. *Web Sustainability Guidelines (WSG)*, Group Note Draft, 16 de octubre de 2026. <https://www.w3.org/TR/web-sustainability-guidelines/>
 - Sustainable Web Design. *Estimating digital emissions* (SWDM v4). <https://sustainablewebdesign.org/estimating-digital-emissions/>
 - Google. *Lighthouse CI*. <https://github.com/GoogleChrome/lighthouse-ci>
+
+## Correcciones documentales y trazabilidad (2026-11-12)
+
+Se mantiene el nombre exigido V_1_0_0 y el registro original del 10/11. Esta fe de erratas no crea una medición ni una nueva entrega funcional. Base actual revisada: `7cdde3b765aa4898ef61789640900bad4910d386`.
+
+| Versión / revisión | Fecha | Cambio y límite |
+|---|---|---|
+| V_1_0_0 | 2026-11-10 | Informe histórico de la rama Green IT, con código antes/después y resultados de esa fase. |
+| V_1_0_0, fe de erratas documental | 2026-11-12 | Corrige visibilidad pública, alcance real de CI, ausencia de bloqueo obligatorio corroborado, perfil móvil y evidencia disponible. No se repitieron auditorías ni pruebas de aplicación. |
+
+La consulta de protección clásica de main respondió 404 y el único ruleset visible (`Aprobar`) está desactivado. No se demuestra una regla activa que exija este check; la consulta no autoriza a configurar protecciones.
+
+La aceptación docente de NestJS/Prisma/PostgreSQL como adaptación MERN permanece **Pendiente de aportar por el equipo**. La justificación es la conservación de módulos/validación de NestJS y relaciones/restricciones de Prisma/PostgreSQL; no se modifica el stack.
+
+Los presupuestos de transferencia necesitan unidad explícita: los resúmenes llaman `peso_KB` a valores tratados como KiB (×1024 en SWDM), y CI fija 1.153.434 B. La transcripción exige 1,1 MB sin precisar conversión; los pesos finales resumidos también quedan por debajo de 1.100.000 B, de modo que esa ambigüedad no cambia la conclusión de peso en esta evidencia. Confirmar la unidad oficial.
+
+[Inventario, fuentes y pendientes de evaluación](../../INFORME-EVALUACION-TP2.md) · [← Volver al README principal](../../../README.md)
