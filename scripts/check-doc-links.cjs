@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
+const { headingSlug } = require('./doc-heading-slug.cjs');
 
 const root = path.resolve(__dirname, '..');
 const tracked = execFileSync('git', ['-c', 'core.quotepath=false', 'ls-files', '--cached', '--others', '--exclude-standard', '-z'], { cwd: root, encoding: 'utf8' }).split('\0');
@@ -23,7 +24,7 @@ function anchors(file) {
   const seen = new Map();
   const content = fs.readFileSync(file, 'utf8');
   for (const match of prose(content).matchAll(/^#{1,6}\s+(.+?)\s*#*$/gm)) {
-    const slug = match[1].replace(/<[^>]*>/g, '').replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[\p{P}\p{S}]/gu, character => character === '-' || character === '_' ? character : '').toLowerCase().replace(/ /g, '-');
+    const slug = headingSlug(match[1]);
     const duplicate = seen.get(slug) || 0;
     identifiers.add(slug + (duplicate ? `-${duplicate}` : ''));
     seen.set(slug, duplicate + 1);
