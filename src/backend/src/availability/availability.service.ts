@@ -12,6 +12,7 @@ import {
   CreateAvailabilityDto,
   UpdateAvailabilityDto,
 } from './dto/availability.dto';
+import { DEFAULT_PAGE_SIZE } from '../common/pagination';
 
 @Injectable()
 export class AvailabilityService {
@@ -135,7 +136,7 @@ export class AvailabilityService {
       inicio,
       fin,
       page = 1,
-      pageSize = 20,
+      pageSize = DEFAULT_PAGE_SIZE,
     } = query;
 
     if (inicio && fin) {

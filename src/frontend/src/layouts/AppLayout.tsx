@@ -36,7 +36,7 @@ export function AppLayout({ children, title, navigationLabel = 'Área autenticad
         {role === 'Usuario Final / Conductor' && DRIVER_SECTIONS.map(({ id, label }) => <a key={id} href={`#${id}`} aria-current={hash === `#${id}` ? 'location' : undefined} onClick={() => followSection(id)}>{label}</a>)}
         {role === 'Administrador' && <NavLink onClick={dismissMenu} to="/usuarios">Usuarios</NavLink>}
         {role === 'Administrador' && <NavLink onClick={dismissMenu} to="/vehiculos">Vehículos</NavLink>}
-        {operational && <><NavLink onClick={dismissMenu} to="/rutas">Consultar rutas</NavLink><NavLink onClick={dismissMenu} to="/planificacion">Preparar recorrido</NavLink></>}
+        {operational && <><NavLink onClick={dismissMenu} to="/rutas">Consultar rutas</NavLink><NavLink onClick={dismissMenu} to="/planificacion">Preparar recorrido</NavLink><NavLink onClick={dismissMenu} to="/seguimiento">Seguimiento operativo</NavLink></>}
         {operational && <><NavLink onClick={dismissMenu} to="/conductores">Conductores</NavLink><NavLink onClick={dismissMenu} to="/disponibilidad">Disponibilidad</NavLink><NavLink onClick={dismissMenu} to="/pedidos" end>Consultar pedidos</NavLink><NavLink onClick={dismissMenu} to="/pedidos/nuevo">Registrar pedido</NavLink></>}
       </nav>
       <p className="sidebar-note">Huancayo · Valle del Mantaro</p>

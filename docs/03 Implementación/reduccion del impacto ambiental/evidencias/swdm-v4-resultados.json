@@ -1,0 +1,130 @@
+{
+ "modelo": "Sustainable Web Design Model v4",
+ "coeficientes": {
+  "operacional_kWh_GB": {
+   "centroDatos": 0.055,
+   "red": 0.059,
+   "dispositivo": 0.08
+  },
+  "incorporado_kWh_GB": {
+   "centroDatos": 0.012,
+   "red": 0.013,
+   "dispositivo": 0.081
+  },
+  "total_kWh_GB": 0.3,
+  "red_gCO2e_kWh": 494,
+  "gCO2e_por_GB": 148.2
+ },
+ "supuestos": {
+  "visitas_anuales": 500000,
+  "green_hosting_factor": 0,
+  "visita": "primera visita (sin caché)",
+  "bytes_por_GB": 1000000000
+ },
+ "resultados": [
+  {
+   "pagina": "login-desktop",
+   "antes_KB": 2599.8,
+   "despues_KB": 198.9,
+   "antes_kWh": 0.0007987,
+   "despues_kWh": 0.0000611,
+   "antes_gCO2e": 0.3945,
+   "despues_gCO2e": 0.0302,
+   "reduccion_pct": 92.3,
+   "anual_antes_kgCO2e": 197.27,
+   "anual_despues_kgCO2e": 15.09,
+   "ahorro_anual_kgCO2e": 182.18
+  },
+  {
+   "pagina": "login-mobile",
+   "antes_KB": 2599.8,
+   "despues_KB": 171.2,
+   "antes_kWh": 0.0007987,
+   "despues_kWh": 0.0000526,
+   "antes_gCO2e": 0.3945,
+   "despues_gCO2e": 0.026,
+   "reduccion_pct": 93.4,
+   "anual_antes_kgCO2e": 197.27,
+   "anual_despues_kgCO2e": 12.99,
+   "ahorro_anual_kgCO2e": 184.28
+  },
+  {
+   "pagina": "panel-admin-desktop",
+   "antes_KB": 691,
+   "despues_KB": 134.7,
+   "antes_kWh": 0.0002123,
+   "despues_kWh": 0.0000414,
+   "antes_gCO2e": 0.1049,
+   "despues_gCO2e": 0.0204,
+   "reduccion_pct": 80.5,
+   "anual_antes_kgCO2e": 52.43,
+   "anual_despues_kgCO2e": 10.22,
+   "ahorro_anual_kgCO2e": 42.21
+  },
+  {
+   "pagina": "panel-admin-mobile",
+   "antes_KB": 691,
+   "despues_KB": 134.7,
+   "antes_kWh": 0.0002123,
+   "despues_kWh": 0.0000414,
+   "antes_gCO2e": 0.1049,
+   "despues_gCO2e": 0.0204,
+   "reduccion_pct": 80.5,
+   "anual_antes_kgCO2e": 52.43,
+   "anual_despues_kgCO2e": 10.22,
+   "ahorro_anual_kgCO2e": 42.21
+  },
+  {
+   "pagina": "registrar-pedido-desktop",
+   "antes_KB": 1360.9,
+   "despues_KB": 627,
+   "antes_kWh": 0.0004181,
+   "despues_kWh": 0.0001926,
+   "antes_gCO2e": 0.2065,
+   "despues_gCO2e": 0.0952,
+   "reduccion_pct": 53.9,
+   "anual_antes_kgCO2e": 103.26,
+   "anual_despues_kgCO2e": 47.58,
+   "ahorro_anual_kgCO2e": 55.69
+  },
+  {
+   "pagina": "registrar-pedido-mobile",
+   "antes_KB": 1071.8,
+   "despues_KB": 341,
+   "antes_kWh": 0.0003293,
+   "despues_kWh": 0.0001048,
+   "antes_gCO2e": 0.1627,
+   "despues_gCO2e": 0.0517,
+   "reduccion_pct": 68.2,
+   "anual_antes_kgCO2e": 81.33,
+   "anual_despues_kgCO2e": 25.87,
+   "ahorro_anual_kgCO2e": 55.45
+  },
+  {
+   "pagina": "seguimiento-desktop",
+   "antes_KB": 691.9,
+   "despues_KB": 138.8,
+   "antes_kWh": 0.0002126,
+   "despues_kWh": 0.0000426,
+   "antes_gCO2e": 0.105,
+   "despues_gCO2e": 0.0211,
+   "reduccion_pct": 79.9,
+   "anual_antes_kgCO2e": 52.5,
+   "anual_despues_kgCO2e": 10.53,
+   "ahorro_anual_kgCO2e": 41.97
+  },
+  {
+   "pagina": "seguimiento-mobile",
+   "antes_KB": 691.9,
+   "despues_KB": 138.8,
+   "antes_kWh": 0.0002126,
+   "despues_kWh": 0.0000426,
+   "antes_gCO2e": 0.105,
+   "despues_gCO2e": 0.0211,
+   "reduccion_pct": 79.9,
+   "anual_antes_kgCO2e": 52.5,
+   "anual_despues_kgCO2e": 10.53,
+   "ahorro_anual_kgCO2e": 41.97
+  }
+ ]
+}

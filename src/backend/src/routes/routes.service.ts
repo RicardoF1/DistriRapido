@@ -6,6 +6,7 @@ import { routingDatabaseError, sourceInput, sources } from '../planning/planning
 import { makeHash, type PreparedSnapshot } from '../planning/planning-domain';
 import { RouteQueryDto } from './dto/route-query.dto';
 import { ASSIGNABLE_ROUTE_STATE, AssignRouteDto } from './dto/assign-route.dto';
+import { DEFAULT_PAGE_SIZE } from '../common/pagination';
 
 const DRIVER_ROLE = 'Usuario Final / Conductor';
 const ACTIVE_ROUTE_STATES = ['ASIGNADA', 'EN_CURSO'];
@@ -75,7 +76,7 @@ export class RoutesService {
   constructor(private readonly prisma: PrismaService) {}
   async list(q: RouteQueryDto) {
     if (q.desde && q.hasta && +new Date(q.hasta) < +new Date(q.desde)) throw new BadRequestException('El rango de fechas no es válido.');
-    const { page = 1, pageSize = 20 } = q;
+    const { page = 1, pageSize = DEFAULT_PAGE_SIZE } = q;
     const where: Prisma.RutaWhereInput = { ...(q.alternativa_id ? { alternativa_id: q.alternativa_id } : {}), ...(q.desde || q.hasta ? { creado_en: { ...(q.desde ? { gte: new Date(q.desde) } : {}), ...(q.hasta ? { lte: new Date(q.hasta) } : {}) } } : {}), alternativa: { ...(q.metodo ? { metodo: q.metodo } : {}), ejecucion: { version: { ...(q.planificacion_id ? { planificacion_id: q.planificacion_id } : {}), ...(q.search?.trim() ? { OR: [{ planificacion: { etiqueta: { contains: q.search.trim(), mode: 'insensitive' } } }, ...(isUUID(q.search.trim()) ? [{ planificacion_id: q.search.trim() }] : [])] } : {}) } } } };
     if (q.search && isUUID(q.search.trim())) { delete where.alternativa!.ejecucion!.version!.OR; where.OR = [{ ruta_id: q.search.trim() }, { alternativa: { ejecucion: { version: { planificacion_id: q.search.trim() } } } }]; }
     try { const [items, total] = await this.prisma.$transaction([this.prisma.ruta.findMany({ where, orderBy: [{ creado_en: 'desc' }, { ruta_id: 'asc' }], skip: (page - 1) * pageSize, take: pageSize, include: { alternativa: { include: { ejecucion: { select: { version: { select: { planificacion: { select: { planificacion_id: true, etiqueta: true } } } } } } } }, versiones: { select: { numero: true, distancia_m: true, duracion_s: true }, orderBy: { numero: 'desc' }, take: 1 } } }), this.prisma.ruta.count({ where })], { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead }); return { items, total, page, pageSize }; } catch (cause) { routingDatabaseError(cause); }

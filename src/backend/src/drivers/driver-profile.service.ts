@@ -4,6 +4,9 @@ import { ROLE_NAMES } from '../roles/roles';
 import type { SessionIdentityDto } from '../auth/dto/auth-response.dto';
 import { Prisma } from '@prisma/client';
 import { UpdateDeliveryStatusDto } from './dto/update-delivery-status.dto';
+import { CreateDeliveryIncidentDto } from './dto/create-delivery-incident.dto';
+
+const INCIDENT_SELECT = { incidencia_id: true, tipo: true, descripcion: true, detalle_complementario: true, registrado_en: true } as const;
 
 @Injectable()
 export class DriverProfileService {
@@ -83,6 +86,7 @@ export class DriverProfileService {
               select: {
                 parada_id: true, pedido_id: true, secuencia: true, datos: true, estado_entrega: true,
                 causa_no_entrega: true, atendido_en: true, actualizado_en: true, version_entrega: true,
+                incidencias: { orderBy: [{ registrado_en: 'asc' }, { incidencia_id: 'asc' }], select: INCIDENT_SELECT },
               },
             },
           },
@@ -228,4 +232,38 @@ export class DriverProfileService {
         },
       };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, timeout: 15000, maxWait: 3000 });
-  }}
+  }
+
+  // US-018 / RF-015: registra una incidencia sobre una entrega propia sin alterar su estado.
+  async createIncident(user: SessionIdentityDto, deliveryId: string, dto: CreateDeliveryIncidentDto) {
+    const driver = await this.activeDriver(user);
+    const description = dto.descripcion?.trim();
+    if (!description) throw new BadRequestException(['descripcion: describe la incidencia.']);
+    const detail = dto.detalle_complementario?.trim() || null;
+
+    return this.prisma.$transaction(async tx => {
+      const stop = await tx.paradaRuta.findUnique({
+        where: { parada_id: deliveryId },
+        select: {
+          parada_id: true,
+          ruta_version: { select: { numero: true, ruta: { select: { conductor_id: true, estado: true, current_version: true } } } },
+        },
+      });
+      if (!stop || stop.ruta_version.ruta.conductor_id !== driver.conductor_id) {
+        throw new ForbiddenException('La entrega no existe o no esta asignada a tu cuenta.');
+      }
+      const route = stop.ruta_version.ruta;
+      if (stop.ruta_version.numero !== route.current_version) {
+        throw new ConflictException('La entrega pertenece a una version anterior de la ruta.');
+      }
+      if (!['ASIGNADA', 'EN_CURSO'].includes(route.estado)) {
+        throw new ConflictException('La ruta no admite registrar incidencias en su estado actual.');
+      }
+      const incident = await tx.incidenciaEntrega.create({
+        data: { parada_id: stop.parada_id, conductor_id: driver.conductor_id, tipo: dto.tipo, descripcion: description, detalle_complementario: detail },
+        select: INCIDENT_SELECT,
+      });
+      return { parada_id: stop.parada_id, incidencia: incident };
+    }, { timeout: 15000, maxWait: 3000 });
+  }
+}

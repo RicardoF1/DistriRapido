@@ -49,7 +49,7 @@ it('búsqueda con debounce, filtros combinados y limpiar filtros', async () => {
   expect(await screen.findByText('No se encontraron pedidos con los criterios seleccionados.')).toBeVisible();
   await userEvent.click(screen.getByRole('button', { name: 'Limpiar filtros' }));
   expect(screen.getByLabelText('Buscar cliente, dirección o ID')).toHaveValue('');
-  expect(ordersApi.list).toHaveBeenLastCalledWith({ search: '', estado: '', prioridad: '', tipo_producto: '', page: 1, pageSize: 20 }, expect.any(AbortSignal));
+  expect(ordersApi.list).toHaveBeenLastCalledWith({ search: '', estado: '', prioridad: '', tipo_producto: '', page: 1, pageSize: 12 }, expect.any(AbortSignal));
 });
 it('paginación acotada y filtro vuelve a página 1', async () => {
   vi.mocked(ordersApi.list).mockResolvedValue({ ...page, total: 21 }); setup();

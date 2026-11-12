@@ -11,7 +11,7 @@ const values = { placa: 'XYZ-999', tipo: 'Camión', capacidad_carga_kg: 1500, ca
 
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(vehiclesApi.list).mockResolvedValue([vehicle]);
+  vi.mocked(vehiclesApi.list).mockResolvedValue({ items: [vehicle], total: 1, page: 1, pageSize: 12 });
   vi.mocked(vehiclesApi.create).mockResolvedValue({ ...vehicle, ...values, vehiculo_id: 'new-id', capacidad_carga_kg: '1500', capacidad_volumen_m3: null, consumo_km_l: '7', factor_emision_kg_co2_km: '0.3' });
   vi.mocked(vehiclesApi.update).mockResolvedValue({ ...vehicle, tipo: 'Camión', estado: 'MANTENIMIENTO' });
 });

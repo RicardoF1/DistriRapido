@@ -3,7 +3,8 @@ import { AppLayout } from '../layouts/AppLayout';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { useAuth } from '../hooks/useAuth';
 import { ApiError } from '../services/api';
-import { driverProfileApi, type DriverProfile, type DriverRouteDetail, type DriverRouteSummary } from '../services/driver-profile-api';
+import { driverProfileApi, type DeliveryIncident, type DriverProfile, type DriverRouteDetail, type DriverRouteSummary } from '../services/driver-profile-api';
+import { DeliveryIncidents } from '../features/drivers/DeliveryIncidents';
 import { DriverOwnPassword } from '../features/drivers/DriverCredentialsPanel';
 import { useDriverSectionFocus } from '../hooks/useDriverSectionFocus';
 
@@ -90,9 +91,18 @@ export function DriverAccessPage() {
     finally { setBusy(null); }
   }
 
+  function addIncident(deliveryId: string, incident: DeliveryIncident) {
+    setError(null);
+    setNotice('Incidencia registrada y asociada a la entrega.');
+    setSelected(current => current && {
+      ...current,
+      version: { ...current.version, paradas: current.version.paradas.map(stop => stop.parada_id === deliveryId ? { ...stop, incidencias: [...(stop.incidencias ?? []), incident] } : stop) },
+    });
+  }
+
   return <AppLayout title="Mi panel" navigationLabel="Área del conductor">
     <section className="driver-portal" aria-labelledby="driver-panel-title">
-      <header className="driver-portal-heading"><p className="driver-portal-eyebrow">EcoRuta Huancayo · Mi espacio</p><h1 id="driver-panel-title">Panel del conductor</h1><p>Consulta tu recorrido y registra el resultado de cada entrega.</p></header>
+      <header className="driver-portal-heading"><p className="driver-portal-eyebrow">EcoRuta Huancayo · Mi espacio</p><h1 id="driver-panel-title">Panel del conductor</h1><p>Consulta tu recorrido, registra el resultado de cada entrega y las incidencias que encuentres.</p></header>
       {notice && <p role="status" className="users-panel">{notice}</p>}
       {error && <section className="users-panel"><ErrorMessage message={error.message} />{error.retry && <button type="button" className="button button-secondary" onClick={() => setAttempt(value => value + 1)}>Reintentar</button>}</section>}
       {!profile && !error ? <p className="users-panel"><output>Comprobando tu identidad de conductor…</output></p> : profile && <>
@@ -104,7 +114,7 @@ export function DriverAccessPage() {
             <DriverRoutes loading={loadingRoutes} routes={routes} busy={busy} onOpen={id => void openRoute(id)} />
           </section>
           <section id="mis-entregas" className="users-panel driver-panel-card" tabIndex={-1} aria-labelledby="driver-deliveries-title"><h2 id="driver-deliveries-title">Mis entregas</h2>
-            {!selected ? <p>Selecciona una ruta para consultar sus entregas.</p> : <><p>Ruta {selected.estado} · {selected.version.vehiculo.placa} · Inicio: {formatDate(selected.iniciado_en)}</p><p>Progreso: {selected.progress.processed}/{selected.progress.total} ({selected.progress.percentage}%)</p><ol>{selected.version.paradas.map(stop => <li key={stop.parada_id}><strong>Parada {stop.secuencia}</strong> · {stop.datos.direccion ?? stop.pedido_id}<br />Estado: {stop.estado_entrega}{stop.atendido_en ? ` · ${formatDate(stop.atendido_en)}` : ''}{stop.causa_no_entrega ? <p>Causa: {stop.causa_no_entrega}</p> : null}{stop.estado_entrega === 'PENDIENTE' && <div className="driver-actions"><button type="button" className="button button-primary" disabled={busy === stop.parada_id} onClick={() => void updateDelivery(stop.parada_id, 'ENTREGADA', stop.version_entrega)}>Marcar entregada</button><label>Causa de no entrega<input value={causes[stop.parada_id] ?? ''} maxLength={255} onChange={event => setCauses(value => ({ ...value, [stop.parada_id]: event.target.value }))} /></label><button type="button" className="button button-secondary" disabled={busy === stop.parada_id} onClick={() => void updateDelivery(stop.parada_id, 'NO_ENTREGADA', stop.version_entrega)}>Registrar no entregada</button></div>}</li>)}</ol></>}
+            {!selected ? <p>Selecciona una ruta para consultar sus entregas.</p> : <><p>Ruta {selected.estado} · {selected.version.vehiculo.placa} · Inicio: {formatDate(selected.iniciado_en)}</p><p>Progreso: {selected.progress.processed}/{selected.progress.total} ({selected.progress.percentage}%)</p><ol>{selected.version.paradas.map(stop => <li key={stop.parada_id}><strong>Parada {stop.secuencia}</strong> · {stop.datos.direccion ?? stop.pedido_id}<br />Estado: {stop.estado_entrega}{stop.atendido_en ? ` · ${formatDate(stop.atendido_en)}` : ''}{stop.causa_no_entrega ? <p>Causa: {stop.causa_no_entrega}</p> : null}{stop.estado_entrega === 'PENDIENTE' && <div className="driver-actions"><button type="button" className="button button-primary" disabled={busy === stop.parada_id} onClick={() => void updateDelivery(stop.parada_id, 'ENTREGADA', stop.version_entrega)}>Marcar entregada</button><label>Causa de no entrega<input value={causes[stop.parada_id] ?? ''} maxLength={255} onChange={event => setCauses(value => ({ ...value, [stop.parada_id]: event.target.value }))} /></label><button type="button" className="button button-secondary" disabled={busy === stop.parada_id} onClick={() => void updateDelivery(stop.parada_id, 'NO_ENTREGADA', stop.version_entrega)}>Registrar no entregada</button></div>}<DeliveryIncidents deliveryId={stop.parada_id} sequence={stop.secuencia} incidents={stop.incidencias ?? []} canRegister={selected.estado === 'ASIGNADA' || selected.estado === 'EN_CURSO'} onRegistered={incident => addIncident(stop.parada_id, incident)} onUnauthorized={() => acceptSession(null)} /></li>)}</ol></>}
           </section>
         </div>
       </>}

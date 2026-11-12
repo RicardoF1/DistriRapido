@@ -1,0 +1,176 @@
+[
+ {
+  "informe": "despues-login-desktop",
+  "finalUrl": "http://localhost:5173/login",
+  "score": 100,
+  "FCP_s": 0.32,
+  "LCP_s": 0.53,
+  "TBT_ms": 0,
+  "CLS": 0,
+  "SI_s": 0.32,
+  "peso_KB": 198.9,
+  "peticiones": 7,
+  "tipos_KB": {
+   "Document": 1.4,
+   "Script": 89.9,
+   "Stylesheet": 7.8,
+   "Font": 28.8,
+   "Fetch": 1.1,
+   "Image": 69.8
+  },
+  "lcpElemento": "EcoRuta Huancayo",
+  "lighthouse": "12.6.1"
+ },
+ {
+  "informe": "despues-login-mobile",
+  "finalUrl": "http://localhost:5173/login",
+  "score": 98,
+  "FCP_s": 1.36,
+  "LCP_s": 2.26,
+  "TBT_ms": 0,
+  "CLS": 0,
+  "SI_s": 1.36,
+  "peso_KB": 171.2,
+  "peticiones": 7,
+  "tipos_KB": {
+   "Document": 1.4,
+   "Script": 89.9,
+   "Stylesheet": 7.8,
+   "Font": 28.8,
+   "Fetch": 1.1,
+   "Image": 42.1
+  },
+  "lcpElemento": "Plataforma de gestión logística\nde última milla",
+  "lighthouse": "12.6.1"
+ },
+ {
+  "informe": "despues-panel-admin-desktop",
+  "finalUrl": "http://localhost:5173/acceso/administrador",
+  "score": 100,
+  "FCP_s": 0.34,
+  "LCP_s": 0.53,
+  "TBT_ms": 0,
+  "CLS": 0.013,
+  "SI_s": 0.45,
+  "peso_KB": 134.7,
+  "peticiones": 9,
+  "tipos_KB": {
+   "Document": 1.4,
+   "Script": 93.1,
+   "Stylesheet": 7.8,
+   "Font": 28.8,
+   "Fetch": 3.5
+  },
+  "lcpElemento": "Bienvenido al sistema de gestión logística EcoRuta Huancayo. Desde aquí puedes …",
+  "lighthouse": "12.6.1"
+ },
+ {
+  "informe": "despues-panel-admin-mobile",
+  "finalUrl": "http://localhost:5173/acceso/administrador",
+  "score": 98,
+  "FCP_s": 1.43,
+  "LCP_s": 2.27,
+  "TBT_ms": 0,
+  "CLS": 0,
+  "SI_s": 1.43,
+  "peso_KB": 134.7,
+  "peticiones": 9,
+  "tipos_KB": {
+   "Document": 1.4,
+   "Script": 93.1,
+   "Stylesheet": 7.8,
+   "Font": 28.8,
+   "Fetch": 3.5
+  },
+  "lcpElemento": "Bienvenido al sistema de gestión logística EcoRuta Huancayo. Desde aquí puedes …",
+  "lighthouse": "12.6.1"
+ },
+ {
+  "informe": "despues-registrar-pedido-desktop",
+  "finalUrl": "http://localhost:5173/pedidos/nuevo",
+  "score": 100,
+  "FCP_s": 0.41,
+  "LCP_s": 0.59,
+  "TBT_ms": 0,
+  "CLS": 0.012,
+  "SI_s": 0.51,
+  "peso_KB": 627,
+  "peticiones": 63,
+  "tipos_KB": {
+   "Document": 1.4,
+   "Script": 144.9,
+   "Stylesheet": 14.8,
+   "Font": 28.8,
+   "Fetch": 28.5,
+   "Image": 408.5
+  },
+  "lcpElemento": "Atención: 7:00 AM–1:00 PM y 2:00 PM–8:00 PM. Almuerzo: 1:00 PM–2:00 PM. Usa for…",
+  "lighthouse": "12.6.1"
+ },
+ {
+  "informe": "despues-registrar-pedido-mobile",
+  "finalUrl": "http://localhost:5173/pedidos/nuevo",
+  "score": 92,
+  "FCP_s": 1.75,
+  "LCP_s": 2.94,
+  "TBT_ms": 139,
+  "CLS": 0,
+  "SI_s": 1.75,
+  "peso_KB": 341,
+  "peticiones": 30,
+  "tipos_KB": {
+   "Document": 1.4,
+   "Script": 144.9,
+   "Stylesheet": 14.8,
+   "Font": 28.8,
+   "Fetch": 28.5,
+   "Image": 122.5
+  },
+  "lcpElemento": "Completa el cliente, selecciona el destino en el mapa e indica el peso y la ent…",
+  "lighthouse": "12.6.1"
+ },
+ {
+  "informe": "despues-seguimiento-desktop",
+  "finalUrl": "http://localhost:5173/seguimiento",
+  "score": 100,
+  "FCP_s": 0.37,
+  "LCP_s": 0.56,
+  "TBT_ms": 0,
+  "CLS": 0,
+  "SI_s": 0.51,
+  "peso_KB": 138.8,
+  "peticiones": 12,
+  "tipos_KB": {
+   "Document": 1.4,
+   "Script": 96.9,
+   "Stylesheet": 7.8,
+   "Font": 28.8,
+   "Fetch": 3.8,
+   "Image": 0
+  },
+  "lcpElemento": "Consulta el estado de las rutas en operación y de sus entregas. Las rutas aún n…",
+  "lighthouse": "12.6.1"
+ },
+ {
+  "informe": "despues-seguimiento-mobile",
+  "finalUrl": "http://localhost:5173/seguimiento",
+  "score": 98,
+  "FCP_s": 1.52,
+  "LCP_s": 2.16,
+  "TBT_ms": 0,
+  "CLS": 0,
+  "SI_s": 1.52,
+  "peso_KB": 138.8,
+  "peticiones": 12,
+  "tipos_KB": {
+   "Document": 1.4,
+   "Script": 96.9,
+   "Stylesheet": 7.8,
+   "Font": 28.8,
+   "Fetch": 3.8,
+   "Image": 0
+  },
+  "lcpElemento": "Consulta el estado de las rutas en operación y de sus entregas. Las rutas aún n…",
+  "lighthouse": "12.6.1"
+ }
+]

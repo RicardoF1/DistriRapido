@@ -4,6 +4,7 @@ import * as argon2 from 'argon2';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { isAllowedRole, ROLE_NAMES } from '../roles/roles';
+import { DEFAULT_PAGE_SIZE, type Page, PaginationQueryDto, pageWindow } from '../common/pagination';
 export const PUBLIC_USER_SELECT = { usuario_id: true, email: true, rol_id: true, estado: true, creado_en: true, rol: { select: { rol_id: true, nombre: true } } } satisfies Prisma.UsuarioSelect;
 
 @Injectable()
@@ -15,7 +16,14 @@ export class UsersService {
   findById(usuario_id: string) {
     return this.prisma.usuario.findUnique({ where: { usuario_id }, include: { rol: true } });
   }
-  list() { return this.prisma.usuario.findMany({ select: PUBLIC_USER_SELECT, orderBy: [{ creado_en: 'desc' }, { usuario_id: 'asc' }] }); }
+  // Green IT (área 2): listado paginado en bloques de DEFAULT_PAGE_SIZE.
+  async list({ page = 1, pageSize = DEFAULT_PAGE_SIZE }: PaginationQueryDto = new PaginationQueryDto()): Promise<Page<Prisma.UsuarioGetPayload<{ select: typeof PUBLIC_USER_SELECT }>>> {
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.usuario.findMany({ select: PUBLIC_USER_SELECT, orderBy: [{ creado_en: 'desc' }, { usuario_id: 'asc' }], ...pageWindow(page, pageSize) }),
+      this.prisma.usuario.count(),
+    ]);
+    return { items, total, page, pageSize };
+  }
   async get(usuario_id: string) {
     const user = await this.prisma.usuario.findUnique({ where: { usuario_id }, select: PUBLIC_USER_SELECT });
     if (!user) throw new NotFoundException('Usuario no encontrado.');

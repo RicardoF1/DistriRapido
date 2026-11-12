@@ -15,6 +15,11 @@ it('actualiza entrega con estado, causa y versión esperada', async () => {
   await driverProfileApi.updateDelivery('stop/id', { estado: 'NO_ENTREGADA', causa: 'Ausente', expected_version: 2 });
   expect(request).toHaveBeenCalledWith('/driver/deliveries/stop%2Fid/status', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ estado: 'NO_ENTREGADA', causa: 'Ausente', expected_version: 2 }) });
 });
+it('US-018: registra una incidencia sobre la entrega indicada', async () => {
+  vi.mocked(request).mockResolvedValue({});
+  await driverProfileApi.createIncident('stop/id', { tipo: 'OTRO', descripcion: 'Detalle' });
+  expect(request).toHaveBeenCalledWith('/driver/deliveries/stop%2Fid/incidents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo: 'OTRO', descripcion: 'Detalle' }) });
+});
 describe('errores reales de rutas y entregas del conductor', () => {
   const realRequest = async (path: string) => (await vi.importActual<typeof import('./api')>('./api')).request(path, { method: 'PATCH' });
   const reply = (status: number, body?: unknown) => vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(body === undefined ? 'sin json' : JSON.stringify(body), { status })));
@@ -31,6 +36,21 @@ describe('errores reales de rutas y entregas del conductor', () => {
   ])('%s sin mensaje usa el respaldo específico', async (status, message) => {
     reply(status);
     await expect(realRequest('/driver/deliveries/stop/status')).rejects.toMatchObject({ status, message });
+  });
+  it('US-018: 400 de incidencias conserva un mensaje por campo', async () => {
+    reply(400, { statusCode: 400, message: ['tipo: selecciona el tipo de incidencia.', 'descripcion: describe la incidencia.'] });
+    await expect(realRequest('/driver/deliveries/stop/incidents')).rejects.toMatchObject({ status: 400, message: 'tipo: selecciona el tipo de incidencia.\ndescripcion: describe la incidencia.' });
+    reply(400);
+    await expect(realRequest('/driver/deliveries/stop/incidents')).rejects.toMatchObject({ status: 400, message: 'Revisa el tipo y la descripción de la incidencia.' });
+  });
+  it('US-019: /operations conserva mensajes por filtro y usa respaldos propios', async () => {
+    const operationsRequest = async (path: string) => (await vi.importActual<typeof import('./api')>('./api')).request(path, {});
+    reply(400, { statusCode: 400, message: ['estado: usa ASIGNADA, EN_CURSO o COMPLETADA.', 'desde debe tener el formato AAAA-MM-DD.'] });
+    await expect(operationsRequest('/operations/routes?estado=X')).rejects.toMatchObject({ status: 400, message: 'estado: usa ASIGNADA, EN_CURSO o COMPLETADA.\ndesde debe tener el formato AAAA-MM-DD.' });
+    reply(403);
+    await expect(operationsRequest('/operations/summary')).rejects.toMatchObject({ status: 403, message: 'No tienes permisos para consultar el seguimiento operativo.' });
+    reply(404, { message: 'La ruta no existe o todavía no está en operación.' });
+    await expect(operationsRequest('/operations/routes/r1')).rejects.toMatchObject({ status: 404, message: 'La ruta no existe o todavía no está en operación.' });
   });
   it('aplica el mismo tratamiento a /driver/routes', async () => {
     reply(404, { message: 'La ruta no existe o no esta asignada a tu cuenta.' });
