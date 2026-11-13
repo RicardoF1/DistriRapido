@@ -63,7 +63,7 @@ La validación final de cobertura en backend permanece pendiente de la siguiente
 
 El registro sigue siendo un formulario único. Cliente/carga y programación están en dos columnas de escritorio; la ubicación ocupa el ancho completo debajo. El mapa mide ahora 560–640 px en escritorio, 480 px en tablet y 400–460 px en celular. La confirmación aparece junto al buscador, la leyenda es compacta y el botón está al final. Estos cambios no sustituyen la sincronización y bloqueo descritos aquí.
 
-La imagen del login y las mejoras de administración se documentan en el [addendum V_1_1_0](../docs/03%20Implementación/05%20Mejoras%20posteriores%20al%20Sprint%201%20V_1_1_0.md), sin presentarlas como parte del cierre histórico.
+La imagen del login y las mejoras de administración se documentan en el [addendum V_1_1_0](../docs/otros/antecedentes-sprint-01/05%20Mejoras%20posteriores%20al%20Sprint%201%20V_1_1_0.md), sin presentarlas como parte del cierre histórico.
 
 ## Reconciliación de estructura posterior
 

@@ -1,5 +1,8 @@
 # Informe de adecuación documental — Taller de Proyectos 2
 
+> Antecedente histórico de la adecuación anterior. Las ubicaciones y exigencias estructurales registradas describen aquella revisión; la organización actual por sprints es una decisión expresa del usuario y se consulta en el [índice documental vigente](../README.md). No es un nuevo entregable académico.
+
+
 | Campo | Evidencia |
 |---|---|
 | Repositorio | [RicardoF1/DistriRapido](https://github.com/RicardoF1/DistriRapido), público según API |
@@ -36,7 +39,7 @@ La revisión previa sigue vigente en su base: main continúa exactamente en `7cd
 | `03 Implementación/01…04 … V_1_0_0.md` | Conserva Sprint 1 y sus datos; corrige identificación y destinos `src/backend` / `src/frontend`, enlaza continuidad documental |
 | `03 Implementación/01…04 … V_1_1_0.md` | Cuatro informes nuevos de gestión del Sprint 2 directamente en la carpeta oficial; historias, impedimentos, revisión, retrospectiva e historial |
 | [Sprint 03](../03%20Implementaci%C3%B3n/Sprint%2003) | Traslada los cinco informes existentes, conserva V_1_1_0 y su justificación, añade traza de ubicación y alcance histórico |
-| [Índice anterior Sprint 3](../03%20Implementaci%C3%B3n/evidencias-tecnicas/Sprint-3/cierre/README.md) | Remite a informes canónicos; conserva evidencia técnica 06 e imágenes donde estaban, sin copias contradictorias |
+| [Índice anterior Sprint 3](soporte-sprint-03/README.md) | Remite a informes canónicos; conserva evidencia técnica 06 e imágenes donde estaban, sin copias contradictorias |
 | [Green IT](../03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental) | Fe de erratas: repositorio público, comprobación de fórmula frente a recálculo, fallo de job frente a check obligatorio, móvil e inventario Lighthouse |
 | [Versionamiento y evidencias](VERSIONAMIENTO-Y-EVIDENCIAS.md) | Ramas/PR, ausencia de tags/releases, límites de commits candidatos y revisión visual de cinco capturas Jira |
 | Documentos académicos/técnicos, geodata y README de aplicaciones | Reparaciones de navegación y retornos; enlaces históricos retirados apuntan al commit anterior a su eliminación |

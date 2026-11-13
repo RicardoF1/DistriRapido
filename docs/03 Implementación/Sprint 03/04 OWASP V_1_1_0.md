@@ -2,7 +2,7 @@
 
 > Sprint 3 · Informe histórico V_1_1_0. Resultados sobre `33e7601` (noviembre de 2026), no sobre el HEAD actual. Traslado documental a la ruta oficial el 2026-11-12; no se repitieron pruebas, auditorías ni reuniones.
 
-[Evidencia técnica conservada](../evidencias-tecnicas/Sprint-3/cierre/06%20Evidencia%20técnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md) · [Otros informes del Sprint 3](../../README.md#sprint-3--ubicación-oficial)
+[Evidencia técnica conservada](../../otros/soporte-sprint-03/06%20Evidencia%20t%C3%A9cnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md) · [Otros informes del Sprint 3](../../README.md#sprint-03)
 
 ## Identificación
 

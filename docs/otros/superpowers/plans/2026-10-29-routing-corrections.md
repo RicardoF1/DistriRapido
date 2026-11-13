@@ -8,7 +8,7 @@
 
 **Tech Stack:** NestJS/Prisma/PostgreSQL, React/Leaflet, OSRM configurable; sin nuevas dependencias.
 
-**Spec:** `docs/otros/superpowers/specs/2026-10-29-routing-osrm-design.md` y `docs/03 Implementación/evidencias-tecnicas/Sprint-3/04 Auditoría del incremento parcial de rutas V_1_1_0.md`.
+**Spec:** `docs/otros/superpowers/specs/2026-10-29-routing-osrm-design.md` y `docs/otros/soporte-sprint-03/04 Auditoría del incremento parcial de rutas V_1_1_0.md`.
 
 ## Global Constraints
 

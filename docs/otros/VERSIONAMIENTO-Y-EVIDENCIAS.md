@@ -30,7 +30,7 @@ La guía de Green IT describe ese flujo por ramas/PR. Para la siguiente entrega 
 |---|---|---|
 | `33d6139e6404f70e12c76a6111f51245f24057db` | Commit de implementación/documentación Sprint 1 del 02/10; informes registran pruebas y confirmación técnica del equipo | Solo alcance inicial; falta aceptación formal de PMV y de interesados |
 | `33e76018d3c656d1702d059765c518368d482234` | Informes Sprint 3: pruebas, Quality Gate análisis 9, flujo local, cierre administrativo Jira | Candidato técnico de incremento, no candidato PMV validado formalmente; deuda HGR-43, WCAG y alcance del acta pendientes |
-| `7cdde3b765aa4898ef61789640900bad4910d386` | main incorpora Sprint 4 y Green IT por PR #16 | No se encontró una entrega integral aceptada que vincule todo este HEAD con v1.0.0 |
+| `7cdde3b765aa4898ef61789640900bad4910d386` | main incorpora los avances US-018/US-019 y, por separado, la entrega Green IT por PR #16 | No se encontró una entrega integral aceptada que vincule todo este HEAD con v1.0.0 |
 
 **No se identificó un candidato respaldado por aceptación formal de PMV.** El equipo debe decidir alcance, aportar aceptación y seleccionar el commit exacto antes de autorizar publicación del tag/release. No se generó ninguno automáticamente.
 
