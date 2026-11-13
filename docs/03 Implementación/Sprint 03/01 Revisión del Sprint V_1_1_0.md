@@ -2,7 +2,7 @@
 
 > Sprint 3 · Informe histórico V_1_1_0. Resultados sobre `33e7601` (noviembre de 2026), no sobre el HEAD actual. Traslado documental a la ruta oficial el 2026-11-12; no se repitieron pruebas, auditorías ni reuniones.
 
-[Evidencia técnica conservada](../evidencias-tecnicas/Sprint-3/cierre/06%20Evidencia%20técnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md) · [Otros informes del Sprint 3](../../README.md#sprint-3--ubicación-oficial)
+[Evidencia técnica conservada](../../otros/soporte-sprint-03/06%20Evidencia%20t%C3%A9cnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md) · [Otros informes del Sprint 3](../../README.md#sprint-03)
 
 ## Identificación
 
@@ -51,13 +51,13 @@ El estado técnico corresponde a lo demostrado en el entorno local. El estado ad
 | HGR-35 | Consulta de rutas propias del conductor | Validada con un conductor de prueba | Finalizada, resolución Listo |
 | HGR-36 | Registro de entregas y progreso | ENTREGADA validada en dos rutas completadas (2 entregas cada una); rechazo 409 sin cambios parciales validado; NO_ENTREGADA validada con causa, con deuda funcional abierta (ver «Deuda funcional») | Finalizada, resolución Listo, con comentarios 10000 (validación y bloqueo), 10001 (decisión del equipo) y 10002 (comentario final) |
 
-![Cronograma de Jira con HGR-32 a HGR-36 en Finalizada](../evidencias-tecnicas/Sprint-3/cierre/evidencias/jira/02-historias-finalizadas.png)
+![Cronograma de Jira con HGR-32 a HGR-36 en Finalizada](../../otros/soporte-sprint-03/evidencias/jira/02-historias-finalizadas.png)
 
 *Figura 1. Cronograma de Jira con las épicas HGR-8 y HGR-9 desplegadas: HGR-32 a HGR-36 en Finalizada (claves tachadas por estar resueltas) y HGR-43 en Tareas por hacer; la resolución Listo de las cinco historias se contrastó con acli. Captura directa y sin alteraciones de la interfaz web de Jira, tomada el 2026-11-08. El encuadre excluye datos personales. Datos contrastados mediante acli en modo de solo lectura.*
 
 El Sprint «SCRUM Sprint 3» se activó y se cerró administrativamente en Jira el 2026-11-07, con fechas administrativas del 2026-10-15 al 2026-11-07 (-05:00). Terminó con HGR-32 a HGR-36 en Finalizada, resolución Listo, y 23 Story Points finalizados. La épica HGR-8 se retiró del Sprint 3 antes del cierre y continúa En curso. La deuda de NO_ENTREGADA quedó registrada como HGR-43, en el backlog y pendiente.
 
-![Informe de trabajo completado de SCRUM Sprint 3 con 23 puntos](../evidencias-tecnicas/Sprint-3/cierre/evidencias/jira/01-sprint-3-cerrado.png)
+![Informe de trabajo completado de SCRUM Sprint 3 con 23 puntos](../../otros/soporte-sprint-03/evidencias/jira/01-sprint-3-cerrado.png)
 
 *Figura 2. Informe de trabajo completado de SCRUM Sprint 3: periodo del 15 de octubre al 7 de noviembre de 2026, meta del Sprint, alcance y trabajo completado de 23 puntos de historia, retirada de HGR-8 y evento «Sprint completado» del 2026-11-07 22:32. Captura directa y sin alteraciones de la interfaz web de Jira, tomada el 2026-11-08. El encuadre excluye datos personales. Datos contrastados mediante acli en modo de solo lectura.*
 
@@ -85,7 +85,7 @@ Los checks de backend, frontend, CodeQL y code scanning aprobaron antes de la in
 
 - **NO_ENTREGADA y replanificación (no resuelta):** se validó en local una parada NO_ENTREGADA con causa obligatoria; la ruta quedó COMPLETADA y el pedido quedó PENDIENTE, como establece la decisión del equipo en HGR-36. El backend acepta NO_ENTREGADA aunque el pedido no esté EN_RUTA, la ventana de entrega del pedido está vencida y no existe un flujo para reprogramarla ni un flujo funcional completo de replanificación. Permanece como deuda funcional (detalle en 06). La deuda se registró en Jira como HGR-43 / US-024: Reprogramar y replanificar pedidos no entregados. HGR-43 sigue pendiente en el backlog.
 
-![HGR-43 en Tareas por hacer dentro del Backlog](../evidencias-tecnicas/Sprint-3/cierre/evidencias/jira/03-hgr-43-backlog.png)
+![HGR-43 en Tareas por hacer dentro del Backlog](../../otros/soporte-sprint-03/evidencias/jira/03-hgr-43-backlog.png)
 
 *Figura 3. Backlog del tablero: HGR-43 / US-024: Reprogramar y replanificar pedidos no entregados, en Tareas por hacer y fuera de cualquier Sprint. Captura directa y sin alteraciones de la interfaz web de Jira, tomada el 2026-11-08. El encuadre excluye datos personales. Datos contrastados mediante acli en modo de solo lectura.*
 - **Placa histórica (RN-020):** las versiones de ruta guardan solo el identificador del vehículo; si la placa del vehículo cambia, la ruta muestra la placa actual y no la usada al planificar.
