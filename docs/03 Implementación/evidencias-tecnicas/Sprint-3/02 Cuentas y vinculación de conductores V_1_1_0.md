@@ -82,7 +82,7 @@ Frontend nuevos:
 
 Documentación nueva:
 
-- `docs/superpowers/plans/2026-10-29-driver-account-management.md`
+- `docs/otros/superpowers/plans/2026-10-29-driver-account-management.md`
 - Este informe.
 - `docs/03 Implementación/evidencias-tecnicas/Sprint-3/03 Diseño de restablecimiento de credenciales V_1_1_0.md`
 

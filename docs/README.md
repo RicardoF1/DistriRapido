@@ -1,6 +1,6 @@
 # Documentación de DistriRapido
 
-[← Volver al README principal](../README.md) · [Informe de adecuación TP2](INFORME-EVALUACION-TP2.md) · [Versionamiento y evidencias](VERSIONAMIENTO-Y-EVIDENCIAS.md)
+[← Volver al README principal](../README.md) · [Informe de adecuación TP2](otros/INFORME-EVALUACION-TP2.md) · [Versionamiento y evidencias](otros/VERSIONAMIENTO-Y-EVIDENCIAS.md)
 
 ## Fases del proyecto
 
@@ -56,6 +56,6 @@ Los resultados de SonarQube, OWASP, accesibilidad y pruebas corresponden a los c
 
 ## Referencias técnicas e historia
 
-- [Diseños](superpowers/specs) y [planes](superpowers/plans): material técnico, no comandos a ejecutar automáticamente.
+- [Diseños](otros/superpowers/specs) y [planes](otros/superpowers/plans): material técnico, no comandos a ejecutar automáticamente.
 - Los informes Post-Sprint-1 se retiraron en `19d6c45`; los enlaces de archivo usan su revisión anterior `77d7e10262183368f7f5831f0cc860722d4001aa`. No se restauraron como informes vigentes.
 - Control de navegación y alcance corregidos el 2026-11-12; las fechas técnicas originales no se sustituyen por la fecha de edición.

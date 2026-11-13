@@ -76,7 +76,7 @@ flowchart LR
     Cobertura --> API
 ```
 
-La autorización y la cobertura se validan también en servidor. Consulta el [C4 histórico V_1_1_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_1_0.md), el [diseño de rutas](docs/superpowers/specs/2026-10-29-routing-osrm-design.md) y los README de [backend](src/backend/README.md), [frontend](src/frontend/README.md) y [geodata](geodata/README.md).
+La autorización y la cobertura se validan también en servidor. Consulta el [C4 histórico V_1_1_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_1_0.md), el [diseño de rutas](docs/otros/superpowers/specs/2026-10-29-routing-osrm-design.md) y los README de [backend](src/backend/README.md), [frontend](src/frontend/README.md) y [geodata](geodata/README.md).
 
 ## Instalación
 
@@ -151,7 +151,7 @@ Enlace al video de **máximo cinco minutos**: **Pendiente de aportar por el equi
 
 ## Fases y sprints
 
-[Índice documental completo](docs/README.md) · [Informe de adecuación y pendientes](docs/INFORME-EVALUACION-TP2.md).
+[Índice documental completo](docs/README.md) · [Informe de adecuación y pendientes](docs/otros/INFORME-EVALUACION-TP2.md).
 
 | Fase | Documentación disponible y estado |
 |---|---|
@@ -199,7 +199,7 @@ Ocho optimizaciones documentadas con antes/después y estimación SWDM v4. Los r
 
 ## Versionamiento y evidencias
 
-El historial muestra ramas por historia/actividad y PR hacia `main` o integración de sprint. Véase [flujo y candidatos a PMV](docs/VERSIONAMIENTO-Y-EVIDENCIAS.md). No hay tags ni releases de GitHub en la consulta de esta revisión. `v1.0.0-MVP` UNRELEASED de Jira no es un tag Git.
+El historial muestra ramas por historia/actividad y PR hacia `main` o integración de sprint. Véase [flujo y candidatos a PMV](docs/otros/VERSIONAMIENTO-Y-EVIDENCIAS.md). No hay tags ni releases de GitHub en la consulta de esta revisión. `v1.0.0-MVP` UNRELEASED de Jira no es un tag Git.
 
 El commit `33e7601` tiene evidencia histórica de pruebas, SonarQube y demostración local del Sprint 3; es una referencia técnica a evaluar, no una entrega PMV formalmente aceptada. La selección y publicación de `v1.0.0` quedan pendientes del equipo.
 

@@ -31,16 +31,16 @@ La revisión previa sigue vigente en su base: main continúa exactamente en `7cd
 
 | Ruta | Cambio |
 |---|---|
-| [README principal](../README.md) | Equipo según Jira, problemática, PMV y límites, tecnologías, arquitectura, instalación/build/despliegue, video pendiente, TOC y navegación por fases/sprints |
-| [Índice docs](README.md) | Fases Inicio, Planificación, Implementación, Seguimiento y Control y Cierre identificables; no se crean carpetas vacías |
+| [README principal](../../README.md) | Equipo según Jira, problemática, PMV y límites, tecnologías, arquitectura, instalación/build/despliegue, video pendiente, TOC y navegación por fases/sprints |
+| [Índice docs](../README.md) | Fases Inicio, Planificación, Implementación, Seguimiento y Control y Cierre identificables; no se crean carpetas vacías |
 | `03 Implementación/01…04 … V_1_0_0.md` | Conserva Sprint 1 y sus datos; corrige identificación y destinos `src/backend` / `src/frontend`, enlaza continuidad documental |
 | `03 Implementación/01…04 … V_1_1_0.md` | Cuatro informes nuevos de gestión del Sprint 2 directamente en la carpeta oficial; historias, impedimentos, revisión, retrospectiva e historial |
-| [Sprint 03](03%20Implementación/Sprint%2003) | Traslada los cinco informes existentes, conserva V_1_1_0 y su justificación, añade traza de ubicación y alcance histórico |
-| [Índice anterior Sprint 3](03%20Implementación/evidencias-tecnicas/Sprint-3/cierre/README.md) | Remite a informes canónicos; conserva evidencia técnica 06 e imágenes donde estaban, sin copias contradictorias |
-| [Green IT](03%20Implementación/reduccion%20del%20impacto%20ambiental) | Fe de erratas: repositorio público, comprobación de fórmula frente a recálculo, fallo de job frente a check obligatorio, móvil e inventario Lighthouse |
+| [Sprint 03](../03%20Implementaci%C3%B3n/Sprint%2003) | Traslada los cinco informes existentes, conserva V_1_1_0 y su justificación, añade traza de ubicación y alcance histórico |
+| [Índice anterior Sprint 3](../03%20Implementaci%C3%B3n/evidencias-tecnicas/Sprint-3/cierre/README.md) | Remite a informes canónicos; conserva evidencia técnica 06 e imágenes donde estaban, sin copias contradictorias |
+| [Green IT](../03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental) | Fe de erratas: repositorio público, comprobación de fórmula frente a recálculo, fallo de job frente a check obligatorio, móvil e inventario Lighthouse |
 | [Versionamiento y evidencias](VERSIONAMIENTO-Y-EVIDENCIAS.md) | Ramas/PR, ausencia de tags/releases, límites de commits candidatos y revisión visual de cinco capturas Jira |
 | Documentos académicos/técnicos, geodata y README de aplicaciones | Reparaciones de navegación y retornos; enlaces históricos retirados apuntan al commit anterior a su eliminación |
-| [Comprobador documental](../scripts/check-doc-links.cjs) | Revisión reproducible sin dependencias de rutas, imágenes, anchors, retornos y estructura de tablas Markdown |
+| [Comprobador documental](../../scripts/check-doc-links.cjs) | Revisión reproducible sin dependencias de rutas, imágenes, anchors, retornos y estructura de tablas Markdown |
 
 Las modificaciones fuera de los informes solicitados se limitan a enlaces y notas de contexto necesarias para navegación coherente. El versionado académico existente se conserva; las reparaciones de enlaces se registran en este informe y no alteran la aceptación ni los resultados históricos.
 
@@ -49,16 +49,16 @@ Las modificaciones fuera de los informes solicitados se limitan a enlaces y nota
 | Requisito oficial transcrito | Estado | Evidencia disponible | Pendiente |
 |---|---|---|---|
 | Repositorio e instrucciones correctos; conservar trabajo | Comprobado | origin RicardoF1/DistriRapido; clon limpio, main en base indicada; sin AGENTS locales | No se inspeccionaron ni alteraron otras copias ajenas al espacio de trabajo |
-| README con nombre, TOC, equipo, problema, PMV, stack y arquitectura | Corregido | [README](../README.md) y fuentes del acta/Jira | Confirmar liderazgo y validadores |
+| README con nombre, TOC, equipo, problema, PMV, stack y arquitectura | Corregido | [README](../../README.md) y fuentes del acta/Jira | Confirmar liderazgo y validadores |
 | Instalación, build y despliegue | Documentado con límites | README, package.json, Dockerfiles y Compose | No existe .env.example versionado; entorno privado y autorización de inicialización requieren coordinación |
 | Video ≤5 minutos | Pendiente | Marcador explícito en README | Enlace, duración y acceso para docente |
 | Cinco fases claramente identificables | Parcial | README e índice docs identifican las cinco | Entregables consolidados de Seguimiento y Control y Cierre global no localizados |
 | Sprint 1: cuatro documentos directamente en Implementación | Conservado y enlazado | V_1_0_0, alcance Sprint 1 | Aceptación/reuniones/cierre formal según pendientes originales |
 | Sprint 2: cuatro documentos de gestión diferenciados | Preparado, por validar | V_1_1_0, US-006–US-009, informes técnicos y PR #5–#7 | Fechas efectivas, responsables, aceptación, demo y retrospectiva humana; no se declara sprint terminado |
 | Sprint 3: cinco informes en ruta oficial | Corregido | `03 Implementación/Sprint 03/`, V_1_1_0 conservado | Confirmar con fuente oficial no accesible; no rebajar ni duplicar V_1_0_0 |
-| Calidad y Quality Gate SonarQube | Evidencia histórica conservada | [Calidad](03%20Implementación/Sprint%2003/03%20Calidad%20de%20código%20V_1_1_0.md), análisis 9 sobre 33e7601, OK; 96,3% cobertura nueva; 256 code smells heredados | No se ejecutó nuevo análisis del HEAD; revisar deuda |
-| OWASP | Evidencia histórica conservada, parcial | [OWASP](03%20Implementación/Sprint%2003/04%20OWASP%20V_1_1_0.md), controles y hotspots revisados | Pruebas dinámicas/dependencias y validación humana; no es certificación completa |
-| WCAG | Parcial | [WCAG](03%20Implementación/Sprint%2003/05%20WCAG%20V_1_1_0.md), axe/Lighthouse y revisión manual históricas | Lector real, contraste instrumental y mapas; no conformidad AA declarada |
+| Calidad y Quality Gate SonarQube | Evidencia histórica conservada | [Calidad](../03%20Implementaci%C3%B3n/Sprint%2003/03%20Calidad%20de%20c%C3%B3digo%20V_1_1_0.md), análisis 9 sobre 33e7601, OK; 96,3% cobertura nueva; 256 code smells heredados | No se ejecutó nuevo análisis del HEAD; revisar deuda |
+| OWASP | Evidencia histórica conservada, parcial | [OWASP](../03%20Implementaci%C3%B3n/Sprint%2003/04%20OWASP%20V_1_1_0.md), controles y hotspots revisados | Pruebas dinámicas/dependencias y validación humana; no es certificación completa |
+| WCAG | Parcial | [WCAG](../03%20Implementaci%C3%B3n/Sprint%2003/05%20WCAG%20V_1_1_0.md), axe/Lighthouse y revisión manual históricas | Lector real, contraste instrumental y mapas; no conformidad AA declarada |
 | Enlaces, imágenes y retornos | Corregidos, sujetos a validación final abajo | Comprobador documental; índice anterior y destinos de código reales | Enlaces externos no equivalen a accesibilidad autenticada ni aprobación |
 | Green IT: dos archivos en ruta exacta y ocho áreas antes/después | Conservado y corregido | Secciones 5.1–5.8 del informe y matriz de estándares | Aprobación expresa de adaptación MERN |
 | SWDM v4 y alcance CI | Corregido documentalmente | Fórmula, coeficientes, JSON y test de fórmula existentes | Sin medición continua ni recálculo automático de emisiones; confirmar supuestos |
@@ -88,11 +88,11 @@ Resultados **históricos DESPUÉS**, extraídos del JSON versionado. No son medi
 
 | Original o resumen disponible | Estado |
 |---|---|
-| [Login escritorio antes](03%20Implementación/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/antes/login-escritorio.html) | HTML original versionado |
-| [Login móvil antes](03%20Implementación/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/antes/login-movil.html) | HTML original versionado |
-| [Login escritorio después](03%20Implementación/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/despues/login-escritorio.html) | HTML original versionado |
-| [Login móvil después](03%20Implementación/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/despues/login-movil.html) | HTML original versionado |
-| [Resumen antes](03%20Implementación/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/antes/resumen-antes.json) y [resumen después](03%20Implementación/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/despues/resumen-despues.json) | 8 registros cada uno; no equivalen a originales completos |
+| [Login escritorio antes](../03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/antes/login-escritorio.html) | HTML original versionado |
+| [Login móvil antes](../03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/antes/login-movil.html) | HTML original versionado |
+| [Login escritorio después](../03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/despues/login-escritorio.html) | HTML original versionado |
+| [Login móvil después](../03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/despues/login-movil.html) | HTML original versionado |
+| [Resumen antes](../03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/antes/resumen-antes.json) y [resumen después](../03%20Implementaci%C3%B3n/reduccion%20del%20impacto%20ambiental/evidencias/lighthouse/despues/resumen-despues.json) | 8 registros cada uno; no equivalen a originales completos |
 | Panel, seguimiento y pedidos: escritorio/móvil antes/después | Faltan 12 originales correspondientes a esas filas resumidas |
 | Declaración histórica de 32 archivos en .local/lighthouse | Carpeta no incluida en este clon; inventario completo pendiente de aportar por el equipo |
 
@@ -138,4 +138,4 @@ La copia nueva estaba limpia. Las modificaciones se mantienen locales en main, s
 | V_1_0_0 del informe de adecuación | 2026-11-12 | Documenta cambios, matriz de requisitos, fuentes, evidencias disponibles y límites de validación. |
 | Revisión final local | 2026-11-12 | Corrige la equiparación de integración con finalización técnica en Sprint 2 y la descripción CRUD de vehículos sin eliminación acreditada; armoniza la conclusión de retrospectiva Sprint 3 con las evidencias existentes de WCAG y cierre Jira. Sin nuevas pruebas de aplicación ni aceptación humana. |
 
-[← Volver al README principal](../README.md) · [Índice documental](README.md)
+[← Volver al README principal](../../README.md) · [Índice documental](../README.md)
