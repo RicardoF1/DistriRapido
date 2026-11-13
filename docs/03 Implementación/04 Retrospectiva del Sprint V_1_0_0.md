@@ -1,4 +1,7 @@
-# Reprospectiva del sprint
+# Retrospectiva del Sprint — Sprint 1 V_1_0_0
+
+> Antecedente histórico del Sprint 1 (02/10/2026). El 2026-11-12 solo se corrigen identificación y enlaces; no se alteran resultados ni se acredita aceptación nueva. La gestión del Sprint 2 está en [la serie V_1_1_0](04%20Retrospectiva%20del%20Sprint%20V_1_1_0.md).
+
 
 **Nombre del Proyecto:** Plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo
 

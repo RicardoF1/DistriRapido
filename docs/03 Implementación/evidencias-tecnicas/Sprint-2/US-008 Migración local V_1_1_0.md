@@ -45,3 +45,5 @@ El bloqueo por tabla ausente está resuelto; los flujos solicitados se verificar
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Revisar evidencia HGR-26 y ratificar los acuerdos provisionales. Resolver la invariancia del rol de cuentas vinculadas antes del cierre formal de US-008. Mantener el respaldo privado hasta aceptar la entrega y acordar posteriormente el tratamiento de la ficha ficticia.
+
+[← Volver al README principal](../../../../README.md)

@@ -1,4 +1,7 @@
-# Revisión del sprint
+# Informe de estado del proyecto — Sprint 1 V_1_0_0
+
+> Antecedente histórico del Sprint 1 (02/10/2026). El 2026-11-12 solo se corrigen identificación y enlaces; no se alteran resultados ni se acredita aceptación nueva. La gestión del Sprint 2 está en [la serie V_1_1_0](01%20Informe%20de%20estado%20del%20proyecto%20V_1_1_0.md).
+
 
 **Nombre del Proyecto:** Plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo
 
@@ -24,15 +27,15 @@ Estado funcional: incremento de acceso, administración de cuentas, registro y c
 
 | Historia completada | Funcionalidad verificable | Evidencia del repositorio |
 |---|---|---|
-| US-001 — Iniciar sesión | Autenticación email/contraseña, identidad mediante GET /auth/me y rechazo de credenciales inválidas. | [Auth](../../backend/src/auth/auth.controller.ts), [prueba de login](../../frontend/e2e/login.spec.ts) |
-| US-002 — Cerrar sesión | Cookie HttpOnly, restauración tras F5, logout explícito y bloqueo posterior de rutas protegidas. | [Informe US-002](evidencias-tecnicas/Sprint-1/US-002.md), [proveedor de sesión](../../frontend/src/features/auth/AuthProvider.tsx) |
-| US-003 — Administrar usuarios y roles | Administrador lista, crea y edita email, rol y estado; contraseña inicial Argon2id; diferenciación 401/403. | [Informe US-003](evidencias-tecnicas/Sprint-1/US-003.md), [integración usuarios](../../backend/test/users.integration.ts) |
-| US-004 — Registrar pedidos | Cliente/destino y pedido transaccionales; dirección, mapa y marcador; peso positivo obligatorio; volumen NULL si desconocido; descripción y referencia opcionales; ventana Lima y estado PENDIENTE. | [Formulario](../../frontend/src/features/orders/OrderForm.tsx), [integración pedidos](../../backend/test/orders.integration.ts) |
-| US-005 — Consultar pedidos | Consulta con búsqueda, filtros, paginación y detalle de solo lectura para Administrador y Operador / Técnico. | [Controlador](../../backend/src/orders/orders.controller.ts), [prueba de consulta](../../frontend/e2e/order-consultation.spec.ts) |
+| US-001 — Iniciar sesión | Autenticación email/contraseña, identidad mediante GET /auth/me y rechazo de credenciales inválidas. | [Auth](../../src/backend/src/auth/auth.controller.ts), [prueba de login](../../src/frontend/e2e/login.spec.ts) |
+| US-002 — Cerrar sesión | Cookie HttpOnly, restauración tras F5, logout explícito y bloqueo posterior de rutas protegidas. | [Informe US-002](evidencias-tecnicas/Sprint-1/US-002.md), [proveedor de sesión](../../src/frontend/src/features/auth/AuthProvider.tsx) |
+| US-003 — Administrar usuarios y roles | Administrador lista, crea y edita email, rol y estado; contraseña inicial Argon2id; diferenciación 401/403. | [Informe US-003](evidencias-tecnicas/Sprint-1/US-003.md), [integración usuarios](../../src/backend/test/users.integration.ts) |
+| US-004 — Registrar pedidos | Cliente/destino y pedido transaccionales; dirección, mapa y marcador; peso positivo obligatorio; volumen NULL si desconocido; descripción y referencia opcionales; ventana Lima y estado PENDIENTE. | [Formulario](../../src/frontend/src/features/orders/OrderForm.tsx), [integración pedidos](../../src/backend/test/orders.integration.ts) |
+| US-005 — Consultar pedidos | Consulta con búsqueda, filtros, paginación y detalle de solo lectura para Administrador y Operador / Técnico. | [Controlador](../../src/backend/src/orders/orders.controller.ts), [prueba de consulta](../../src/frontend/e2e/order-consultation.spec.ts) |
 
 ## Demostración del trabajo completado
 
-La aplicación permite demostrar login, persistencia, logout, gestión de usuarios y registro/consulta de pedidos. Las rutas y los controles de acceso se encuentran en [AppRoutes](../../frontend/src/routes/AppRoutes.tsx). La demostración se puede repetir siguiendo la [Revisión del Sprint](03%20Revisión%20del%20Sprint%20V_1_0_0.md). No consta un acta de presentación formal a stakeholders.
+La aplicación permite demostrar login, persistencia, logout, gestión de usuarios y registro/consulta de pedidos. Las rutas y los controles de acceso se encuentran en [AppRoutes](../../src/frontend/src/routes/AppRoutes.tsx). La demostración se puede repetir siguiendo la [Revisión del Sprint](03%20Revisión%20del%20Sprint%20V_1_0_0.md). No consta un acta de presentación formal a stakeholders.
 
 ## Pendientes
 

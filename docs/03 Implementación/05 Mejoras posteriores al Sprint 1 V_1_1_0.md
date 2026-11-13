@@ -1,5 +1,8 @@
 # 05. Mejoras posteriores al Sprint 1 V_1_1_0
 
+> Antecedente histórico posterior al Sprint 1. Sus afirmaciones de alcance pendiente y trabajo local describen esa fase, no main actual. Corrección de navegación: 2026-11-12; [estado vigente](../../README.md#estado-vigente-e-historia).
+
+
 ## Datos y control de versión
 
 | Campo | Valor |
@@ -93,16 +96,18 @@ Se preservan el manifiesto, hashes y validación original en [geodata](../../geo
 
 ## Evidencias y trazabilidad
 
-Los indicadores están documentados en [el incremento administrativo](evidencias-tecnicas/Post-Sprint-1/02%20Resumen%20administrativo%20V_1_1_0.md); las verificaciones e inventario vigentes de la nueva estructura constan en [la reconciliación sobre main](evidencias-tecnicas/Post-Sprint-1/04%20Reconciliación%20sobre%20main%20V_1_1_0.md). Los informes previos son fotografías de sus respectivas fases.
+Los indicadores están documentados en [el incremento administrativo — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/02%20Resumen%20administrativo%20V_1_1_0.md); las verificaciones e inventario vigentes de la nueva estructura constan en [la reconciliación sobre main — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliaci%C3%B3n%20sobre%20main%20V_1_1_0.md). Los informes previos son fotografías de sus respectivas fases.
 
-- [Informe actual de verificación y entrega](evidencias-tecnicas/Post-Sprint-1/01%20Verificación%20y%20entrega%20V_1_1_0.md).
+- [Informe actual de verificación y entrega — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/01%20Verificaci%C3%B3n%20y%20entrega%20V_1_1_0.md).
 - [Integración de cobertura](../../geodata/FRONTEND-INTEGRATION.md) y [corrección del marcador](../../geodata/MARKER-SYNC.md): conservan sus resultados de fase separados de los actuales.
 - El [índice histórico del Sprint 1](evidencias-tecnicas/Sprint-1/README.md) y los cuatro entregables académicos no se modificaron para atribuirles estas mejoras.
 
 ## Fase técnica posterior autorizada
 
-La documentación V_1_1_0 se conserva como addendum incremental. [Validación backend y empaquetado V_1_1_0](evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md) registra los archivos, reglas, aprovisionamiento privado, migraciones explícitas y resultados de 2026-10-09. Los informes del cierre del Sprint 1 y las evidencias anteriores no fueron reescritos.
+La documentación V_1_1_0 se conserva como addendum incremental. [Validación backend y empaquetado V_1_1_0 — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/05%20Validaci%C3%B3n%20backend%20y%20empaquetado%20V_1_1_0.md) registra los archivos, reglas, aprovisionamiento privado, migraciones explícitas y resultados de 2026-10-09. Los informes del cierre del Sprint 1 y las evidencias anteriores no fueron reescritos.
 
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Resolver y documentar los permisos de redistribución INEI antes de publicar datos o imágenes. Revisar la evidencia técnica 05 y verificar persistencia en una base exclusivamente de pruebas, sin utilizar los registros existentes.
+
+[← Volver al README principal](../../README.md)

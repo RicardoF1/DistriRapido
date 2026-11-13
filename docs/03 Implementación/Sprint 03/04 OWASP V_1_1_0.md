@@ -1,5 +1,9 @@
 # 04 OWASP V_1_1_0
 
+> Sprint 3 · Informe histórico V_1_1_0. Resultados sobre `33e7601` (noviembre de 2026), no sobre el HEAD actual. Traslado documental a la ruta oficial el 2026-11-12; no se repitieron pruebas, auditorías ni reuniones.
+
+[Evidencia técnica conservada](../evidencias-tecnicas/Sprint-3/cierre/06%20Evidencia%20técnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md) · [Otros informes del Sprint 3](../../README.md#sprint-3--ubicación-oficial)
+
 ## Identificación
 
 - Versión del documento: V_1_1_0 (sustituye a V_1_0_0, disponible en el historial de Git)
@@ -112,4 +116,12 @@ No se identificaron bloqueos críticos durante las pruebas, el análisis de CI n
 
 ---
 
-[← Volver al README principal](../../../../../README.md) · [Índice documental](../../../../README.md)
+## Historial documental de ubicación
+
+| Versión | Fecha | Cambio |
+|---|---|---|
+| V_1_0_0 | Véase historial Git | Versión inicial anterior, no recreada ni duplicada. |
+| V_1_1_0 | Actualización técnica registrada: 2026-11-07; evidencias posteriores: 2026-11-08 | Se mantiene la justificación y el detalle histórico del informe. |
+| V_1_1_0, corrección de ubicación | 2026-11-12 | Traslado desde `evidencias-tecnicas/Sprint-3/cierre/` a `Sprint 03/`, enlaces ajustados. No es una nueva medición. |
+
+[← Volver al README principal](../../../README.md) · [Índice documental](../../README.md)

@@ -66,3 +66,5 @@ Revisar el SQL en prisma/migrations/202610090001_us008_conductores/migration.sql
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Ratificar acuerdos provisionales y alcance de coordenadas; definir coordinación del rol de cuentas vinculadas con US-003. Autorizar por separado la migración tras revisión, verificar persistencia y aceptación en entorno aislado y adjuntar evidencia HGR-26 antes de cerrar US-008.
+
+[← Volver al README principal](../../../../README.md)

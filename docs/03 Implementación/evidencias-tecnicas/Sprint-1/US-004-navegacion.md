@@ -42,3 +42,5 @@ No se guardaron formularios, no se modificó PostgreSQL, no se ejecutó bootstra
 5. Como Operador / Técnico, iniciar sesión con su contraseña actual: Registrar pedido visible, sin Usuarios y roles. Como Conductor/Auditor, no debe aparecer Registrar pedido.
 
 Si necesitas reiniciar otra vez: detener con Ctrl+C únicamente la terminal cuya salida corresponde a DistriRapido frontend y http://localhost:5173; desde frontend ejecutar npm run dev. Si npm global falla, usar node "$env:ProgramFiles\nodejs\node_modules\npm\bin\npm-cli.js" run dev. No reiniciar backend, Docker ni otros proyectos para esta comprobación.
+
+[← Volver al README principal](../../../../README.md)

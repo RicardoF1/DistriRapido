@@ -202,3 +202,5 @@ Estados: **base** = implementado, con los límites/hallazgos de este informe; **
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Revisar este diagnóstico y aprobar por separado la corrección del incremento parcial. Hasta entonces no continuar implementación ni aplicar migraciones. Mantener el reset de contraseñas como trabajo independiente con su autorización propia.
+
+[← Volver al README principal](../../../../README.md)

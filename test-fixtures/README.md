@@ -11,3 +11,5 @@ La cuadrícula tiene cinco áreas separadas, una con hueco y otra con dos partes
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Mantener estos fixtures independientes de fuentes reales y comprobar que futuras pruebas no incorporen dependencias privadas. La validación territorial real debe verificarse separadamente en un entorno privado autorizado.
+
+[← Volver al README principal](../README.md)

@@ -46,3 +46,5 @@ Orden de despliegue: respaldo y revisión, migración aditiva compatible, backen
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Revisar y aprobar este diseño y su política de contraseñas con el equipo. Solo después preparar la migración aditiva y solicitar autorización específica para aplicarla al entorno elegido con respaldo verificable.
+
+[← Volver al README principal](../../../../README.md)

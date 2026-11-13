@@ -13,4 +13,6 @@ La [documentación oficial del Sprint](../../) contiene los entregables académi
 | [US-004.md](US-004.md) | US-004 | Registro inicial de pedidos, validaciones y persistencia transaccional. |
 | [US-004-navegacion.md](US-004-navegacion.md) | US-004 | Verificación de navegación, roles y acceso al formulario. |
 
-US-005 no tiene un informe técnico individual en esta carpeta. Su evidencia formal se encuentra en el [Informe de estado](../../01%20Informe%20de%20estado%20del%20proyecto%20V_1_0_0.md), la [Revisión del Sprint](../../03%20Revisión%20del%20Sprint%20V_1_0_0.md) y las [pruebas del repositorio](../../../../frontend/e2e/order-consultation.spec.ts).
+US-005 no tiene un informe técnico individual en esta carpeta. Su evidencia formal se encuentra en el [Informe de estado](../../01%20Informe%20de%20estado%20del%20proyecto%20V_1_0_0.md), la [Revisión del Sprint](../../03%20Revisión%20del%20Sprint%20V_1_0_0.md) y las [pruebas del repositorio](../../../../src/frontend/e2e/order-consultation.spec.ts).
+
+[← Volver al README principal](../../../../README.md)

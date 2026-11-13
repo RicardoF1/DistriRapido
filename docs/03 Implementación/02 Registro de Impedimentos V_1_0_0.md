@@ -1,4 +1,7 @@
-# Registro de impedimentos
+# Registro de impedimentos — Sprint 1 V_1_0_0
+
+> Antecedente histórico del Sprint 1 (02/10/2026). El 2026-11-12 solo se corrigen identificación y enlaces; no se alteran resultados ni se acredita aceptación nueva. La gestión del Sprint 2 está en [la serie V_1_1_0](02%20Registro%20de%20Impedimentos%20V_1_1_0.md).
+
 
 **Nombre del Proyecto:** Plataforma web con Algoritmo Genético para optimizar rutas sostenibles de última milla en Huancayo
 
@@ -29,8 +32,8 @@ Reconstrucción de problemas y restricciones verificables; no equivale a un regi
 ## Evidencias
 
 - [Informe histórico US-004](evidencias-tecnicas/Sprint-1/US-004.md) y [verificación de navegación](evidencias-tecnicas/Sprint-1/US-004-navegacion.md): flujo inicial y refinamientos posteriores.
-- [Modelo Prisma](../../backend/prisma/schema.prisma) y [migraciones](../../backend/prisma/migrations/202610010003_us004_ubicacion_carga/migration.sql): volumen nullable y descripción.
-- [Formulario](../../frontend/src/features/orders/OrderForm.tsx), [dirección](../../frontend/src/features/orders/useDeliveryAddress.ts), [mapa](../../frontend/src/features/orders/DeliveryMap.tsx) y [pruebas de hora](../../frontend/e2e/order-delivery-time.spec.ts).
+- [Modelo Prisma](../../src/backend/prisma/schema.prisma) y [migraciones](../../src/backend/prisma/migrations/202610010003_us004_ubicacion_carga/migration.sql): volumen nullable y descripción.
+- [Formulario](../../src/frontend/src/features/orders/OrderForm.tsx), [dirección](../../src/frontend/src/features/orders/useDeliveryAddress.ts), [mapa](../../src/frontend/src/features/orders/DeliveryMap.tsx) y [pruebas de hora](../../src/frontend/e2e/order-delivery-time.spec.ts).
 - [Reglas refinadas](../01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_1_0.md): contradicciones y decisiones pendientes.
 
 ## Base documental y límites de evidencia

@@ -1,5 +1,9 @@
 # 02 Retrospectiva del Sprint V_1_1_0
 
+> Sprint 3 · Informe histórico V_1_1_0. Resultados sobre `33e7601` (noviembre de 2026), no sobre el HEAD actual. Traslado documental a la ruta oficial el 2026-11-12; no se repitieron pruebas, auditorías ni reuniones.
+
+[Evidencia técnica conservada](../evidencias-tecnicas/Sprint-3/cierre/06%20Evidencia%20técnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md) · [Otros informes del Sprint 3](../../README.md#sprint-3--ubicación-oficial)
+
 ## Identificación
 
 - Versión del documento: V_1_1_0 (sustituye a V_1_0_0, disponible en el historial de Git)
@@ -71,13 +75,21 @@
 - Conservar la placa del vehículo en cada versión de ruta (RN-020).
 - Evitar que la revalidación de sesión al recuperar el foco desmonte formularios o listas abiertas (H1).
 - Resolver la rotación de las flechas del mapa con clases CSS predefinidas, sin `unsafe-inline`.
-- Completar las comprobaciones manuales de WCAG (lector de pantalla, contraste, zoom real).
-- Revisar y actualizar en Jira el estado de HGR-32 a HGR-36.
+- Completar lector de pantalla y contraste instrumental; la revisión manual de teclado y zoom ya consta en el informe WCAG (2026-11-07).
+- Conservar la evidencia del cierre administrativo del 2026-11-07, documentada en la Revisión; no se consultó Jira de nuevo en esta corrección.
 
 ## Conclusión
 
-El Sprint 3 cerró con el incremento integrado y validado en local, y con las lecciones de integración, calidad y accesibilidad convertidas en acciones concretas. De los cuatro compromisos anteriores se cumplió uno (OSRM local) y tres continúan pendientes; a ellos se suman la deuda de NO_ENTREGADA, la placa histórica, H1, la rotación de las flechas, las comprobaciones manuales de WCAG y la revisión del estado de las historias en Jira.
+El Sprint 3 cerró con el incremento integrado y validado en local, y con las lecciones de integración, calidad y accesibilidad convertidas en acciones concretas. De los cuatro compromisos anteriores se cumplió uno (OSRM local) y tres continúan pendientes; a ellos se suman la deuda de NO_ENTREGADA, la placa histórica, H1, la rotación de las flechas y las comprobaciones WCAG aún pendientes descritas en el informe 05. La revisión manual de teclado y zoom y el cierre administrativo de HGR-32 a HGR-36 ya constan en los informes 05 y 01, respectivamente; no se consultó Jira de nuevo en esta revisión documental.
 
 ---
 
-[← Volver al README principal](../../../../../README.md) · [Índice documental](../../../../README.md)
+## Historial documental de ubicación
+
+| Versión | Fecha | Cambio |
+|---|---|---|
+| V_1_0_0 | Véase historial Git | Versión inicial anterior, no recreada ni duplicada. |
+| V_1_1_0 | Actualización técnica registrada: 2026-11-07; evidencias posteriores: 2026-11-08 | Se mantiene la justificación y el detalle histórico del informe. |
+| V_1_1_0, corrección de ubicación | 2026-11-12 | Traslado desde `evidencias-tecnicas/Sprint-3/cierre/` a `Sprint 03/`, enlaces ajustados y pendientes WCAG/Jira armonizados con los informes 05/01. No es una nueva medición. |
+
+[← Volver al README principal](../../../README.md) · [Índice documental](../../README.md)

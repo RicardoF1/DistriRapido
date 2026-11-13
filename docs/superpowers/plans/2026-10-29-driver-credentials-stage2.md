@@ -34,3 +34,5 @@ Especificación aprobada: diseño de credenciales V_1_1_0 y solicitud de impleme
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Registrar evidencias y revisar la autorización específica de migración y despliegue antes de habilitar las operaciones reales.
+
+[← Volver al README principal](../../../README.md)

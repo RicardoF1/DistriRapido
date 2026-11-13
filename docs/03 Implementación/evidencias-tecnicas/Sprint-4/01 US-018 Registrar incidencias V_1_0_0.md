@@ -69,3 +69,5 @@ Migración aditiva `202611090001_us018_incidencias_entrega`: tabla `incidencias_
 
 - Revisión del equipo y aceptación de la historia en Jira.
 - Consulta de incidencias por el Supervisor en US-019.
+
+[← Volver al README principal](../../../../README.md)

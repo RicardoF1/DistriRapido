@@ -170,3 +170,5 @@ Estado Git: cambios locales anteriores y nuevos sin commit; índice vacío; rama
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Revisión humana de esta interfaz y cuenta local. Después de aprobarla, acordar los contratos de rutas/asignaciones y los criterios de pertenencia y estados antes de desarrollar US-013 a US-017. No iniciar esas historias como continuación automática de esta fase.
+
+[← Volver al README principal](../../../../README.md)

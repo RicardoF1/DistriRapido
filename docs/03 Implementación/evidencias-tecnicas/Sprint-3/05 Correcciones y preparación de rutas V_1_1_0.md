@@ -140,3 +140,5 @@ Rama `main`; HEAD `128af98b7021655c39160a92121087023ed3f931` conservado. Sin sta
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Revisar estos resultados y la guía de infraestructura. Autorizar por separado la migración y los recursos privados/operativos necesarios para una prueba real de US-013. Detener la implementación aquí; mantener la etapa 2 de contraseñas y US-014/015/016/017 como trabajos independientes todavía no ejecutados.
+
+[← Volver al README principal](../../../../README.md)

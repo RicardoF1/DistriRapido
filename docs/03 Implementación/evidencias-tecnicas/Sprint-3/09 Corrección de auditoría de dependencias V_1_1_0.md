@@ -67,3 +67,5 @@ Antes/después de integración se verificaron conteos y hashes de las ocho tabla
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Revisar la actualización de la PR 8 y sus ejecuciones de CI. Mantener visible el pendiente bajo de deepmerge/Jest y actualizarlo cuando exista una solución compatible; desplegar imágenes nuevas únicamente con autorización separada. US-013 sigue requiriendo su migración, OSRM privado y prueba vial real.
+
+[← Volver al README principal](../../../../README.md)
