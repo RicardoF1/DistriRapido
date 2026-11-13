@@ -46,11 +46,11 @@ Inspección visual realizada sobre los PNG existentes; no se modificó ninguna i
 
 | Evidencia | Archivo | Observación visual |
 |---|---|---|
-| Roadmap | [Evidencia1_Roadmap.png](02%20Planificación/Evidencia1_Roadmap.png) | Panel con épicas y cronograma; sin escritorio ni barras de navegador |
-| Backlog | [Evidencia2_Backlog_Priorizado.png](02%20Planificación/Evidencia2_Backlog_Priorizado.png) | Lista priorizada con historias y puntos; sin escritorio ni barras de navegador |
-| Planificación y objetivo | [Evidencia3_SprintPlanning.png](02%20Planificación/Evidencia3_SprintPlanning.png) | SCRUM Sprint 1, 11–25 sep, objetivo visible; margen claro superior, sin barra de navegador |
-| Tablero | [Evidencia4_TableroScrum.png](02%20Planificación/Evidencia4_TableroScrum.png) | To Do 2, In Progress 2, In Review/QA 1, Done 0; no acredita cierre |
-| Release | [Evidencia5_Release.png](02%20Planificación/Evidencia5_Release.png) | v1.0.0-MVP UNRELEASED; fechas no completadas; no es tag Git |
+| Roadmap | [Evidencia1_Roadmap.png](../02%20Planificaci%C3%B3n/Evidencia1_Roadmap.png) | Panel con épicas y cronograma; sin escritorio ni barras de navegador |
+| Backlog | [Evidencia2_Backlog_Priorizado.png](../02%20Planificaci%C3%B3n/Evidencia2_Backlog_Priorizado.png) | Lista priorizada con historias y puntos; sin escritorio ni barras de navegador |
+| Planificación y objetivo | [Evidencia3_SprintPlanning.png](../02%20Planificaci%C3%B3n/Evidencia3_SprintPlanning.png) | SCRUM Sprint 1, 11–25 sep, objetivo visible; margen claro superior, sin barra de navegador |
+| Tablero | [Evidencia4_TableroScrum.png](../02%20Planificaci%C3%B3n/Evidencia4_TableroScrum.png) | To Do 2, In Progress 2, In Review/QA 1, Done 0; no acredita cierre |
+| Release | [Evidencia5_Release.png](../02%20Planificaci%C3%B3n/Evidencia5_Release.png) | v1.0.0-MVP UNRELEASED; fechas no completadas; no es tag Git |
 
 Cumplen el encuadre solicitado para estas cinco evidencias de planificación. Son históricas y no demuestran el estado actual de Jira, el cierre Sprint 2 ni aceptación del producto.
 
@@ -60,4 +60,4 @@ Cumplen el encuadre solicitado para estas cinco evidencias de planificación. So
 |---|---|---|
 | V_1_0_0 de este informe de inspección | 2026-11-12 | Registra ramas/PR, ausencia de tags/releases, límites del candidato y comprobación visual de Jira. |
 
-[← Volver al README principal](../README.md) · [Índice documental](README.md)
+[← Volver al README principal](../../README.md) · [Índice documental](../README.md)

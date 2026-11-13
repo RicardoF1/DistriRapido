@@ -262,4 +262,4 @@ La aceptación docente de NestJS/Prisma/PostgreSQL como adaptación MERN permane
 
 Los presupuestos de transferencia necesitan unidad explícita: los resúmenes llaman `peso_KB` a valores tratados como KiB (×1024 en SWDM), y CI fija 1.153.434 B. La transcripción exige 1,1 MB sin precisar conversión; los pesos finales resumidos también quedan por debajo de 1.100.000 B, de modo que esa ambigüedad no cambia la conclusión de peso en esta evidencia. Confirmar la unidad oficial.
 
-[Inventario, fuentes y pendientes de evaluación](../../INFORME-EVALUACION-TP2.md) · [← Volver al README principal](../../../README.md)
+[Inventario, fuentes y pendientes de evaluación](../../otros/INFORME-EVALUACION-TP2.md) · [← Volver al README principal](../../../README.md)

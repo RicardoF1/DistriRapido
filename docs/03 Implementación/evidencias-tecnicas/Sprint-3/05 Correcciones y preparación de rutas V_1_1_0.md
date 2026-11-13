@@ -133,7 +133,7 @@ Los siguientes archivos se añadieron o cambiaron respecto al respaldo de inicio
 - `src/frontend/src/features/routes/RouteMap.tsx`, `RouteMap.test.tsx`.
 - `src/frontend/e2e/routes.spec.ts`, `drivers.spec.ts`.
 - `infra/osrm/.env.example`, `infra/osrm/README.md`.
-- `docs/superpowers/plans/2026-10-29-routing-corrections.md` y este informe.
+- `docs/otros/superpowers/plans/2026-10-29-routing-corrections.md` y este informe.
 
 Rama `main`; HEAD `128af98b7021655c39160a92121087023ed3f931` conservado. Sin staging, commits, push ni merge. No se eliminaron carpetas antiguas, copias de trabajo, recursos privados o datos existentes. El preview temporal de pruebas se cerró.
 

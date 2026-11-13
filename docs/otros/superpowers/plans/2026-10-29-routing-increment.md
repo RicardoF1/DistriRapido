@@ -8,7 +8,7 @@
 
 **Tech Stack:** Prisma/PostgreSQL, NestJS, TypeScript, React, Leaflet y OSRM. Sin dependencias nuevas previstas.
 
-**Spec:** `docs/superpowers/specs/2026-10-29-routing-osrm-design.md`, aprobado por el usuario.
+**Spec:** `docs/otros/superpowers/specs/2026-10-29-routing-osrm-design.md`, aprobado por el usuario.
 
 ## Global Constraints
 
@@ -61,4 +61,4 @@ Files: PlanningPage, RoutesPage, RouteDetailPage, RouteMap, API/tipos, navegaci�
 
 Informe del primer incremento y revisión de la migración pendiente. Solicitar autorización específica antes de aplicarla a desarrollo o generar rutas allí.
 
-[← Volver al README principal](../../../README.md)
+[← Volver al README principal](../../../../README.md)

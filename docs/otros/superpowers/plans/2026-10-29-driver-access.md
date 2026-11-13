@@ -29,4 +29,4 @@ Rol o estado cambiado con JWT aún vigente; conductor desvinculado/inactivo; man
 
 Informe de preparación del panel con evidencias y revisión humana antes de implementar rutas/asignaciones.
 
-[← Volver al README principal](../../../README.md)
+[← Volver al README principal](../../../../README.md)

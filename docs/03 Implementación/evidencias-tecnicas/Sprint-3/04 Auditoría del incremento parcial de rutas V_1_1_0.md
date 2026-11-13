@@ -4,7 +4,7 @@ Versión: V_1_1_0. Fecha: 2026-10-29. Estado: diagnóstico previo a continuar im
 
 ## 1. Alcance y conservación
 
-Se revisó el trabajo interrumpido contra `docs/superpowers/specs/2026-10-29-routing-osrm-design.md` y el respaldo preincremento `.local/routing-increment-20261029-175242/`. Se identificaron exactamente **47 archivos de implementación** nuevos/modificados desde ese respaldo: el inventario al final los enumera individualmente. El plan del incremento es un documento adicional. Los documentos anteriores de integración, Juan y cuentas no se atribuyen a este incremento.
+Se revisó el trabajo interrumpido contra `docs/otros/superpowers/specs/2026-10-29-routing-osrm-design.md` y el respaldo preincremento `.local/routing-increment-20261029-175242/`. Se identificaron exactamente **47 archivos de implementación** nuevos/modificados desde ese respaldo: el inventario al final los enumera individualmente. El plan del incremento es un documento adicional. Los documentos anteriores de integración, Juan y cuentas no se atribuyen a este incremento.
 
 Al comenzar: 40 archivos rastreados modificados y 163 archivos no rastreados, incluyendo trabajos anteriores y carpetas antiguas. Esos 203 archivos no equivalen a 203 cambios de rutas. Se conservaron todos. La rama permanece `main`, HEAD `128af98b7021655c39160a92121087023ed3f931`. No se cambió de rama, hizo staging, commit, push, merge ni se revirtieron archivos.
 

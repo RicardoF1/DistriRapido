@@ -86,13 +86,13 @@ Backend: schema.prisma; migración nueva; auth.service.ts y spec; auth.module.ts
 
 Frontend: DriverCredentialsPanel.tsx y test; DriverAccountsPanel.tsx; DriverAccessPage.tsx; AppLayout.tsx; LoginPage.tsx; PasswordField.tsx y test; services/driver-credentials-api.ts; services/api.ts; e2e/driver-credentials.spec.ts; playwright.mock.config.ts.
 
-Documentos: este informe, actualización de estado en el diseño 03 y plan `docs/superpowers/plans/2026-10-29-driver-credentials-stage2.md`. Inventario exacto local comparado con el respaldo en `.local/credential-stage2-changed-files.json`. Ningún archivo de implementación de planning/routes/routing/orders/vehicles/availability se modificó en esta fase.
+Documentos: este informe, actualización de estado en el diseño 03 y plan `docs/otros/superpowers/plans/2026-10-29-driver-credentials-stage2.md`. Inventario exacto local comparado con el respaldo en `.local/credential-stage2-changed-files.json`. Ningún archivo de implementación de planning/routes/routing/orders/vehicles/availability se modificó en esta fase.
 
 ### Inventario exacto (30 archivos)
 
 - `docs/03 Implementación/evidencias-tecnicas/Sprint-3/03 Diseño de restablecimiento de credenciales V_1_1_0.md`
 - `docs/03 Implementación/evidencias-tecnicas/Sprint-3/06 Gestión de credenciales de conductores V_1_1_0.md`
-- `docs/superpowers/plans/2026-10-29-driver-credentials-stage2.md`
+- `docs/otros/superpowers/plans/2026-10-29-driver-credentials-stage2.md`
 - `src/backend/prisma/migrations/202610300001_driver_credentials_version/migration.sql`
 - `src/backend/prisma/schema.prisma`
 - `src/backend/src/auth/auth.module.ts`

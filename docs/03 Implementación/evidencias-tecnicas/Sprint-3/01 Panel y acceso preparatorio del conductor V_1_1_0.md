@@ -82,7 +82,7 @@ src/frontend/src/pages/DriverAccessPage.tsx
 src/frontend/src/pages/DriverAccessPage.test.tsx
 src/frontend/e2e/driver-panel.spec.ts
 src/frontend/e2e/fixtures/driver-profile.ts
-docs/superpowers/plans/2026-10-29-driver-access.md
+docs/otros/superpowers/plans/2026-10-29-driver-access.md
 docs/03 Implementación/evidencias-tecnicas/Sprint-3/01 Panel y acceso preparatorio del conductor V_1_1_0.md
 ```
 
