@@ -67,13 +67,21 @@ V_1_1_0 conserva su historial. Las métricas y el cierre administrativo Jira son
 
 [Evidencia técnica](otros/soporte-sprint-03/06%20Evidencia%20t%C3%A9cnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md) · [Capturas e inventario](otros/soporte-sprint-03/evidencias/README.md).
 
-### Sprint 04 — avances
+### Sprint 04 — entregables
+
+- [01 Revisión del Sprint V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/01%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
+- [02 Retrospectiva del Sprint V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
+- [03 Analisis PlayWrigth V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/03%20Analisis%20PlayWrigth%20V_1_0_0.md)
+- 04 Usabilidad V_1_0_0 — pendiente de las respuestas SUS (mínimo 5 personas).
+
+Informes técnicos de las historias:
 
 - [01 US-018 Registrar incidencias V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/01%20US-018%20Registrar%20incidencias%20V_1_0_0.md)
 - [02 US-019 Consultar estado operativo V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/02%20US-019%20Consultar%20estado%20operativo%20V_1_0_0.md)
 - [03 US-020 Confirmar ruta V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/03%20US-020%20Confirmar%20ruta%20V_1_0_0.md)
+- [04 US-021 Registrar sostenibilidad V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/04%20US-021%20Registrar%20sostenibilidad%20V_1_0_0.md)
 
-Solo informes técnicos existentes de US-018, US-019 y US-020; sin nuevos entregables de gestión ni cierre declarado.
+La Revisión del Sprint registra como pendientes la integración en `main` y la aceptación de las historias en Jira.
 
 ### Inspección 04 — Green IT
 

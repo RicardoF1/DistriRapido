@@ -7,10 +7,12 @@ import { RouteMap } from '../features/routes/RouteMap';
 import { RouteAssignmentPanel } from '../features/routes/RouteAssignmentPanel';
 import { RouteConfirmationPanel } from '../features/routes/RouteConfirmationPanel';
 import { confirmationPending } from '../features/routes/route-confirmation';
+import { RouteSustainabilityPanel, RouteSustainabilitySummary } from '../features/routes/RouteSustainabilityPanel';
+import { initialSustainabilityForm } from '../features/routes/route-sustainability';
 import { ROUTE_STATE_LABELS } from '../features/routes/route-states';
 import { routeMethod } from '../features/routes/route-method';
 import { warningLabel } from '../features/routes/route-warnings';
-import type { RouteAssignment, RouteConfirmation, RouteDetail } from '../types/routes';
+import type { RouteAssignment, RouteConfirmation, RouteDetail, RouteState, RouteSustainability } from '../types/routes';
 const date = (value: string) => new Date(value).toLocaleString('es-PE', { timeZone: 'America/Lima' });
 function assignmentBlock(data: RouteDetail, version: RouteDetail['versiones'][number]): string | null {
   if (version.numero !== data.current_version) return 'Estás consultando una versión histórica. Solo la versión actual puede asignarse.';
@@ -21,18 +23,26 @@ function assignmentBlock(data: RouteDetail, version: RouteDetail['versiones'][nu
   if (!version.resultado.confirmable) return 'La ruta no es confirmable. Revisa las restricciones antes de asignarla.';
   return null;
 }
+const REGISTRABLE_STATES: RouteState[] = ['CONFIRMADA', 'ASIGNADA', 'EN_CURSO', 'COMPLETADA'];
+/** US-021: solo la versión actual de una ruta confirmada (o posterior) admite registrar sostenibilidad. */
+function sustainabilityBlock(data: RouteDetail, version: RouteDetail['versiones'][number]): string | null {
+  if (version.numero !== data.current_version) return 'Estás consultando una versión histórica. Consulta la versión actual para registrar su información de sostenibilidad.';
+  if (!REGISTRABLE_STATES.includes(data.estado)) return 'Confirma la ruta antes de registrar su información de sostenibilidad.';
+  return null;
+}
 export function RouteDetailPage() {
   const { id } = useParams(); const { acceptSession } = useAuth(); const [data, setData] = useState<RouteDetail>(); const [version, setVersion] = useState<number>(); const [attempt, setAttempt] = useState(0); const [loading, setLoading] = useState(true); const [error, setError] = useState(''); const [notice, setNotice] = useState('');
   const expire = useCallback(() => acceptSession(null), [acceptSession]);
   const reload = useCallback(() => setAttempt(x => x + 1), []);
   const confirmed = useCallback((result: RouteConfirmation) => { setNotice(`Ruta confirmada el ${date(result.confirmado_en)}; ya puedes asignar un conductor.`); setAttempt(x => x + 1); }, []);
   const assigned = useCallback((result: RouteAssignment) => { setNotice(`Ruta asignada a ${result.conductor.nombre_completo} el ${date(result.asignado_en)}.`); setAttempt(x => x + 1); }, []);
+  const registered = useCallback((result: RouteSustainability) => { setNotice(`Información de sostenibilidad registrada el ${date(result.registrado_en)}`); setAttempt(x => x + 1); }, []);
   useEffect(() => { const controller = new AbortController(); setLoading(true); setError(''); routesApi.get(id!, version, controller.signal).then(value => { if (!controller.signal.aborted) setData(value); }).catch((cause: unknown) => { if (controller.signal.aborted) return; if (cause instanceof ApiError && cause.status === 401) acceptSession(null); else setError(cause instanceof Error ? cause.message : 'No se pudo cargar el recorrido.'); }).finally(() => { if (!controller.signal.aborted) setLoading(false); }); return () => controller.abort(); }, [id, version, attempt, acceptSession]);
   const v = data?.versiones[0];
   let content: ReactNode = null;
   if (loading) content = <p><output>Cargando recorrido…</output></p>;
   else if (error) content = <><p role="alert">{error}</p><button onClick={reload}>Reintentar consulta</button></>;
-  else if (data && v) content = <RouteVersionDetail data={data} v={v} onVersionChange={setVersion} onConfirmed={confirmed} onAssigned={assigned} onReload={reload} onSessionExpired={expire} />;
+  else if (data && v) content = <RouteVersionDetail data={data} v={v} onVersionChange={setVersion} onConfirmed={confirmed} onAssigned={assigned} onRegistered={registered} onReload={reload} onSessionExpired={expire} />;
   return <section className="users-panel routing-panel"><div className="page-heading"><h1>Detalle de recorrido</h1><Link to="/rutas">Volver a rutas</Link></div>{notice && <p><output>{notice}</output></p>}{content}</section>;
 }
 interface RouteVersionDetailProps {
@@ -41,11 +51,17 @@ interface RouteVersionDetailProps {
   onVersionChange: (version: number) => void;
   onConfirmed: (result: RouteConfirmation) => void;
   onAssigned: (result: RouteAssignment) => void;
+  onRegistered: (result: RouteSustainability) => void;
   onReload: () => void;
   onSessionExpired: () => void;
 }
-function RouteVersionDetail({ data, v, onVersionChange, onConfirmed, onAssigned, onReload, onSessionExpired }: Readonly<RouteVersionDetailProps>) {
+function RouteVersionDetail({ data, v, onVersionChange, onConfirmed, onAssigned, onRegistered, onReload, onSessionExpired }: Readonly<RouteVersionDetailProps>) {
   const block = assignmentBlock(data, v);
+  const sustainabilityBlocked = sustainabilityBlock(data, v);
+  let sustainability: ReactNode;
+  if (data.sostenibilidad) sustainability = <RouteSustainabilitySummary record={data.sostenibilidad} />;
+  else if (sustainabilityBlocked) sustainability = <p>{sustainabilityBlocked}</p>;
+  else sustainability = <RouteSustainabilityPanel key={`${data.ruta_id}-${v.numero}`} routeId={data.ruta_id} routeState={data.estado} initial={initialSustainabilityForm(v)} onRegistered={onRegistered} onReload={onReload} onSessionExpired={onSessionExpired} />;
   const confirmable = data.estado === 'GENERADA' && !data.conductor_id && v.numero === data.current_version;
   return <>
     <h2>{data.alternativa.ejecucion.version.planificacion.etiqueta}</h2><p>Versión {v.numero} · {routeMethod(data.alternativa.metodo)} · Sin optimización genética.{v.resultado.estrategia ? ' Estrategia: ' + v.resultado.estrategia.nombre + '.' : ''}</p><label>Versión registrada<select value={v.numero} onChange={e => onVersionChange(Number(e.target.value))}>{Array.from({ length: data.current_version }, (_, i) => <option key={i} value={i + 1}>{i + 1}</option>)}</select></label>
@@ -57,6 +73,8 @@ function RouteVersionDetail({ data, v, onVersionChange, onConfirmed, onAssigned,
     {confirmable && <RouteConfirmationPanel routeId={data.ruta_id} pending={confirmationPending(data, v)} onConfirmed={onConfirmed} onReload={onReload} onSessionExpired={onSessionExpired} />}
     <h2>Asignación</h2><dl className="driver-detail"><div><dt>Conductor</dt><dd>{data.conductor?.nombre_completo ?? 'Sin asignar'}</dd></div><div><dt>Asignada el</dt><dd>{data.asignado_en ? date(data.asignado_en) : 'Sin asignar'}</dd></div></dl>
     {block ? <p>{block}</p> : <RouteAssignmentPanel routeId={data.ruta_id} onAssigned={onAssigned} onReload={onReload} onSessionExpired={onSessionExpired} />}
+    <h2>Sostenibilidad</h2>
+    {sustainability}
     {v.resultado.warnings.length > 0 && <div role="status"><strong>Restricciones y datos no evaluables:</strong><ul>{v.resultado.warnings.map(w => <li key={w}><span>{warningLabel(w)}</span> <code>{w}</code></li>)}</ul></div>}
     {data.current_warnings.length > 0 && <p role="status">Los pedidos actuales difieren de esta versión histórica. No se recalculó ni modificó el recorrido.</p>}
     <h2>Paradas ordenadas</h2><div className="table-scroll" tabIndex={0} role="region" aria-label="Paradas del recorrido"><table><thead><tr><th>Orden</th><th>Pedido y destino</th><th>Llegada estimada</th><th>Atención y salida</th><th>Estado actual</th></tr></thead><tbody>{v.paradas.map(p => <tr key={p.pedido_id}><td>{p.secuencia}</td><td><Link to={'/pedidos/' + p.pedido_id}>{p.pedido_id}</Link><p>{p.datos.direccion}</p></td><td>{date(p.datos.arrival)}</td><td>{p.datos.service_minutes} min · {date(p.datos.departure)}</td><td>{p.pedido.estado}</td></tr>)}</tbody></table></div>
