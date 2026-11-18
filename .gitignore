@@ -11,6 +11,8 @@ dist/
 *.tsbuildinfo
 playwright-report/
 test-results/
+playwright-report-live/
+test-results-live/
 LEVANTAR.md
 
 # Temporales y configuración personal del IDE
