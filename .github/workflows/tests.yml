@@ -1,0 +1,115 @@
+name: DistriRapido tests
+
+on:
+  push:
+    branches: [main, develop, sprint-4]
+  pull_request:
+    branches: [main, develop, sprint-4]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (unitarias e integración)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test_runner
+          POSTGRES_DB: distrirapido_test
+          # Solo servicio efímero del runner de CI, sin credenciales versionadas.
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U test_runner -d distrirapido_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://test_runner@localhost:5432/distrirapido_test
+      TEST_DATABASE_URL: postgresql://test_runner@localhost:5432/distrirapido_test
+    defaults:
+      run:
+        working-directory: src/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/backend/package-lock.json
+      - name: Generate ephemeral test JWT secret
+        run: node -e "require('fs').appendFileSync(process.env.GITHUB_ENV, 'JWT_SECRET=' + require('crypto').randomBytes(48).toString('hex') + '\n')"
+      - run: npm ci
+      - run: npm run prisma:generate
+      - run: npm run db:migrate
+      - run: npm run test:coverage
+      - run: npm run test:integration
+      - name: Guardar cobertura del backend
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: src/backend/coverage/
+          retention-days: 14
+
+  frontend-unit:
+    name: Frontend (Vitest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run test:coverage -- --pool=forks --maxWorkers=1
+      - name: Guardar cobertura del frontend
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: src/frontend/coverage/
+          retention-days: 14
+
+  e2e:
+    name: E2E Playwright (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    needs: frontend-unit
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    defaults:
+      run:
+        working-directory: src/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/frontend/package-lock.json
+      - run: npm ci
+      - name: Instalar navegador ${{ matrix.browser }}
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Compilar el frontend
+        run: npm run build
+      - name: Ejecutar suite E2E (API simulada)
+        run: npx playwright test -c playwright.ci.config.ts --project=${{ matrix.browser }}
+      - name: Guardar reporte HTML de Playwright
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: src/frontend/playwright-report/
+          retention-days: 14

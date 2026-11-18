@@ -33,7 +33,7 @@ test('geometría corrupta muestra error visible sin línea sustitutiva', async (
 });
 for (const role of ['Usuario Final / Conductor', 'Auditor Externo']) test('rutas administrativas denegadas: ' + role, async ({ page, baseURL }) => { await mock(page, new URL(baseURL!).origin, role); await page.goto('/rutas'); await expect(page).toHaveURL(/\/acceso\//); await expect(page.getByRole('link', { name: 'Preparar recorrido' })).toHaveCount(0); });
 test('migración ausente es error y no lista vacía', async ({ page, baseURL }) => { await mock(page, new URL(baseURL!).origin, 'Administrador', true); await page.goto('/rutas'); await expect(page.getByRole('alert')).toHaveText('Falta aplicar la migración autorizada.'); await expect(page.getByText('0 recorridos registrados')).toHaveCount(0); });
-test('origen/orden/regreso explícitos, fallo OSRM y nueva clave sin duplicar preparación', async ({ page, baseURL }) => {
+test('origen/orden/regreso explícitos, fallo OSRM y nueva clave sin duplicar preparación', { tag: '@cobertura-privada' }, async ({ page, baseURL }) => {
   const calls = await mock(page, new URL(baseURL!).origin, 'Operador / Técnico', true); await page.goto('/planificacion'); await page.getByLabel('Inicio de jornada').fill('2030-01-01T07:00'); await page.getByLabel('Límite de jornada').fill('2030-01-01T10:00'); await page.getByRole('button', { name: 'Consultar pedidos y recursos' }).click();
   await page.getByLabel('Seleccionar pedido ' + orderId).check(); await page.getByLabel('Vehículo candidato').selectOption(id); await page.getByLabel('Conductor sintético', { exact: true }).check(); await page.getByLabel('Atención en minutos para ' + orderId).fill('5'); await page.getByLabel('Dirección del origen').fill('Origen sintético'); await page.getByRole('button', { name: /Origen sintético, Huancayo/ }).click(); await page.getByLabel('Finalización del recorrido').selectOption('OPEN');
   await expect(page.getByRole('button', { name: 'Preparar planificación' })).toBeDisabled(); for (const text of ['Confirmo el origen seleccionado.', 'Confirmo el orden y los tiempos de atención.', 'Confirmo si el recorrido regresa al origen.']) await page.getByLabel(text).check();
@@ -61,7 +61,7 @@ test('mapa de ruta: marcadores y flechas fuera del orden de tabulación, control
   const recenter = page.getByRole('button', { name: 'Centrar el recorrido en el mapa' }); await expect(recenter).toBeFocused();
   await page.keyboard.press('Enter'); await page.keyboard.press('Space'); await expect(recenter).toBeFocused(); await expect(stops).toHaveCount(2);
 });
-test('mapa de entrega en planificación: distritos fuera de la tabulación y zoom en español', async ({ page, baseURL }) => {
+test('mapa de entrega en planificación: distritos fuera de la tabulación y zoom en español', { tag: '@cobertura-privada' }, async ({ page, baseURL }) => {
   await mock(page, new URL(baseURL!).origin, 'Operador / Técnico'); await page.goto('/planificacion');
   await page.getByLabel('Inicio de jornada').fill('2030-01-01T07:00'); await page.getByLabel('Límite de jornada').fill('2030-01-01T10:00'); await page.getByRole('button', { name: 'Consultar pedidos y recursos' }).click();
   const map = page.getByRole('region', { name: 'Mapa de ubicación de entrega' }); await expect(map).toBeVisible();

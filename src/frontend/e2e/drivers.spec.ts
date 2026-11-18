@@ -6,7 +6,8 @@ async function mock(page:Page,origin:string,role='Administrador'){
  const headers={'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Credentials':'true'};
  await mockOwnDriver(page, headers);
  await page.route('**/auth/me',r=>r.fulfill({headers,json:{usuario_id:id,email:'fixture@example.com',rol:{nombre:role},expiresAt:Date.now()+900000}}));
- await page.route('**/drivers**',async r=>{const req=r.request();if(req.method()==='OPTIONS')return r.fulfill({status:204,headers:{...headers,'Access-Control-Allow-Methods':'GET,POST,PATCH','Access-Control-Allow-Headers':'Content-Type'}});
+ // API paths only: a '**/drivers**' glob also captured the drivers-api-*.js chunk of the build.
+ await page.route(url=>/^\/drivers(\/|$)/.test(url.pathname),async r=>{const req=r.request();if(req.method()==='OPTIONS')return r.fulfill({status:204,headers:{...headers,'Access-Control-Allow-Methods':'GET,POST,PATCH','Access-Control-Allow-Headers':'Content-Type'}});
  if(req.method()==='POST'||req.method()==='PATCH'){driver={...driver,...req.postDataJSON()};return r.fulfill({status:req.method()==='POST'?201:200,headers,json:driver});}
  return r.fulfill({headers,json:new URL(req.url()).pathname==='/drivers'?{items:[driver],total:1,page:1,pageSize:20}:driver});});
  await page.route('**/admin/summary',r=>r.fulfill({headers,json:{totalOrders:0,pendingOrders:0,totalUsers:0,ordersByState:[]}}));

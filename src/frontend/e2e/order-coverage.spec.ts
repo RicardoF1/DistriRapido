@@ -5,7 +5,7 @@ async function session(page: import('@playwright/test').Page, baseURL: string) {
   await page.route('https://tile.openstreetmap.org/**', route => route.abort());
 }
 for (const width of [390, 768, 1366, 1440]) {
-  test(`cobertura responsive ${width}, Photon ambiguo y selección`, async ({ page, baseURL }) => {
+  test(`cobertura responsive ${width}, Photon ambiguo y selección`, { tag: '@cobertura-privada' }, async ({ page, baseURL }) => {
     await page.setViewportSize({ width, height: 900 }); await session(page, baseURL!);
     let searches = 0;
     await page.route('https://photon.komoot.io/**', route => {
@@ -43,7 +43,7 @@ for (const width of [390, 768, 1366, 1440]) {
     await page.screenshot({ path: `test-results/coverage-${width}.png`, fullPage: true });
   });
 }
-test('arrastre fuera de cobertura invalida y bloquea POST', async ({ page, baseURL }) => {
+test('arrastre fuera de cobertura invalida y bloquea POST', { tag: '@cobertura-privada' }, async ({ page, baseURL }) => {
   await session(page, baseURL!);
   await page.route('https://photon.komoot.io/**', route => route.fulfill({ headers: { 'Access-Control-Allow-Origin': '*' }, json: { features: [{ geometry: { coordinates: [-75.204,-12.065] }, properties: { name: 'Destino', city: 'Huancayo' } }] } }));
   let posts = 0; await page.route('**/orders', route => { posts++; return route.abort(); });

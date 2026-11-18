@@ -37,7 +37,7 @@ describe('Planificación/rutas con Prisma real y proveedor sintético aislado', 
     order = (await p.pedido.create({ data: { cliente_id: clientId, peso_kg: 2, volumen_m3: 1, ventana_inicio: new Date('2030-01-01T12:00:00Z'), ventana_fin: new Date('2030-01-01T14:00:00Z'), prioridad: 'ESTANDAR', tipo_producto: 'NO_PERECEDERO' } })).pedido_id;
   });
   beforeEach(() => { provider.calculate.mockReset().mockImplementation(output); });
-  afterAll(async () => { if (app) await app.close(); if (p) { const where = { ruta: { alternativa: { ejecucion: { actor_id: actor } } } }; await p.paradaRuta.deleteMany({ where: { ruta_version: where } }); await p.rutaVersion.deleteMany({ where }); await p.ruta.deleteMany({ where: { alternativa: { ejecucion: { actor_id: actor } } } }); await p.alternativaRuta.deleteMany({ where: { ejecucion: { actor_id: actor } } }); await p.ejecucionCalculo.deleteMany({ where: { actor_id: actor } }); await p.planificacionVersion.deleteMany({ where: { planificacion_id: { in: plans } } }); await p.planificacion.deleteMany({ where: { planificacion_id: { in: plans } } }); if (order) await p.pedido.delete({ where: { pedido_id: order } }); if (clientId) await p.cliente.delete({ where: { cliente_id: clientId } }); if (driver) { await p.disponibilidadConductor.deleteMany({ where: { conductor_id: driver } }); await p.conductor.delete({ where: { conductor_id: driver } }); } if (vehicle) await p.vehiculo.delete({ where: { vehiculo_id: vehicle } }); if (actor) await p.usuario.delete({ where: { usuario_id: actor } }); await p.$disconnect(); } });
+  afterAll(async () => { if (app) await app.close(); if (p) { if (actor) await p.registroSostenibilidad.deleteMany({ where: { registrado_por: actor } }); const where = { ruta: { alternativa: { ejecucion: { actor_id: actor } } } }; await p.paradaRuta.deleteMany({ where: { ruta_version: where } }); await p.rutaVersion.deleteMany({ where }); await p.ruta.deleteMany({ where: { alternativa: { ejecucion: { actor_id: actor } } } }); await p.alternativaRuta.deleteMany({ where: { ejecucion: { actor_id: actor } } }); await p.ejecucionCalculo.deleteMany({ where: { actor_id: actor } }); await p.planificacionVersion.deleteMany({ where: { planificacion_id: { in: plans } } }); await p.planificacion.deleteMany({ where: { planificacion_id: { in: plans } } }); if (order) await p.pedido.delete({ where: { pedido_id: order } }); if (clientId) await p.cliente.delete({ where: { cliente_id: clientId } }); if (driver) { await p.disponibilidadConductor.deleteMany({ where: { conductor_id: driver } }); await p.conductor.delete({ where: { conductor_id: driver } }); } if (vehicle) await p.vehiculo.delete({ where: { vehiculo_id: vehicle } }); if (actor) await p.usuario.delete({ where: { usuario_id: actor } }); await p.$disconnect(); } });
   async function prepare() { const response = await agent.post('/planning').set('Origin', 'http://localhost:5173').set('X-Forwarded-For', `192.0.2.${ip++}`).send(dto()).expect(201); plans.push(response.body.planificacion_id); return response.body.planificacion_id as string; }
   const calculate = (id: string, key = randomUUID()) => agent.post(`/planning/${id}/calculations`).set('Origin', 'http://localhost:5173').set('Idempotency-Key', key).set('X-Forwarded-For', `192.0.2.${ip++}`).send(calc);
   async function failed(id: string) { const deadline = Date.now() + 3000; do { const row = await p.ejecucionCalculo.findFirst({ where: { version: { planificacion_id: id } } }); if (row?.estado === 'FALLIDA') return row; await delay(20); } while (Date.now() < deadline); throw new Error('El mantenimiento acotado no registró FALLIDA.'); }
@@ -58,6 +58,79 @@ describe('Planificación/rutas con Prisma real y proveedor sintético aislado', 
     await p.vehiculo.update({ where: { vehiculo_id: vehicle }, data: { estado: 'MANTENIMIENTO' } }); expect((await agent.get('/routes/' + routeId).expect(200)).body.current_warnings).toContain('RECURSOS_O_PEDIDOS_NO_DISPONIBLES'); await p.vehiculo.update({ where: { vehiculo_id: vehicle }, data: { estado: 'DISPONIBLE' } });
     await p.disponibilidadConductor.updateMany({ where: { conductor_id: driver }, data: { estado: 'NO_DISPONIBLE' } }); expect((await agent.get('/routes/' + routeId).expect(200)).body.current_warnings).toContain('RECURSOS_O_PEDIDOS_NO_DISPONIBLES'); await p.disponibilidadConductor.updateMany({ where: { conductor_id: driver }, data: { estado: 'DISPONIBLE' } });
     expect((await agent.get('/routes/' + routeId).expect(200)).body.current_warnings).toEqual([]);
+  });
+  it('US-020: confirma la ruta revisada, enumera condiciones pendientes y habilita la asignación', async () => {
+    const id = await prepare(); const routeId = (await calculate(id).expect(201)).body.alternativas[0].rutas[0].ruta_id as string;
+    const patch = (path: string, body: object) => agent.patch(`/routes/${routeId}/${path}`).set('Origin', 'http://localhost:5173').send(body);
+    try {
+      expect((await agent.get(`/routes/${routeId}/assignment-candidates`).expect(409)).body.message).toBe('Confirma la ruta antes de asignarle un conductor.');
+      await patch('confirmation', { expected_estado: 'GENERADA' }).expect(400);
+      await p.pedido.update({ where: { pedido_id: order }, data: { peso_kg: 3 } });
+      const pending = (await patch('confirmation', { expected_estado: 'GENERADA', confirmed: true }).expect(409)).body.message as string;
+      expect(pending).toContain('Condiciones pendientes: Un pedido cambió desde el cálculo'); expect(pending).toContain('Los datos usados en el cálculo cambiaron');
+      await p.pedido.update({ where: { pedido_id: order }, data: { peso_kg: 2 } });
+      await p.vehiculo.update({ where: { vehiculo_id: vehicle }, data: { estado: 'MANTENIMIENTO' } });
+      expect((await patch('confirmation', { expected_estado: 'GENERADA', confirmed: true }).expect(409)).body.message).toContain('El vehículo, los conductores o los pedidos del cálculo ya no están disponibles.');
+      await p.vehiculo.update({ where: { vehiculo_id: vehicle }, data: { estado: 'DISPONIBLE' } });
+      expect((await p.ruta.findUniqueOrThrow({ where: { ruta_id: routeId } })).estado).toBe('GENERADA');
+      const confirmed = (await patch('confirmation', { expected_estado: 'GENERADA', confirmed: true }).expect(200)).body;
+      expect(confirmed).toMatchObject({ ruta_id: routeId, estado: 'CONFIRMADA', version_confirmada: 1, confirmador: { email: expect.stringContaining('@example.test') } });
+      const row = await p.ruta.findUniqueOrThrow({ where: { ruta_id: routeId } }); expect(row).toMatchObject({ estado: 'CONFIRMADA', confirmado_por: actor, conductor_id: null, version_confirmada: 1 }); expect(row.confirmado_en).toBeInstanceOf(Date);
+      expect((await agent.get('/routes/' + routeId).expect(200)).body).toMatchObject({ estado: 'CONFIRMADA', confirmador: { email: confirmed.confirmador.email } });
+      expect((await patch('confirmation', { expected_estado: 'GENERADA', confirmed: true }).expect(409)).body.message).toContain('La ruta ya fue confirmada');
+      await agent.get(`/routes/${routeId}/assignment-candidates`).expect(200);
+      await expect(p.$executeRaw`UPDATE rutas SET confirmado_por = NULL WHERE ruta_id = ${routeId}::uuid`).rejects.toThrow(/chk_rutas_confirmacion_completa/);
+      await expect(p.$executeRaw`UPDATE rutas SET estado = 'GENERADA' WHERE ruta_id = ${routeId}::uuid`).rejects.toThrow(/chk_rutas_asignacion_coherente/);
+    } finally {
+      await p.pedido.update({ where: { pedido_id: order }, data: { peso_kg: 2 } }); await p.vehiculo.update({ where: { vehiculo_id: vehicle }, data: { estado: 'DISPONIBLE' } });
+      await p.ruta.update({ where: { ruta_id: routeId }, data: { estado: 'GENERADA', confirmado_en: null, confirmado_por: null, version_confirmada: null } });
+    }
+  });
+  it('US-021: registra la información de sostenibilidad asociada a la ruta y rechaza la información incompleta', async () => {
+    const id = await prepare(); const routeId = (await calculate(id).expect(201)).body.alternativas[0].rutas[0].ruta_id as string;
+    const post = (body: object) => agent.post(`/routes/${routeId}/sustainability`).set('Origin', 'http://localhost:5173').send(body);
+    const complete = { distancia_km: 0.2, combustible_l: 0.02, factor_emision_kg_co2_km: 1, origen_datos: 'ESTIMADO', costo_combustible: 0.5 };
+    try {
+      expect((await post(complete).expect(409)).body.message).toBe('Confirma la ruta antes de registrar su información de sostenibilidad.');
+      await agent.patch(`/routes/${routeId}/confirmation`).set('Origin', 'http://localhost:5173').send({ expected_estado: 'GENERADA', confirmed: true }).expect(200);
+      const empty = (await post({}).expect(400)).body;
+      expect(empty).toMatchObject({ code: 'INFORMACION_INSUFICIENTE', campos_requeridos: ['distancia_km', 'combustible_l', 'factor_emision_kg_co2_km', 'origen_datos'] });
+      expect(empty.message).toBe('No se registró la información de sostenibilidad. Falta: distancia recorrida (km), combustible consumido (L), factor de emisión (kg CO₂/km), origen de los datos.');
+      expect((await post({ ...complete, factor_emision_kg_co2_km: undefined }).expect(400)).body.campos_requeridos).toEqual(['factor_emision_kg_co2_km']);
+      await post({ ...complete, distancia_km: -1 }).expect(400);
+      await post({ ...complete, emisiones_co2_kg: 99 }).expect(400);
+      expect((await post({ ...complete, origen_datos: 'MEDIDO' }).expect(409)).body.message).toBe('Los datos medidos solo se pueden registrar cuando la ruta está completada. Registra datos estimados o espera a que la ruta termine.');
+      expect(await p.registroSostenibilidad.count({ where: { ruta_id: routeId } })).toBe(0);
+      const saved = (await post(complete).expect(201)).body;
+      expect(saved).toMatchObject({ ruta_id: routeId, ruta_version: 1, distancia_km: '0.2', combustible_l: '0.02', factor_emision_kg_co2_km: '1', emisiones_co2_kg: '0.2', origen_datos: 'ESTIMADO', costo_combustible: '0.5', observaciones: null, vehiculo: { vehiculo_id: vehicle }, registrador: { email: expect.stringContaining('@example.test') } });
+      expect(await p.registroSostenibilidad.findUniqueOrThrow({ where: { ruta_id: routeId } })).toMatchObject({ registrado_por: actor, vehiculo_id: vehicle, ruta_version: 1 });
+      const detail = (await agent.get('/routes/' + routeId).expect(200)).body;
+      expect(detail.sostenibilidad).toMatchObject({ registro_id: saved.registro_id, emisiones_co2_kg: '0.2' });
+      expect(detail.versiones[0].vehiculo).toMatchObject({ consumo_km_l: '10', factor_emision_kg_co2_km: '1' });
+      expect((await post(complete).expect(409)).body.message).toBe('La ruta ya tiene información de sostenibilidad registrada.');
+      expect(await p.registroSostenibilidad.count({ where: { ruta_id: routeId } })).toBe(1);
+      await expect(p.$executeRaw`UPDATE registros_sostenibilidad SET origen_datos = 'OTRO' WHERE ruta_id = ${routeId}::uuid`).rejects.toThrow(/chk_sostenibilidad_origen/);
+      await expect(p.$executeRaw`UPDATE registros_sostenibilidad SET distancia_km = 0 WHERE ruta_id = ${routeId}::uuid`).rejects.toThrow(/chk_sostenibilidad_valores/);
+      await expect(p.$executeRaw`UPDATE registros_sostenibilidad SET observaciones = '   ' WHERE ruta_id = ${routeId}::uuid`).rejects.toThrow(/chk_sostenibilidad_observaciones/);
+    } finally {
+      await p.registroSostenibilidad.deleteMany({ where: { ruta_id: routeId } });
+      await p.ruta.update({ where: { ruta_id: routeId }, data: { estado: 'GENERADA', confirmado_en: null, confirmado_por: null, version_confirmada: null } });
+    }
+  });
+  it('US-021: registra datos medidos solo cuando la ruta está COMPLETADA', async () => {
+    const id = await prepare(); const routeId = (await calculate(id).expect(201)).body.alternativas[0].rutas[0].ruta_id as string;
+    const measured = { distancia_km: 0.25, combustible_l: 0.03, factor_emision_kg_co2_km: 1, origen_datos: 'MEDIDO' };
+    try {
+      await agent.patch(`/routes/${routeId}/confirmation`).set('Origin', 'http://localhost:5173').send({ expected_estado: 'GENERADA', confirmed: true }).expect(200);
+      // Solo en la base aislada: se simula una operación terminada (asignada, iniciada y finalizada) sin pasar por la app del conductor.
+      const now = Date.now();
+      await p.ruta.update({ where: { ruta_id: routeId }, data: { estado: 'COMPLETADA', conductor_id: driver, asignado_en: new Date(now + 1000), iniciado_en: new Date(now + 2000), finalizado_en: new Date(now + 3000) } });
+      const saved = (await agent.post(`/routes/${routeId}/sustainability`).set('Origin', 'http://localhost:5173').send(measured).expect(201)).body;
+      expect(saved).toMatchObject({ ruta_id: routeId, origen_datos: 'MEDIDO', emisiones_co2_kg: '0.25' });
+    } finally {
+      await p.registroSostenibilidad.deleteMany({ where: { ruta_id: routeId } });
+      await p.ruta.update({ where: { ruta_id: routeId }, data: { estado: 'GENERADA', conductor_id: null, asignado_en: null, iniciado_en: null, finalizado_en: null, confirmado_en: null, confirmado_por: null, version_confirmada: null } });
+    }
   });
   it('rollback PostgreSQL real si vence el presupuesto después del INSERT de resultado', async () => {
     const id = await prepare(); let now = Date.now(); const clock = jest.spyOn(Date, 'now').mockImplementation(() => now);

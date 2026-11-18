@@ -14,9 +14,11 @@ for (const role of ['Administrador', 'Operador / Técnico', 'Usuario Final / Con
       else if (path === '/auth/logout') { authenticated = false; await route.fulfill({ status: 204, headers }); }
       else await route.fulfill({ status: authenticated ? 200 : 401, headers, json: authenticated ? { ...user, expiresAt: Date.now() + 900000 } : { message: 'Sin sesión' } });
     });
-    await page.route('**/users', async route => {
+    // API path only (the list is requested as /users?page=1&pageSize=…) and the current paginated contract.
+    await page.route(url => url.pathname === '/users', async route => {
       userRequests++;
-      await route.fulfill({ status: role === 'Administrador' ? 200 : 403, headers, json: [{ ...user, rol_id: user.rol.rol_id, estado: 'ACTIVO', creado_en: new Date().toISOString() }] });
+      const items = [{ ...user, rol_id: user.rol.rol_id, estado: 'ACTIVO', creado_en: new Date().toISOString() }];
+      await route.fulfill({ status: role === 'Administrador' ? 200 : 403, headers, json: { items, total: items.length, page: 1, pageSize: 20 } });
     });
     await page.route('http://localhost:3000/admin/summary', route => route.fulfill({ headers, json: { totalOrders: 0, pendingOrders: 0, totalUsers: 1, ordersByState: [] } }));
     await page.goto('/login'); await page.getByLabel('Correo electrónico').fill(user.email); await page.getByLabel('Contraseña', { exact: true }).fill('frontend-test-only'); await page.getByRole('button', { name: 'Iniciar sesión' }).click();

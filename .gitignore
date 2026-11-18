@@ -1,5 +1,6 @@
 node_modules/
 dist/
+build/
 .env
 .env.local
 .env.*
@@ -11,6 +12,8 @@ dist/
 *.tsbuildinfo
 playwright-report/
 test-results/
+playwright-report-live/
+test-results-live/
 LEVANTAR.md
 
 # Temporales y configuración personal del IDE

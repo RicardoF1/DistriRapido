@@ -7,7 +7,7 @@ import { RoutesController } from './routes.controller';
 
 it('RoutesController exige sesión, rol de planificación y origen confiable en todas sus rutas', () => {
   expect(Reflect.getMetadata(GUARDS_METADATA, RoutesController)).toEqual([JwtAuthGuard, PlanningGuard, RequestOriginGuard]);
-  for (const handler of ['assign', 'candidates', 'get', 'list', 'version'] as const) {
+  for (const handler of ['assign', 'candidates', 'confirm', 'get', 'list', 'registerSustainability', 'version'] as const) {
     expect(Reflect.getMetadata(GUARDS_METADATA, RoutesController.prototype[handler])).toBeUndefined();
   }
 });
