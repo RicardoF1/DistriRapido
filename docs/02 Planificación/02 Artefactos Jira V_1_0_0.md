@@ -1,6 +1,6 @@
 # 02 Artefactos Jira V_1_0_0
 
-[← Volver al README Principal](../../README.md)
+
 
 ## 1. Metadatos del documento
 
@@ -164,5 +164,7 @@ El uso de estas herramientas facilita el seguimiento del avance del proyecto y p
 | **1.0.0** | 17/09/2026 | Creación inicial del documento con las cinco evidencias requeridas de Jira Software. |
 
 ---
+
+[← Volver al README Principal](../../README.md)
 
 

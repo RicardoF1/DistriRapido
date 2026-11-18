@@ -274,3 +274,5 @@ Los pasos 1 a 6 se completaron el 2026-11-06 con el resultado de la sección 4.5
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Registrar esta validación en la evidencia de cierre del Sprint 3, revisar el aviso `allowScripts` de npm y integrar en la interfaz la asignación de rutas a conductores, ya disponible en el backend, en el siguiente incremento. Conservar servicios, datos y la carpeta privada `.local/osrm-data`.
+
+[← Volver al README principal](../../README.md)

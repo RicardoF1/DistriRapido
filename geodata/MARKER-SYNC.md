@@ -44,7 +44,7 @@ Informe: `geodata/MARKER-SYNC.md`. Se preservan los cambios pendientes anteriore
 
 ## Verificación
 
-Los resultados siguientes corresponden al cierre de esta corrección de sincronización, antes de reorganizar el formulario y mejorar el panel. La verificación actual del conjunto se encuentra en [el informe posterior al Sprint 1](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/01%20Verificación%20y%20entrega%20V_1_1_0.md).
+Los resultados siguientes corresponden al cierre de esta corrección de sincronización, antes de reorganizar el formulario y mejorar el panel. La verificación actual del conjunto se encuentra en [el informe posterior al Sprint 1 — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/01%20Verificaci%C3%B3n%20y%20entrega%20V_1_1_0.md).
 
 - ESLint y TypeScript `tsc --noEmit`: exit 0.
 - Suite Vitest completa: 15 archivos y 192 pruebas aprobadas, 61.05 s.
@@ -63,12 +63,14 @@ La validación final de cobertura en backend permanece pendiente de la siguiente
 
 El registro sigue siendo un formulario único. Cliente/carga y programación están en dos columnas de escritorio; la ubicación ocupa el ancho completo debajo. El mapa mide ahora 560–640 px en escritorio, 480 px en tablet y 400–460 px en celular. La confirmación aparece junto al buscador, la leyenda es compacta y el botón está al final. Estos cambios no sustituyen la sincronización y bloqueo descritos aquí.
 
-La imagen del login y las mejoras de administración se documentan en el [addendum V_1_1_0](../docs/03%20Implementación/05%20Mejoras%20posteriores%20al%20Sprint%201%20V_1_1_0.md), sin presentarlas como parte del cierre histórico.
+La imagen del login y las mejoras de administración se documentan en el [addendum V_1_1_0](../docs/otros/antecedentes-sprint-01/05%20Mejoras%20posteriores%20al%20Sprint%201%20V_1_1_0.md), sin presentarlas como parte del cierre histórico.
 
 ## Reconciliación de estructura posterior
 
-La entrega preparada desde origin/main conserva geodata/ en la raíz y usa src/frontend y src/backend. Las rutas y comandos antiguos de este informe corresponden a su fase original. La carga frontend y los tests se adaptaron al nivel adicional de src; Docker mantiene su contexto limitado a src/frontend y no incluye geodata. La validación geográfica backend y los permisos INEI continúan pendientes. Véase [la evidencia vigente](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliación%20sobre%20main%20V_1_1_0.md).
+La entrega preparada desde origin/main conserva geodata/ en la raíz y usa src/frontend y src/backend. Las rutas y comandos antiguos de este informe corresponden a su fase original. La carga frontend y los tests se adaptaron al nivel adicional de src; Docker mantiene su contexto limitado a src/frontend y no incluye geodata. La validación geográfica backend y los permisos INEI continúan pendientes. Véase [la evidencia vigente — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliaci%C3%B3n%20sobre%20main%20V_1_1_0.md).
 
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Completar la validación en backend una vez aclarada la distribución de los recursos. Reutilizar la misma política de seis decimales y bordes evita discrepancias entre marcador confirmado y persistencia del pedido.
+
+[← Volver al README principal](../README.md)

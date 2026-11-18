@@ -58,7 +58,7 @@ Se preservan los cambios pendientes de fases anteriores. No se modificaron backe
 
 ## Validaciones ejecutadas
 
-Resultados ejecutados al finalizar la primera integración, antes de los ajustes posteriores de marcador, formulario y panel. Son evidencia histórica de esa fase; los resultados actuales se registran en [la verificación posterior al Sprint 1](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/01%20Verificación%20y%20entrega%20V_1_1_0.md).
+Resultados ejecutados al finalizar la primera integración, antes de los ajustes posteriores de marcador, formulario y panel. Son evidencia histórica de esa fase; los resultados actuales se registran en [la verificación posterior al Sprint 1 — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/01%20Verificaci%C3%B3n%20y%20entrega%20V_1_1_0.md).
 
 | Verificación | Resultado |
 |---|---|
@@ -116,14 +116,16 @@ node node_modules/@playwright/test/cli.js test e2e/order-coverage.spec.ts e2e/or
 
 ## Reconciliación de estructura posterior
 
-La entrega preparada desde origin/main conserva geodata/ en la raíz y usa src/frontend y src/backend. Las rutas y comandos antiguos de este informe corresponden a su fase original. La carga frontend y los tests se adaptaron al nivel adicional de src. La fase posterior incorporó validación backend y contexto Docker raíz selectivo; los permisos INEI continúan pendientes. Véase [la evidencia vigente](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliación%20sobre%20main%20V_1_1_0.md).
+La entrega preparada desde origin/main conserva geodata/ en la raíz y usa src/frontend y src/backend. Las rutas y comandos antiguos de este informe corresponden a su fase original. La carga frontend y los tests se adaptaron al nivel adicional de src. La fase posterior incorporó validación backend y contexto Docker raíz selectivo; los permisos INEI continúan pendientes. Véase [la evidencia vigente — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliaci%C3%B3n%20sobre%20main%20V_1_1_0.md).
 
 ## Actualización posterior: validación backend
 
 El frontend contrasta ahora versión, cinco UBIGEO y tabla de hashes con `coverage-release.json`, además del hash del recurso. El backend aplica la misma política geométrica generada reproduciblemente desde `coverage.ts`, antes de cualquier transacción de creación; HTTP 400 para punto exterior/invalidado y 503 ante cobertura no verificable. El cliente presenta este último error de forma explícita.
 
-No se alteraron mapa, Photon, marcador ni formularios en esta fase. El paquete original permanece intacto y privado; los contextos Docker lo incluyen selectivamente tras aprovisionamiento autorizado. Los resultados antiguos de este informe conservan su alcance histórico. Evidencia actual: [informe 05](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md).
+No se alteraron mapa, Photon, marcador ni formularios en esta fase. El paquete original permanece intacto y privado; los contextos Docker lo incluyen selectivamente tras aprovisionamiento autorizado. Los resultados antiguos de este informe conservan su alcance histórico. Evidencia actual: [informe 05 — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/05%20Validaci%C3%B3n%20backend%20y%20empaquetado%20V_1_1_0.md).
 
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Resolver y documentar los permisos de redistribución INEI antes de publicar datos o imágenes. Revisar la evidencia técnica 05 y verificar persistencia en una base exclusivamente de pruebas, sin utilizar los registros existentes.
+
+[← Volver al README principal](../README.md)

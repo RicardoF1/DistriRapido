@@ -83,11 +83,11 @@ La revisión actual del [portal INEI](https://ide.inei.gob.pe/) confirma acceso 
 
 La regla global anterior `coverage/` ocultaba accidentalmente este paquete. Se ajustó `.gitignore` para ignorar los informes de cobertura de frontend/backend sin ocultar los recursos canónicos. Ese ajuste pertenecía a la fase documental anterior. Ahora `/geodata/coverage/v1/` queda excluido expresamente de Git para impedir su publicación accidental; los nueve archivos permanecen intactos en disco.
 
-Las evidencias de preparación se conservan; la verificación vigente y lista exacta propuesta están en [el informe posterior al Sprint 1](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/01%20Verificación%20y%20entrega%20V_1_1_0.md).
+Las evidencias de preparación se conservan; la verificación vigente y lista exacta propuesta están en [el informe posterior al Sprint 1 — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/01%20Verificaci%C3%B3n%20y%20entrega%20V_1_1_0.md).
 
 ## Reconciliación de estructura posterior
 
-La entrega preparada desde origin/main conserva geodata/ en la raíz y usa src/frontend y src/backend. Las rutas y comandos antiguos de este informe corresponden a su fase original. La carga frontend y los tests se adaptaron al nivel adicional de src. La fase posterior añade validación backend y empaquetado privado desde contexto raíz; los permisos INEI continúan pendientes. Véase [la evidencia vigente](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliación%20sobre%20main%20V_1_1_0.md).
+La entrega preparada desde origin/main conserva geodata/ en la raíz y usa src/frontend y src/backend. Las rutas y comandos antiguos de este informe corresponden a su fase original. La carga frontend y los tests se adaptaron al nivel adicional de src. La fase posterior añade validación backend y empaquetado privado desde contexto raíz; los permisos INEI continúan pendientes. Véase [la evidencia vigente — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliaci%C3%B3n%20sobre%20main%20V_1_1_0.md).
 
 ## Aprovisionamiento privado y metadatos fijados
 
@@ -97,7 +97,7 @@ Desde la raíz: `node scripts/provision-coverage.cjs --source "/directorio/priva
 
 `node scripts/check-geodata-publication.cjs` inspecciona el índice Git y falla ante derivados geográficos mientras no exista autorización documentada. Ejecutarlo antes de una entrega y después de seleccionar archivos. No protege una publicación manual de imágenes fuera de Git: las imágenes construidas contienen datos y deben permanecer privadas. Un clon público sin aprovisionamiento autorizado no puede construir ni desplegar completamente esta funcionalidad.
 
-Detalles y resultados de esta fase: [informe 05](../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md).
+Detalles y resultados de esta fase: [informe 05 — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/05%20Validaci%C3%B3n%20backend%20y%20empaquetado%20V_1_1_0.md).
 
 ## Instalación individual para el equipo (Windows)
 
@@ -106,3 +106,5 @@ Consultar [la guía V_1_1_0](EQUIPO-WINDOWS-V_1_1_0.md): nueve recursos exactos,
 ## Siguiente documento / Siguiente trabajo recomendado
 
 Resolver y documentar los permisos de redistribución INEI antes de publicar datos o imágenes. Revisar la evidencia técnica 05 y verificar persistencia en una base exclusivamente de pruebas, sin utilizar los registros existentes.
+
+[← Volver al README principal](../README.md)

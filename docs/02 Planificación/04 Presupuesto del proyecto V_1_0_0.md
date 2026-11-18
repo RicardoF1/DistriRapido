@@ -1,6 +1,6 @@
 # 04 Presupuesto del proyecto V_1_0_0
 
-[← Volver al README Principal](../../README.md)
+
 
 ## 1. Metadatos del documento
 
@@ -343,3 +343,5 @@ La estimación deberá revisarse si cambia el alcance del MVP, la duración del 
 | **1.0.0** | 17/09/2026 | Creación inicial del presupuesto del proyecto expresado en soles peruanos, incluyendo CAPEX, licenciamiento, OPEX, contingencia, consolidación financiera y control presupuestario. |
 
 ---
+
+[← Volver al README Principal](../../README.md)

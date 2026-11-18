@@ -1,6 +1,6 @@
 # 01. Transformando a ágil V_1_0_0
 
-[← Volver al README Principal](../../README.md)
+
 
 ## 1. Datos del documento
 
@@ -1764,3 +1764,5 @@ El Artefacto 1 se considera preparado para su carga en Jira cuando:
 | Versión | Fecha | Descripción | Responsable |
 |---|---|---|---|
 | **V_1_0_0** | 2026-09-11 | Transformación de los 21 RF y 12 RNF de la línea base vigente en épicas, historias de usuario, Enablers, criterios BDD, DoD, backlog y propuesta de Sprint 1. | Equipo del proyecto |
+
+[← Volver al README Principal](../../README.md)

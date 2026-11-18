@@ -1,5 +1,8 @@
 # Frontend
 
+> Contexto: este README conserva procedimientos y resultados históricos del Sprint 1. Para capacidades vigentes (flota, OSRM, asignación y entregas), consultar el [README principal](../../README.md). Corrección documental: 2026-11-12. Las instrucciones de migración requieren revisión/autorización y no se ejecutaron en esta tarea. La referencia histórica a .env.example no corresponde a un archivo versionado en el HEAD inspeccionado.
+
+
 React + TypeScript + Vite + React Router. Alcance implementado: login, sesión persistente, logout, usuarios/roles, registro y consulta de pedidos; layout responsive y panel de bienvenida del Administrador. Incluye indicadores administrativos reales; la PWA queda pendiente.
 
 Configura `VITE_API_URL` en `.env` de la raíz. Desde esta carpeta:
@@ -20,9 +23,9 @@ npm run build
 
 Pruebas reales de navegador: inicia frontend/backend, configura `E2E_LOGIN_EMAIL`, `E2E_LOGIN_PASSWORD` de un administrador de pruebas y `JWT_SECRET` del backend de pruebas (para comprobar expiración real); ejecuta `npm run test:e2e`. Por defecto usa Edge instalado; `PLAYWRIGHT_CHANNEL` permite elegir otro canal instalado. Nunca publiques estas variables. `E2E_BASE_URL` y `E2E_API_URL` permiten servidores de prueba separados; VITE_API_URL y FRONTEND_ORIGIN deben coincidir con ellos.
 
-US-002 conserva el JWT en cookie HttpOnly del backend. F5 restaura identidad con GET /auth/me. No se usan localStorage/sessionStorage para credenciales ni tokens. “Cerrar sesión” llama POST /auth/logout, elimina la cookie y vuelve a login; si falla la conexión, se muestra error y se permite reintentar. Consulta [US-002](../../docs/03%20Implementación/evidencias-tecnicas/Sprint-1/US-002.md).
+US-002 conserva el JWT en cookie HttpOnly del backend. F5 restaura identidad con GET /auth/me. No se usan localStorage/sessionStorage para credenciales ni tokens. “Cerrar sesión” llama POST /auth/logout, elimina la cookie y vuelve a login; si falla la conexión, se muestra error y se permite reintentar. Consulta [US-002](../../docs/otros/antecedentes-sprint-01/US-002.md).
 
-US-003 añade /usuarios, /usuarios/nuevo y /usuarios/:id/editar. El Administrador accede desde “Usuarios y roles”; el resto de roles mantiene su página de acceso. Se editan email, rol y estado; la contraseña se proporciona solo al crear. El logout permanece visible. La tabla móvil permite desplazamiento horizontal. Consulta [US-003](../../docs/03%20Implementación/evidencias-tecnicas/Sprint-1/US-003.md).
+US-003 añade /usuarios, /usuarios/nuevo y /usuarios/:id/editar. El Administrador accede desde “Usuarios y roles”; el resto de roles mantiene su página de acceso. Se editan email, rol y estado; la contraseña se proporciona solo al crear. El logout permanece visible. La tabla móvil permite desplazamiento horizontal. Consulta [US-003](../../docs/otros/antecedentes-sprint-01/US-003.md).
 
 ## Estado actual posterior al Sprint 1
 
@@ -52,7 +55,7 @@ npm run test:e2e -- e2e/login-background.spec.ts e2e/responsive.spec.ts e2e/admi
 
 Inicia Vite en 5173 antes del E2E. Si el lanzador `npm` local está roto, los mismos CLI instalados pueden ejecutarse con Node: `node node_modules/eslint/bin/eslint.js .`, `node node_modules/typescript/bin/tsc --noEmit`, `node node_modules/vitest/vitest.mjs run --maxWorkers=1`, `node node_modules/vite/bin/vite.js build` y `node node_modules/@playwright/test/cli.js test ...`.
 
-Las suites `login.spec.ts`, `users.spec.ts` y `orders.spec.ts` requieren servicios/cuentas exclusivos de prueba; algunas crean datos. No ejecutarlas contra producción. Las pruebas simuladas no acreditan disponibilidad de Photon/OSM ni persistencia PostgreSQL. Las evidencias anteriores conservan sus conteos de fase. Resultados de la nueva estructura en el [informe de reconciliación](../../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliación%20sobre%20main%20V_1_1_0.md).
+Las suites `login.spec.ts`, `users.spec.ts` y `orders.spec.ts` requieren servicios/cuentas exclusivos de prueba; algunas crean datos. No ejecutarlas contra producción. Las pruebas simuladas no acreditan disponibilidad de Photon/OSM ni persistencia PostgreSQL. Las evidencias anteriores conservan sus conteos de fase. Resultados de la nueva estructura en el [informe de reconciliación — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/04%20Reconciliaci%C3%B3n%20sobre%20main%20V_1_1_0.md).
 
 ## Recursos de cobertura y distribución
 
@@ -62,7 +65,7 @@ El Dockerfile compila con contexto raíz y copia selectivamente frontend, polít
 
 ## Verificación de la fase backend
 
-La evidencia vigente separa pruebas HTTP con Prisma simulado, E2E con API simulada y comprobaciones de empaquetado de cualquier persistencia real: [informe 05](../../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md). No se ejecutaron altas contra PostgreSQL.
+La evidencia vigente separa pruebas HTTP con Prisma simulado, E2E con API simulada y comprobaciones de empaquetado de cualquier persistencia real: [informe 05 — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/05%20Validaci%C3%B3n%20backend%20y%20empaquetado%20V_1_1_0.md). No se ejecutaron altas contra PostgreSQL.
 
 ## CI y recursos opcionales
 

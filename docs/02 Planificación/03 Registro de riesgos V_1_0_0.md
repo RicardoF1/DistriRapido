@@ -1,6 +1,6 @@
 # 03 Registro de riesgos V_1_0_0
 
-[← Volver al README Principal](../../README.md)
+
 
 ## 1. Metadatos del documento
 
@@ -157,3 +157,5 @@ El registro deberá mantenerse como un artefacto vivo y actualizarse conforme av
 | **1.0.0** | 17/09/2026 | Creación inicial del Registro de Riesgos con matriz cuantitativa, mitigación, contingencia, responsables, priorización y trazabilidad con la arquitectura. |
 
 ---
+
+[← Volver al README Principal](../../README.md)

@@ -1,5 +1,8 @@
 # Backend
 
+> Contexto: este README conserva procedimientos y resultados históricos del Sprint 1. Para capacidades vigentes (flota, OSRM, asignación y entregas), consultar el [README principal](../../README.md). Corrección documental: 2026-11-12. Las instrucciones de migración requieren revisión/autorización y no se ejecutaron en esta tarea. La referencia histórica a .env.example no corresponde a un archivo versionado en el HEAD inspeccionado.
+
+
 API NestJS + TypeScript, PostgreSQL y Prisma. Alcance: US-001, US-002 y US-003. Administración de cuentas y asignación de roles existentes; sin eliminación física.
 
 Desde la raíz, copia `.env.example` a `.env`, configura valores propios y aprovisiona la cobertura privada con `node scripts/provision-coverage.cjs --source "/directorio/privado/autorizado/v1"`. El procedimiento siguiente de migración y bootstrap corresponde exclusivamente a un entorno nuevo autorizado; no repetirlo sobre la base existente. Desde esta carpeta:
@@ -14,7 +17,7 @@ npm run start:dev
 
 `db:bootstrap` requiere `BOOTSTRAP_ADMIN_EMAIL` y `BOOTSTRAP_ADMIN_PASSWORD` (12–128 caracteres). Crea los cuatro roles documentados y un administrador ACTIVO con Argon2id; rechaza cuentas existentes. Elimina esas dos variables después de crearlo. Nunca publiques `.env`.
 
-API: `http://localhost:3000`; Swagger: `http://localhost:3000/api/docs`. `POST /auth/login` recibe email/password y emite JWT/cookie HttpOnly. `GET /auth/me` admite cookie o Bearer y devuelve identidad/caducidad. `POST /auth/logout` elimina la cookie con respuesta 204, incluso si la sesión ya expiró. CORS con credenciales y origen explícito; login/logout verifican Origin y Fetch Metadata. Secure para HTTPS o NODE_ENV=production; desarrollo localhost HTTP sin Secure. Más detalles en [US-002](../../docs/03%20Implementación/evidencias-tecnicas/Sprint-1/US-002.md).
+API: `http://localhost:3000`; Swagger: `http://localhost:3000/api/docs`. `POST /auth/login` recibe email/password y emite JWT/cookie HttpOnly. `GET /auth/me` admite cookie o Bearer y devuelve identidad/caducidad. `POST /auth/logout` elimina la cookie con respuesta 204, incluso si la sesión ya expiró. CORS con credenciales y origen explícito; login/logout verifican Origin y Fetch Metadata. Secure para HTTPS o NODE_ENV=production; desarrollo localhost HTTP sin Secure. Más detalles en [US-002](../../docs/otros/antecedentes-sprint-01/US-002.md).
 
 ```sh
 npm run typecheck
@@ -25,7 +28,7 @@ npm run build
 
 Integración: proporciona `TEST_DATABASE_URL` de una base aislada cuyo nombre termine en `_test`, aplica la migración allí usando `DATABASE_URL` y ejecuta `npm run test:integration`. Las pruebas crean y eliminan su propio usuario.
 
-US-003: GET /users, GET /users/:id, POST /users, PATCH /users/:id y GET /roles requieren Administrador. La cookie `distrirapido_session_v2` usa Path=/; /auth/me migra la cookie anterior sin renovar el JWT. No se requiere nueva migración ni repetir bootstrap sobre la base validada. PostgreSQL mantiene localhost:5433. Detalles y prueba manual en [US-003](../../docs/03%20Implementación/evidencias-tecnicas/Sprint-1/US-003.md).
+US-003: GET /users, GET /users/:id, POST /users, PATCH /users/:id y GET /roles requieren Administrador. La cookie `distrirapido_session_v2` usa Path=/; /auth/me migra la cookie anterior sin renovar el JWT. No se requiere nueva migración ni repetir bootstrap sobre la base validada. PostgreSQL mantiene localhost:5433. Detalles y prueba manual en [US-003](../../docs/otros/antecedentes-sprint-01/US-003.md).
 
 
 ## Cobertura antes de persistencia
@@ -48,7 +51,7 @@ docker compose -f docker-compose.yml -f docker-compose.migrations.yml --profile 
 
 Revisar proyecto Compose y base de destino antes de hacerlo. En una actualización, revisar migraciones pendientes y disponer de respaldo primero. Arrancar API/frontend solo tras una migración correcta. La operación se ofrece como procedimiento y no se ejecutó durante esta fase. `prisma migrate deploy` continúa disponible en el perfil; no se sustituyó por reset, recreación o bootstrap.
 
-Pruebas de esta fase: Jest ejecuta HTTP Nest/Supertest con Prisma simulado y paquete GeoJSON real. Las pruebas de integración contra una base aislada siguen siendo un procedimiento independiente, no un resultado acreditado aquí. Véase [informe 05](../../docs/03%20Implementación/evidencias-tecnicas/Post-Sprint-1/05%20Validación%20backend%20y%20empaquetado%20V_1_1_0.md).
+Pruebas de esta fase: Jest ejecuta HTTP Nest/Supertest con Prisma simulado y paquete GeoJSON real. Las pruebas de integración contra una base aislada siguen siendo un procedimiento independiente, no un resultado acreditado aquí. Véase [informe 05 — histórico retirado](https://github.com/RicardoF1/DistriRapido/blob/77d7e10262183368f7f5831f0cc860722d4001aa/docs/03%20Implementaci%C3%B3n/evidencias-tecnicas/Post-Sprint-1/05%20Validaci%C3%B3n%20backend%20y%20empaquetado%20V_1_1_0.md).
 
 ## Inyección de datos solo en pruebas
 
