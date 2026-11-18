@@ -17,18 +17,19 @@ model Rol {
 }
 
 model Usuario {
-  planificaciones     Planificacion[]
-  calculos            EjecucionCalculo[]
-  rutas_confirmadas   Ruta[]
-  usuario_id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  rol_id              String             @db.Uuid
-  email               String             @unique @db.VarChar(255)
-  password_hash       String             @db.VarChar(255)
-  credentials_version Int                @default(0)
-  estado              String             @default("ACTIVO") @db.VarChar(20)
-  creado_en           DateTime           @default(now()) @db.Timestamptz(6)
-  conductor           Conductor?
-  rol                 Rol                @relation(fields: [rol_id], references: [rol_id], onDelete: Restrict)
+  planificaciones          Planificacion[]
+  calculos                 EjecucionCalculo[]
+  rutas_confirmadas        Ruta[]
+  registros_sostenibilidad RegistroSostenibilidad[]
+  usuario_id               String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  rol_id                   String                   @db.Uuid
+  email                    String                   @unique @db.VarChar(255)
+  password_hash            String                   @db.VarChar(255)
+  credentials_version      Int                      @default(0)
+  estado                   String                   @default("ACTIVO") @db.VarChar(20)
+  creado_en                DateTime                 @default(now()) @db.Timestamptz(6)
+  conductor                Conductor?
+  rol                      Rol                      @relation(fields: [rol_id], references: [rol_id], onDelete: Restrict)
 
   @@index([rol_id], map: "idx_usuarios_rol_id")
   @@map("usuarios")
@@ -132,24 +133,25 @@ model AlternativaRuta {
 }
 
 model Ruta {
-  ruta_id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  alternativa_id     String          @db.Uuid
-  conductor_id       String?         @db.Uuid
-  indice_recorrido   Int             @default(1)
-  current_version    Int             @default(1)
-  estado             String          @default("GENERADA") @db.VarChar(20)
-  asignado_en        DateTime?       @db.Timestamptz(6)
-  iniciado_en        DateTime?       @db.Timestamptz(6)
-  finalizado_en      DateTime?       @db.Timestamptz(6)
-  confirmado_en      DateTime?       @db.Timestamptz(6)
-  confirmado_por     String?         @db.Uuid
+  ruta_id            String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  alternativa_id     String                  @db.Uuid
+  conductor_id       String?                 @db.Uuid
+  indice_recorrido   Int                     @default(1)
+  current_version    Int                     @default(1)
+  estado             String                  @default("GENERADA") @db.VarChar(20)
+  asignado_en        DateTime?               @db.Timestamptz(6)
+  iniciado_en        DateTime?               @db.Timestamptz(6)
+  finalizado_en      DateTime?               @db.Timestamptz(6)
+  confirmado_en      DateTime?               @db.Timestamptz(6)
+  confirmado_por     String?                 @db.Uuid
   version_confirmada Int?
-  creado_en          DateTime        @default(now()) @db.Timestamptz(6)
-  actualizado_en     DateTime        @updatedAt @db.Timestamptz(6)
-  alternativa        AlternativaRuta @relation(fields: [alternativa_id], references: [alternativa_id], onDelete: Restrict)
-  conductor          Conductor?      @relation(fields: [conductor_id], references: [conductor_id], onDelete: Restrict)
-  confirmador        Usuario?        @relation(fields: [confirmado_por], references: [usuario_id], onDelete: Restrict)
+  creado_en          DateTime                @default(now()) @db.Timestamptz(6)
+  actualizado_en     DateTime                @updatedAt @db.Timestamptz(6)
+  alternativa        AlternativaRuta         @relation(fields: [alternativa_id], references: [alternativa_id], onDelete: Restrict)
+  conductor          Conductor?              @relation(fields: [conductor_id], references: [conductor_id], onDelete: Restrict)
+  confirmador        Usuario?                @relation(fields: [confirmado_por], references: [usuario_id], onDelete: Restrict)
   versiones          RutaVersion[]
+  sostenibilidad     RegistroSostenibilidad?
 
   @@unique([alternativa_id, indice_recorrido])
   @@index([conductor_id, estado], map: "idx_rutas_conductor_estado")
@@ -216,17 +218,44 @@ model IncidenciaEntrega {
   @@map("incidencias_entrega")
 }
 
+// US-021 / RF-017: información para evaluar la sostenibilidad de una ruta confirmada.
+// Un solo registro por ruta; las emisiones las calcula el servidor (distancia × factor de emisión).
+model RegistroSostenibilidad {
+  registro_id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ruta_id                  String   @unique @db.Uuid
+  ruta_version             Int
+  vehiculo_id              String   @db.Uuid
+  distancia_km             Decimal  @db.Decimal(12, 3)
+  combustible_l            Decimal  @db.Decimal(12, 3)
+  factor_emision_kg_co2_km Decimal  @db.Decimal(10, 5)
+  emisiones_co2_kg         Decimal  @db.Decimal(14, 4)
+  origen_datos             String   @db.VarChar(20)
+  costo_combustible        Decimal? @db.Decimal(12, 2)
+  observaciones            String?  @db.VarChar(500)
+  registrado_por           String   @db.Uuid
+  registrado_en            DateTime @default(now()) @db.Timestamptz(6)
+  ruta                     Ruta     @relation(fields: [ruta_id], references: [ruta_id], onDelete: Restrict)
+  vehiculo                 Vehiculo @relation(fields: [vehiculo_id], references: [vehiculo_id], onDelete: Restrict)
+  registrador              Usuario  @relation(fields: [registrado_por], references: [usuario_id], onDelete: Restrict)
+
+  @@index([registrado_en(sort: Desc)], map: "idx_registros_sostenibilidad_registrado")
+  @@index([vehiculo_id], map: "idx_registros_sostenibilidad_vehiculo")
+  @@index([registrado_por], map: "idx_registros_sostenibilidad_usuario")
+  @@map("registros_sostenibilidad")
+}
+
 model Vehiculo {
   rutas_versiones          RutaVersion[]
-  vehiculo_id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  placa                    String        @unique @db.VarChar(15)
-  tipo                     String        @db.VarChar(30)
-  capacidad_carga_kg       Decimal       @db.Decimal(10, 2)
-  capacidad_volumen_m3     Decimal?      @db.Decimal(10, 3)
-  consumo_km_l             Decimal       @db.Decimal(10, 3)
-  factor_emision_kg_co2_km Decimal       @db.Decimal(10, 5)
-  anio_fabricacion         Int           @db.SmallInt
-  estado                   String        @default("DISPONIBLE") @db.VarChar(20)
+  registros_sostenibilidad RegistroSostenibilidad[]
+  vehiculo_id              String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  placa                    String                   @unique @db.VarChar(15)
+  tipo                     String                   @db.VarChar(30)
+  capacidad_carga_kg       Decimal                  @db.Decimal(10, 2)
+  capacidad_volumen_m3     Decimal?                 @db.Decimal(10, 3)
+  consumo_km_l             Decimal                  @db.Decimal(10, 3)
+  factor_emision_kg_co2_km Decimal                  @db.Decimal(10, 5)
+  anio_fabricacion         Int                      @db.SmallInt
+  estado                   String                   @default("DISPONIBLE") @db.VarChar(20)
 
   @@index([estado], map: "idx_vehiculos_estado")
   @@index([tipo], map: "idx_vehiculos_tipo")

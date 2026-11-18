@@ -8,6 +8,7 @@ import { RouteQueryDto } from './dto/route-query.dto';
 import { ASSIGNABLE_ROUTE_STATE, AssignRouteDto } from './dto/assign-route.dto';
 import { CONFIRMABLE_ROUTE_STATE, ConfirmRouteDto } from './dto/confirm-route.dto';
 import { DEFAULT_PAGE_SIZE } from '../common/pagination';
+import { SUSTAINABILITY_RESULT } from './route-sustainability.service';
 
 const DRIVER_ROLE = 'Usuario Final / Conductor';
 /** Una ruta CONFIRMADA ya reserva su vehículo y sus pedidos aunque aún no tenga conductor (US-020). */
@@ -128,7 +129,7 @@ export class RoutesService {
   async get(id: string, version?: number) {
     if (version !== undefined && (!Number.isSafeInteger(version) || version < 1)) throw new BadRequestException('La versión de ruta debe ser un entero positivo.');
     try {
-      const route = await this.prisma.ruta.findUnique({ where: { ruta_id: id }, include: { conductor: { select: { conductor_id: true, nombre_completo: true } }, alternativa: { include: { ejecucion: { select: { ejecucion_id: true, version: { select: { numero: true, planificacion_id: true, snapshot: true, planificacion: { select: { etiqueta: true } } } } } } } }, versiones: { where: version !== undefined ? { numero: version } : undefined, orderBy: { numero: 'desc' }, take: 1, include: { paradas: { orderBy: { secuencia: 'asc' }, include: STOP_ORDER_STATE } } }, confirmador: { select: { email: true } } } });
+      const route = await this.prisma.ruta.findUnique({ where: { ruta_id: id }, include: { conductor: { select: { conductor_id: true, nombre_completo: true } }, alternativa: { include: { ejecucion: { select: { ejecucion_id: true, version: { select: { numero: true, planificacion_id: true, snapshot: true, planificacion: { select: { etiqueta: true } } } } } } } }, versiones: { where: version !== undefined ? { numero: version } : undefined, orderBy: { numero: 'desc' }, take: 1, include: { vehiculo: { select: { placa: true, consumo_km_l: true, factor_emision_kg_co2_km: true } }, paradas: { orderBy: { secuencia: 'asc' }, include: STOP_ORDER_STATE } } }, confirmador: { select: { email: true } }, sostenibilidad: { select: SUSTAINABILITY_RESULT } } });
       if (!route || !route.versiones.length) throw new NotFoundException('Ruta o versión no encontrada.');
       const current = route.versiones[0];
       const warnings = stopWarnings(current.paradas);

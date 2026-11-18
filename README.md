@@ -47,7 +47,7 @@ Inspección documental sobre `main`, commit `7cdde3b765aa4898ef61789640900bad491
 | Sprint 1: US-001 a US-005 | Acceso, sesión, usuarios, registro y consulta de pedidos. Informes históricos V_1_0_0 conservados; aceptación formal y cierre requieren evidencia del equipo. |
 | Sprint 2: US-006 a US-009 | Estados de pedidos, vehículos, conductores y disponibilidad integrados en PR #5–#7. Gestión V_1_1_0 preparada a partir de evidencia técnica; no se declara cierre. |
 | Sprint 3: HGR-32 a HGR-36 | Consulta/comparación, asignación, panel del conductor y entregas. Los informes registran cierre administrativo en Jira y evidencia local de noviembre; esto no implica aceptación docente del producto completo. |
-| Sprint 04 — avances | Existen informes técnicos de US-018, US-019 y US-020. Su integración no acredita cierre del sprint. |
+| Sprint 04 — avances | Existen informes técnicos de US-018, US-019, US-020 y US-021. Su integración no acredita cierre del sprint. |
 | Inspección 04 — Green IT | Entrega independiente de reducción del impacto ambiental y estándares; conserva resultados históricos y limitaciones de evidencia. |
 
 La **interfaz sí permite asignar rutas**: [RouteAssignmentPanel](src/frontend/src/features/routes/RouteAssignmentPanel.tsx), integrado en [RouteDetailPage](src/frontend/src/pages/RouteDetailPage.tsx), con endpoint `PATCH /routes/:id/assignment`. Desde US-020 solo se asignan rutas confirmadas antes con `PATCH /routes/:id/confirmation`. La afirmación anterior de interfaz pendiente describía el estado previo al commit `7745ef3`.
@@ -228,6 +228,7 @@ Solo se reorganizan los dos informes técnicos existentes. No se crean informes 
 - [01 US-018 Registrar incidencias V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/01%20US-018%20Registrar%20incidencias%20V_1_0_0.md)
 - [02 US-019 Consultar estado operativo V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/02%20US-019%20Consultar%20estado%20operativo%20V_1_0_0.md)
 - [03 US-020 Confirmar ruta V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/03%20US-020%20Confirmar%20ruta%20V_1_0_0.md)
+- [04 US-021 Registrar sostenibilidad V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/04%20US-021%20Registrar%20sostenibilidad%20V_1_0_0.md)
 
 ### Inspección 04 — Green IT
 
