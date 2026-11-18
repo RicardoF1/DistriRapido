@@ -6,6 +6,10 @@ import mock from './playwright.mock.config';
 export default defineConfig({
   ...mock,
   retries: 1,
+  // Tests tagged @cobertura-privada need the private INEI package geodata/coverage/v1, which is
+  // never versioned nor available in GitHub Actions. They run locally only once it is provisioned
+  // (node scripts/provision-coverage.cjs), with playwright.mock.config.ts.
+  grepInvert: /@cobertura-privada/,
   reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
   use: {
     ...mock.use,

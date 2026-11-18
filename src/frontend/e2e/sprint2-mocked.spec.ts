@@ -31,7 +31,8 @@ test.beforeEach(async ({ page }) => {
       vehicles = vehicles.map(item => item.vehiculo_id === id ? updated : item);
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(updated) });
     }
-    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(vehicles) });
+    // GET /vehicles?page=…&pageSize=… answers with the current paginated contract (Page<Vehicle>).
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: vehicles, total: vehicles.length, page: 1, pageSize: 20 }) });
   });
 });
 

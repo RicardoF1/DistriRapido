@@ -25,7 +25,7 @@ async function centered(page: Page) {
   await expect(page.locator('.leaflet-tile-pane img').first()).toHaveAttribute('src', /\/17\//);
 }
 for (const destination of destinations) {
-  test(`selección ${destination.district} centra marcador; repetir destino tras Ver cobertura`, async ({ page, baseURL }) => {
+  test(`selección ${destination.district} centra marcador; repetir destino tras Ver cobertura`, { tag: '@cobertura-privada' }, async ({ page, baseURL }) => {
     await setup(page, baseURL!);
     await page.route('https://photon.komoot.io/**', route => route.fulfill({ headers: { 'Access-Control-Allow-Origin': '*' }, json: { features: [feature(destination)] } }));
     await page.goto('/pedidos/nuevo');
@@ -47,7 +47,7 @@ async function fields(page: Page) {
   await page.getByLabel('Fecha de fin').fill('2026-10-02'); await page.getByLabel('Hora de fin').fill('11:00');
   await page.getByLabel('Prioridad', { exact: true }).selectOption('ESTANDAR'); await page.getByLabel('Tipo de producto').selectOption('NO_PERECEDERO');
 }
-test('clic y arrastre confirman las coordenadas reales del marcador enviadas al formulario', async ({ page, baseURL }) => {
+test('clic y arrastre confirman las coordenadas reales del marcador enviadas al formulario', { tag: '@cobertura-privada' }, async ({ page, baseURL }) => {
   const headers = await setup(page, baseURL!);
   let lastPoint: { latitud: number; longitud: number } | undefined; let reverses = 0; let posts = 0;
   await page.route('https://photon.komoot.io/**', route => {
@@ -75,7 +75,7 @@ test('clic y arrastre confirman las coordenadas reales del marcador enviadas al 
   await page.getByRole('button', { name: 'Registrar pedido', exact: true }).click();
   await expect(page.getByText('Pedido registrado correctamente')).toBeVisible(); expect(posts).toBe(1);
 });
-test('editar y errores Photon no conservan confirmación falsa ni permiten POST', async ({ page, baseURL }) => {
+test('editar y errores Photon no conservan confirmación falsa ni permiten POST', { tag: '@cobertura-privada' }, async ({ page, baseURL }) => {
   await setup(page, baseURL!); let failing = false; let posts = 0;
   await page.route('https://photon.komoot.io/**', route => failing ? route.fulfill({ status: 503, headers: { 'Access-Control-Allow-Origin': '*' } }) : route.fulfill({ headers: { 'Access-Control-Allow-Origin': '*' }, json: { features: [feature(destinations[0])] } }));
   await page.route('**/orders', route => { posts++; return route.abort(); });
