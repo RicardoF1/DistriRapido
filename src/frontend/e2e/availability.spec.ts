@@ -103,7 +103,8 @@ async function mockApi(
   );
 
   await page.route(
-    '**/drivers**',
+    // API paths only: a '**/drivers**' glob also captured the drivers-api-*.js chunk of the build.
+    (url) => /^\/drivers(\/|$)/.test(url.pathname),
     async (route) => {
       const request = route.request();
 
@@ -133,7 +134,7 @@ async function mockApi(
   );
 
   await page.route(
-    '**/availability**',
+    (url) => /^\/availability(\/|$)/.test(url.pathname),
     async (route) => {
       const request = route.request();
       const method = request.method();
