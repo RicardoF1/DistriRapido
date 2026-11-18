@@ -19,6 +19,7 @@ model Rol {
 model Usuario {
   planificaciones     Planificacion[]
   calculos            EjecucionCalculo[]
+  rutas_confirmadas   Ruta[]
   usuario_id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   rol_id              String             @db.Uuid
   email               String             @unique @db.VarChar(255)
@@ -131,20 +132,24 @@ model AlternativaRuta {
 }
 
 model Ruta {
-  ruta_id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  alternativa_id   String          @db.Uuid
-  conductor_id     String?         @db.Uuid
-  indice_recorrido Int             @default(1)
-  current_version  Int             @default(1)
-  estado           String          @default("GENERADA") @db.VarChar(20)
-  asignado_en      DateTime?       @db.Timestamptz(6)
-  iniciado_en      DateTime?       @db.Timestamptz(6)
-  finalizado_en    DateTime?       @db.Timestamptz(6)
-  creado_en        DateTime        @default(now()) @db.Timestamptz(6)
-  actualizado_en   DateTime        @updatedAt @db.Timestamptz(6)
-  alternativa      AlternativaRuta @relation(fields: [alternativa_id], references: [alternativa_id], onDelete: Restrict)
-  conductor        Conductor?      @relation(fields: [conductor_id], references: [conductor_id], onDelete: Restrict)
-  versiones        RutaVersion[]
+  ruta_id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  alternativa_id     String          @db.Uuid
+  conductor_id       String?         @db.Uuid
+  indice_recorrido   Int             @default(1)
+  current_version    Int             @default(1)
+  estado             String          @default("GENERADA") @db.VarChar(20)
+  asignado_en        DateTime?       @db.Timestamptz(6)
+  iniciado_en        DateTime?       @db.Timestamptz(6)
+  finalizado_en      DateTime?       @db.Timestamptz(6)
+  confirmado_en      DateTime?       @db.Timestamptz(6)
+  confirmado_por     String?         @db.Uuid
+  version_confirmada Int?
+  creado_en          DateTime        @default(now()) @db.Timestamptz(6)
+  actualizado_en     DateTime        @updatedAt @db.Timestamptz(6)
+  alternativa        AlternativaRuta @relation(fields: [alternativa_id], references: [alternativa_id], onDelete: Restrict)
+  conductor          Conductor?      @relation(fields: [conductor_id], references: [conductor_id], onDelete: Restrict)
+  confirmador        Usuario?        @relation(fields: [confirmado_por], references: [usuario_id], onDelete: Restrict)
+  versiones          RutaVersion[]
 
   @@unique([alternativa_id, indice_recorrido])
   @@index([conductor_id, estado], map: "idx_rutas_conductor_estado")

@@ -59,6 +59,33 @@ describe('Planificación/rutas con Prisma real y proveedor sintético aislado', 
     await p.disponibilidadConductor.updateMany({ where: { conductor_id: driver }, data: { estado: 'NO_DISPONIBLE' } }); expect((await agent.get('/routes/' + routeId).expect(200)).body.current_warnings).toContain('RECURSOS_O_PEDIDOS_NO_DISPONIBLES'); await p.disponibilidadConductor.updateMany({ where: { conductor_id: driver }, data: { estado: 'DISPONIBLE' } });
     expect((await agent.get('/routes/' + routeId).expect(200)).body.current_warnings).toEqual([]);
   });
+  it('US-020: confirma la ruta revisada, enumera condiciones pendientes y habilita la asignación', async () => {
+    const id = await prepare(); const routeId = (await calculate(id).expect(201)).body.alternativas[0].rutas[0].ruta_id as string;
+    const patch = (path: string, body: object) => agent.patch(`/routes/${routeId}/${path}`).set('Origin', 'http://localhost:5173').send(body);
+    try {
+      expect((await agent.get(`/routes/${routeId}/assignment-candidates`).expect(409)).body.message).toBe('Confirma la ruta antes de asignarle un conductor.');
+      await patch('confirmation', { expected_estado: 'GENERADA' }).expect(400);
+      await p.pedido.update({ where: { pedido_id: order }, data: { peso_kg: 3 } });
+      const pending = (await patch('confirmation', { expected_estado: 'GENERADA', confirmed: true }).expect(409)).body.message as string;
+      expect(pending).toContain('Condiciones pendientes: Un pedido cambió desde el cálculo'); expect(pending).toContain('Los datos usados en el cálculo cambiaron');
+      await p.pedido.update({ where: { pedido_id: order }, data: { peso_kg: 2 } });
+      await p.vehiculo.update({ where: { vehiculo_id: vehicle }, data: { estado: 'MANTENIMIENTO' } });
+      expect((await patch('confirmation', { expected_estado: 'GENERADA', confirmed: true }).expect(409)).body.message).toContain('El vehículo, los conductores o los pedidos del cálculo ya no están disponibles.');
+      await p.vehiculo.update({ where: { vehiculo_id: vehicle }, data: { estado: 'DISPONIBLE' } });
+      expect((await p.ruta.findUniqueOrThrow({ where: { ruta_id: routeId } })).estado).toBe('GENERADA');
+      const confirmed = (await patch('confirmation', { expected_estado: 'GENERADA', confirmed: true }).expect(200)).body;
+      expect(confirmed).toMatchObject({ ruta_id: routeId, estado: 'CONFIRMADA', version_confirmada: 1, confirmador: { email: expect.stringContaining('@example.test') } });
+      const row = await p.ruta.findUniqueOrThrow({ where: { ruta_id: routeId } }); expect(row).toMatchObject({ estado: 'CONFIRMADA', confirmado_por: actor, conductor_id: null, version_confirmada: 1 }); expect(row.confirmado_en).toBeInstanceOf(Date);
+      expect((await agent.get('/routes/' + routeId).expect(200)).body).toMatchObject({ estado: 'CONFIRMADA', confirmador: { email: confirmed.confirmador.email } });
+      expect((await patch('confirmation', { expected_estado: 'GENERADA', confirmed: true }).expect(409)).body.message).toContain('La ruta ya fue confirmada');
+      await agent.get(`/routes/${routeId}/assignment-candidates`).expect(200);
+      await expect(p.$executeRaw`UPDATE rutas SET confirmado_por = NULL WHERE ruta_id = ${routeId}::uuid`).rejects.toThrow(/chk_rutas_confirmacion_completa/);
+      await expect(p.$executeRaw`UPDATE rutas SET estado = 'GENERADA' WHERE ruta_id = ${routeId}::uuid`).rejects.toThrow(/chk_rutas_asignacion_coherente/);
+    } finally {
+      await p.pedido.update({ where: { pedido_id: order }, data: { peso_kg: 2 } }); await p.vehiculo.update({ where: { vehiculo_id: vehicle }, data: { estado: 'DISPONIBLE' } });
+      await p.ruta.update({ where: { ruta_id: routeId }, data: { estado: 'GENERADA', confirmado_en: null, confirmado_por: null, version_confirmada: null } });
+    }
+  });
   it('rollback PostgreSQL real si vence el presupuesto después del INSERT de resultado', async () => {
     const id = await prepare(); let now = Date.now(); const clock = jest.spyOn(Date, 'now').mockImplementation(() => now);
     const wrapper = { ejecucionCalculo: p.ejecucionCalculo, $transaction: (op: (tx: Prisma.TransactionClient) => Promise<unknown>, options: object) => p.$transaction(tx => op(new Proxy(tx, { get(target, key) { if (key === 'alternativaRuta') return new Proxy(target.alternativaRuta, { get(model, method) { return method === 'create' ? async (args: Prisma.AlternativaRutaCreateArgs) => { const result = await model.create(args); now += 21000; return result; } : Reflect.get(model, method); } }); return Reflect.get(target, key); } })), options) };

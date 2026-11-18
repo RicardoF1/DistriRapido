@@ -13,10 +13,22 @@ it('asignación envía solo el contrato actual, sin versión, vehículo ni idemp
   const [url, options] = fetcher.mock.calls[0];
   expect(url).toMatch(/\/routes\/r%2F1\/assignment$/);
   expect(options).toMatchObject({ method: 'PATCH', credentials: 'include', headers: { 'Content-Type': 'application/json' } });
-  expect(JSON.parse(options.body)).toEqual({ conductor_id: 'd', expected_estado: 'GENERADA', confirmed: true });
+  expect(JSON.parse(options.body)).toEqual({ conductor_id: 'd', expected_estado: 'CONFIRMADA', confirmed: true });
   expect(options.headers).not.toHaveProperty('Idempotency-Key');
   await routesApi.candidates('r');
   expect(fetcher.mock.calls[1][0]).toMatch(/\/routes\/r\/assignment-candidates$/);
   expect(fetcher.mock.calls[1][1].method).toBeUndefined();
 });
 it.each([400, 403, 404, 409])('conserva el mensaje del backend al asignar con %s', async status => { fetcher.mockResolvedValue(new Response(JSON.stringify({ message: 'Motivo del backend' }), { status })); await expect(routesApi.assign('r', 'd')).rejects.toMatchObject({ status, message: 'Motivo del backend' }); });
+it('US-020: confirmación envía solo el estado esperado y la confirmación explícita', async () => {
+  await routesApi.confirm('r/1');
+  const [url, options] = fetcher.mock.calls[0];
+  expect(url).toMatch(/\/routes\/r%2F1\/confirmation$/);
+  expect(options).toMatchObject({ method: 'PATCH', credentials: 'include', headers: { 'Content-Type': 'application/json' } });
+  expect(JSON.parse(options.body)).toEqual({ expected_estado: 'GENERADA', confirmed: true });
+});
+it('US-020: conserva las condiciones pendientes que devuelve el backend', async () => {
+  const message = 'No se puede confirmar la ruta. Condiciones pendientes: El vehículo de la ruta no está disponible.';
+  fetcher.mockResolvedValue(new Response(JSON.stringify({ message }), { status: 409 }));
+  await expect(routesApi.confirm('r')).rejects.toMatchObject({ status: 409, message });
+});

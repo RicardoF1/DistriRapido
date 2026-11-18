@@ -1,14 +1,17 @@
-import { Body, Controller, Get, Header, Param, ParseIntPipe, ParseUUIDPipe, Patch, Query, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Body, Controller, Get, Header, Param, ParseIntPipe, ParseUUIDPipe, Patch, Query, Req, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard, type AuthRequest } from '../auth/jwt-auth.guard';
 import { RequestOriginGuard } from '../common/request-origin';
 import { PlanningGuard } from '../planning/planning.guard';
 import { RouteQueryDto } from './dto/route-query.dto';
 import { AssignRouteDto } from './dto/assign-route.dto';
+import { ConfirmRouteDto } from './dto/confirm-route.dto';
 import { RoutesService } from './routes.service';
 @Controller('routes') @UseGuards(JwtAuthGuard, PlanningGuard, RequestOriginGuard)
 export class RoutesController {
   constructor(private readonly routes: RoutesService) {}
   @Get() @Header('Cache-Control', 'no-store') list(@Query() query: RouteQueryDto) { return this.routes.list(query); }
+  @Patch(':id/confirmation') @Header('Cache-Control', 'no-store')
+  confirm(@Param('id', ParseUUIDPipe) id: string, @Body() dto: ConfirmRouteDto, @Req() req: AuthRequest) { return this.routes.confirm(id, dto, req.user.usuario_id); }
   @Patch(':id/assignment') @Header('Cache-Control', 'no-store')
   assign(@Param('id', ParseUUIDPipe) id: string, @Body() dto: AssignRouteDto) { return this.routes.assign(id, dto); }
   @Get(':id/assignment-candidates') @Header('Cache-Control', 'no-store')

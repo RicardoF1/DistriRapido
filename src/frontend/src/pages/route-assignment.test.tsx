@@ -7,13 +7,14 @@ import { routeFixture } from '../test/route-fixture';
 import { ApiError } from '../services/api';
 import type { RouteDetail } from '../types/routes';
 
-const mock = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), candidates: vi.fn(), assign: vi.fn(), acceptSession: vi.fn() }));
+const mock = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), candidates: vi.fn(), assign: vi.fn(), confirm: vi.fn(), acceptSession: vi.fn() }));
 vi.mock('../services/routes-api', () => ({ routesApi: mock }));
 vi.mock('../hooks/useAuth', () => ({ useAuth: () => ({ acceptSession: mock.acceptSession }) }));
 vi.mock('../features/routes/RouteMap', () => ({ RouteMap: () => <div>Visor de geometría registrada</div> }));
 
 const [baseVersion] = routeFixture.versiones;
-const assignable: RouteDetail = { ...routeFixture, versiones: [{ ...baseVersion, resultado: { ...baseVersion.resultado, confirmable: true } }] };
+const confirmedAt = '2030-01-01T12:10:00Z';
+const assignable: RouteDetail = { ...routeFixture, estado: 'CONFIRMADA', confirmado_en: confirmedAt, version_confirmada: 1, confirmador: { email: 'planificador@example.test' }, versiones: [{ ...baseVersion, resultado: { ...baseVersion.resultado, confirmable: true } }] };
 const assignedAt = '2030-01-01T12:30:00Z';
 const assigned: RouteDetail = { ...assignable, estado: 'ASIGNADA', conductor_id: 'd1', asignado_en: assignedAt, conductor: { conductor_id: 'd1', nombre_completo: 'Ana Elegible' } };
 const candidates = [{ conductor_id: 'd1', nombre_completo: 'Ana Elegible' }, { conductor_id: 'd2', nombre_completo: 'Beto Disponible' }];
@@ -33,20 +34,23 @@ async function fill() {
   return screen.getByRole('button', { name: 'Asignar ruta' });
 }
 
-it('muestra el panel accesible en ruta GENERADA, sin conductor, confirmable y versión actual', async () => {
+it('muestra el panel accesible en ruta CONFIRMADA, sin conductor y versión actual', async () => {
   await ready();
   const group = screen.getByRole('group', { name: 'Asignar conductor' });
   expect(group.tagName).toBe('FIELDSET');
   expect(within(group).getByLabelText('Conductor').tagName).toBe('SELECT');
   expect(within(group).getByRole('checkbox', { name: confirmation })).not.toBeChecked();
-  expect(screen.getByText('GENERADA')).toBeVisible();
+  expect(screen.getByText('Confirmada')).toBeVisible();
+  expect(screen.getByText('planificador@example.test')).toBeVisible();
+  expect(screen.queryByRole('group', { name: 'Confirmar ruta' })).not.toBeInTheDocument();
   expect(screen.getAllByText('Sin asignar')).toHaveLength(2);
   expect(mock.candidates).toHaveBeenCalledWith('r', expect.any(AbortSignal));
 });
 
 it.each([
   ['versión histórica', { ...assignable, current_version: 2 }, 'Estás consultando una versión histórica. Solo la versión actual puede asignarse.'],
-  ['ruta no confirmable', routeFixture, 'La ruta no es confirmable. Revisa las restricciones antes de asignarla.'],
+  ['ruta GENERADA sin confirmar', routeFixture, 'Confirma la ruta antes de asignarle un conductor.'],
+  ['ruta CONFIRMADA no confirmable', { ...assignable, versiones: [baseVersion] }, 'La ruta no es confirmable. Revisa las restricciones antes de asignarla.'],
   ['ruta ASIGNADA', assigned, 'La ruta ya fue asignada. Esta interfaz no permite reasignar.'],
   ['ruta EN_CURSO', { ...assigned, estado: 'EN_CURSO' }, 'La ruta está en curso y no admite asignación.'],
   ['ruta COMPLETADA', { ...assigned, estado: 'COMPLETADA' }, 'La ruta está completada y no admite asignación.'],
@@ -106,7 +110,7 @@ it('bloquea el doble envío, recarga el detalle y muestra la asignación sin red
   const assignedNotice = await screen.findByText(/^Ruta asignada a Ana Elegible el /);
   expect(assignedNotice.tagName).toBe('OUTPUT');
   expect(screen.getAllByRole('status')).toContain(assignedNotice);
-  expect(await screen.findByText('ASIGNADA')).toBeVisible();
+  expect(await screen.findByText('Asignada')).toBeVisible();
   expect(screen.getByText('Ana Elegible')).toBeVisible();
   expect(screen.getByText(new Date(assignedAt).toLocaleString('es-PE', { timeZone: 'America/Lima' }))).toBeVisible();
   expect(mock.get).toHaveBeenCalledTimes(2);

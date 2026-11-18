@@ -1,6 +1,7 @@
 import { Equals, IsIn, IsUUID } from 'class-validator';
 
-export const ASSIGNABLE_ROUTE_STATE = 'GENERADA' as const;
+/** US-020: solo una ruta confirmada puede recibir conductor. */
+export const ASSIGNABLE_ROUTE_STATE = 'CONFIRMADA' as const;
 
 export class AssignRouteDto {
   @IsUUID()

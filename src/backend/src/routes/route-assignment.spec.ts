@@ -6,10 +6,10 @@ const routeId = '00000000-0000-4000-8000-000000000001';
 const driverId = '00000000-0000-4000-8000-000000000002';
 const vehicleId = '00000000-0000-4000-8000-000000000003';
 const orderId = '00000000-0000-4000-8000-000000000004';
-const dto = { conductor_id: driverId, expected_estado: 'GENERADA' as const, confirmed: true as const };
+const dto = { conductor_id: driverId, expected_estado: 'CONFIRMADA' as const, confirmed: true as const };
 const snapshot = { drivers: [{ conductor_id: driverId }], inicio: '2030-01-01T12:00:00.000Z', fin: '2030-01-01T15:00:00.000Z' };
 const route = {
-  ruta_id: routeId, estado: 'GENERADA', conductor_id: null,
+  ruta_id: routeId, estado: 'CONFIRMADA', conductor_id: null, current_version: 1, version_confirmada: 1,
   alternativa: { ejecucion: { version: { snapshot } } },
   versiones: [{ vehiculo_id: vehicleId, resultado: { confirmable: true, inicio: snapshot.inicio, end: snapshot.fin }, paradas: [{ pedido_id: orderId }] }],
 };
@@ -18,7 +18,7 @@ const activeDriver = {
   usuario: { estado: 'ACTIVO', rol: { nombre: 'Usuario Final / Conductor' } },
   disponibilidades: [{ disponibilidad_id: 'available' }],
 };
-const otherActive = { ruta_id: { not: routeId }, estado: { in: ['ASIGNADA', 'EN_CURSO'] } };
+const otherActive = { ruta_id: { not: routeId }, estado: { in: ['CONFIRMADA', 'ASIGNADA', 'EN_CURSO'] } };
 const tx = {
   $queryRaw: jest.fn(),
   ruta: { findUnique: jest.fn(), findMany: jest.fn(), updateMany: jest.fn(), findUniqueOrThrow: jest.fn() },
@@ -54,7 +54,7 @@ describe('asignación de ruta', () => {
   it('asigna una ruta confirmable a un conductor candidato activo y disponible', async () => {
     await expect(service.assign(routeId, dto)).resolves.toMatchObject({ estado: 'ASIGNADA' });
     expect(tx.ruta.updateMany).toHaveBeenCalledWith(expect.objectContaining({
-      where: { ruta_id: routeId, conductor_id: null, estado: 'GENERADA' },
+      where: { ruta_id: routeId, conductor_id: null, estado: 'CONFIRMADA' },
       data: expect.objectContaining({ conductor_id: driverId, estado: 'ASIGNADA' }),
     }));
     expect(prisma.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: 'Serializable', timeout: 15000, maxWait: 3000 });
@@ -73,11 +73,21 @@ describe('asignación de ruta', () => {
     await expect(service.assign(routeId, dto)).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('rechaza ruta EN_CURSO y ruta GENERADA con conductor', async () => {
+  it('rechaza ruta EN_CURSO y ruta CONFIRMADA con conductor', async () => {
     tx.ruta.findUnique.mockResolvedValueOnce({ ...route, estado: 'EN_CURSO', conductor_id: driverId });
     await expectRejected('La ruta ya fue asignada o cambió de estado');
     tx.ruta.findUnique.mockResolvedValueOnce({ ...route, conductor_id: driverId });
     await expectRejected('La ruta ya fue asignada o cambió de estado');
+  });
+
+  it('US-020: exige confirmar la ruta antes de asignarla', async () => {
+    tx.ruta.findUnique.mockResolvedValueOnce({ ...route, estado: 'GENERADA', version_confirmada: null });
+    await expectRejected('Confirma la ruta antes de asignarle un conductor.');
+  });
+
+  it('US-020: rechaza si la versión confirmada ya no es la actual', async () => {
+    tx.ruta.findUnique.mockResolvedValueOnce({ ...route, current_version: 2 });
+    await expectRejected('La versión confirmada no coincide con la versión actual.');
   });
 
   it.each([
@@ -119,7 +129,7 @@ describe('asignación de ruta', () => {
     expect(tx.conductor.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: { conductor_id: { in: [driverId] } } }));
     const select = tx.conductor.findMany.mock.calls[0][0].select;
     expect(select.disponibilidades.where).toEqual({ estado: 'DISPONIBLE', inicio: { lte: new Date(snapshot.inicio) }, fin: { gte: new Date(snapshot.fin) } });
-    expect(tx.ruta.findMany).toHaveBeenCalledWith({ where: { conductor_id: { in: [driverId] }, estado: { in: ['ASIGNADA', 'EN_CURSO'] }, ruta_id: { not: routeId } }, select: { conductor_id: true } });
+    expect(tx.ruta.findMany).toHaveBeenCalledWith({ where: { conductor_id: { in: [driverId] }, estado: { in: ['CONFIRMADA', 'ASIGNADA', 'EN_CURSO'] }, ruta_id: { not: routeId } }, select: { conductor_id: true } });
   });
 
   it('rechaza doble ocupacion y conflicto concurrente', async () => {
@@ -202,7 +212,9 @@ describe('candidatos de asignación', () => {
     ['ASIGNADA', { ...route, estado: 'ASIGNADA', conductor_id: driverId }],
     ['EN_CURSO', { ...route, estado: 'EN_CURSO', conductor_id: driverId }],
     ['COMPLETADA', { ...route, estado: 'COMPLETADA', conductor_id: driverId }],
-    ['GENERADA con conductor', { ...route, conductor_id: driverId }],
+    ['CONFIRMADA con conductor', { ...route, conductor_id: driverId }],
+    ['GENERADA sin confirmar', { ...route, estado: 'GENERADA', version_confirmada: null }],
+    ['con versión confirmada distinta', { ...route, version_confirmada: 2, current_version: 3 }],
     ['no confirmable', withVersion({ resultado: { confirmable: false, inicio: snapshot.inicio, end: snapshot.fin } })],
   ])('responde 409 para ruta %s sin consultar conductores', async (_, value) => {
     tx.ruta.findUnique.mockResolvedValueOnce(value);
