@@ -2,7 +2,7 @@
 
 [← Volver al README principal](../../../README.md) · [Índice documental](../../README.md)
 
-**Nombre del Proyecto:** DistriRapido — Sistema de planificación y seguimiento de entregas de última milla
+**Nombre del Proyecto:** Huancayo GreenRoute Logistics (proyecto HGR en Jira) — sistema DistriRapido de planificación y seguimiento de entregas de última milla
 
 **Líder del Proyecto:** Rupay Chira, Rosalyn Exkra
 
@@ -29,19 +29,19 @@
 
 ### Personas
 
-- La implementación del sprint se concentró en un solo integrante y la documentación en otro; el resto del equipo tuvo poca participación visible en el repositorio. Esto genera dependencia de personas concretas y riesgo si una de ellas no está disponible.
+- En los Sprints 1 a 3 las historias se repartieron entre varios integrantes, pero en el Sprint 4 la implementación de las cuatro historias recayó en un solo integrante (Flores Toribio, Ricardo Miguel) y la documentación en otro. Esto genera dependencia de personas concretas y riesgo si una de ellas no está disponible.
 - Los roles del equipo no estaban registrados en el repositorio: el README indicaba el líder como pendiente.
 
 ### Relaciones
 
 - Las decisiones de alcance (catálogo de incidencias, actores, datos de sostenibilidad) se tomaron historia por historia, sin una sesión con el Product Owner que las validara juntas.
-- La aceptación de las historias en Jira sigue pendiente porque no hubo una revisión conjunta antes del cierre.
+- Jira no se actualizó durante el sprint: el «SCRUM Sprint 4» se creó y las historias HGR-37 a HGR-40 se movieron a Finalizada recién el 2026-11-18, por lo que el tablero no reflejó el avance real en el día a día.
 
 ### Procesos
 
 - El incremento no llegó a `main`: US-021 sigue en su rama y `sprint-4` no se ha integrado. La entrega depende de varias integraciones en los últimos días.
 - US-020 y US-021 se desarrollaron el mismo día que el cierre técnico (2026-11-17); el trabajo se acumuló al final del sprint.
-- Las historias US-022 y US-023 no se iniciaron y no se replanificaron formalmente en Jira.
+- Las historias HGR-41 (US-022) y HGR-42 (US-023) no se iniciaron y siguen en el backlog sin sprint asignado.
 
 ### Herramientas
 
@@ -53,13 +53,13 @@
 
 | # | Acción | Responsable | Fecha límite | Métrica de seguimiento |
 |---|---|---|---|---|
-| 1 | Abrir el PR de US-021 hacia `sprint-4` y el de `sprint-4` hacia `main` | Flores Toribio, Ricardo Miguel | 2026-11-19 | `main` contiene `cc3ad8c` y los checks de CI están en verde |
-| 2 | Revisar con el Product Owner los criterios de US-018 a US-021 y moverlas a Finalizada en Jira | Rupay Chira, Rosalyn Exkra | 2026-11-20 | 4 de 4 historias en Finalizada |
+| 1 | Hacer merge del PR #21 hacia `sprint-4` y luego de `sprint-4` hacia `main` | Flores Toribio, Ricardo Miguel | 2026-11-19 | `main` contiene `cc3ad8c` y los checks de CI están en verde |
+| 2 | Crear cada sprint en Jira al iniciarlo y mover las historias a medida que avanzan, para que el burndown sea real | Rupay Chira, Rosalyn Exkra | Inicio del siguiente sprint | Burndown con actualizaciones al menos cada dos días |
 | 3 | Agregar los workflows `tests.yml` (E2E en Chromium, Firefox y WebKit con reporte como artifact) y `deploy-production.yml` | Janampa Navarro, Clinton | 2026-11-20 | 3 workflows en verde en GitHub Actions |
 | 4 | Aplicar el cuestionario SUS a 5 usuarios como mínimo y documentar el resultado | Albornoz Quiliano, José Antonio · Veliz De La Cruz, Carlos Adrián | 2026-11-20 | n ≥ 5 y puntaje SUS calculado |
 | 5 | Registrar en el README los roles del equipo | Rupay Chira, Rosalyn Exkra | 2026-11-19 | README sin roles pendientes |
 | 6 | Corregir el aviso de `picomatch` en una rama propia | Flores Toribio, Ricardo Miguel | Inicio del siguiente sprint | `npm audit --audit-level=high` sin hallazgos |
-| 7 | Replanificar US-022, US-023 y HGR-43 en Jira | Rupay Chira, Rosalyn Exkra | Planificación del siguiente sprint | Las tres historias asignadas a un sprint |
+| 7 | Replanificar HGR-41 (US-022), HGR-42 (US-023) y HGR-43 (US-024) en Jira | Rupay Chira, Rosalyn Exkra | Planificación del siguiente sprint | Las tres historias asignadas a un sprint |
 | 8 | Repartir las historias del siguiente sprint entre al menos tres integrantes | Rupay Chira, Rosalyn Exkra | Planificación del siguiente sprint | Commits de al menos tres autores en el sprint |
 
 ---
