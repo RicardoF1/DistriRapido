@@ -71,8 +71,9 @@ V_1_1_0 conserva su historial. Las métricas y el cierre administrativo Jira son
 
 - [01 US-018 Registrar incidencias V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/01%20US-018%20Registrar%20incidencias%20V_1_0_0.md)
 - [02 US-019 Consultar estado operativo V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/02%20US-019%20Consultar%20estado%20operativo%20V_1_0_0.md)
+- [03 US-020 Confirmar ruta V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/03%20US-020%20Confirmar%20ruta%20V_1_0_0.md)
 
-Solo informes técnicos existentes de US-018 y US-019; sin nuevos entregables de gestión ni cierre declarado.
+Solo informes técnicos existentes de US-018, US-019 y US-020; sin nuevos entregables de gestión ni cierre declarado.
 
 ### Inspección 04 — Green IT
 
