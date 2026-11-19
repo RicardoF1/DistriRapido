@@ -25,7 +25,7 @@ Las seis historias están implementadas y verificadas con pruebas automatizadas 
 
 **Estado en Jira (2026-11-18):** el sprint «SCRUM Sprint 4» (del 2026-11-09 al 2026-11-20) está activo en el tablero HGR y contiene HGR-37, HGR-38, HGR-39 y HGR-40, las cuatro en **Finalizada** con resolución **Listo** (20 SP completados). Cada historia tiene un comentario con su PR o commit de cierre, su informe técnico y el enlace al [PR #21](https://github.com/RicardoF1/DistriRapido/pull/21).
 
-**Actualización (2026-11-19):** HGR-41 (US-022) y HGR-42 (US-023) **pertenecen al Sprint 4**, el último sprint del proyecto, y se implementaron dentro de él después de ese corte. En Jira se corrigen igual: se incorporan al «SCRUM Sprint 4» y pasan a **Finalizada** con su PR de cierre, de modo que el sprint queda con HGR-37 a HGR-42 (30 SP).
+**Actualización (2026-11-19):** HGR-41 (US-022) y HGR-42 (US-023) **pertenecen al Sprint 4**, el último sprint del proyecto, y se implementaron dentro de él después de ese corte. En Jira se corrigieron igual: se incorporaron al «SCRUM Sprint 4» y pasaron a **Finalizada** con su PR de cierre, de modo que el sprint queda con HGR-37 a HGR-42 (30 SP).
 
 ### Evidencia de calidad (último corte, US-023)
 
@@ -35,6 +35,7 @@ Las seis historias están implementadas y verificadas con pruebas automatizadas 
 | Backend `npm run test:integration` (PostgreSQL aislado) | 164 pruebas aprobadas en 11 suites |
 | Frontend `vitest --coverage` | 467 pruebas aprobadas en 47 archivos; statements 89.75 %, branches 83.78 %, lines 94.17 % |
 | Typecheck, lint y build | Aprobados en backend y frontend |
+| E2E Playwright (`tests.yml`) | Aprobado en Chromium, Firefox y WebKit en GitHub Actions ([ejecución n.º 13](https://github.com/RicardoF1/DistriRapido/actions/runs/44588259745)), incluidos los 9 tests nuevos de US-020 a US-023; detalle en el [Análisis Playwright](03%20Analisis%20PlayWrigth%20V_1_0_0.md) |
 | `npm audit --audit-level=high` | No aprobado por un único aviso de `picomatch` sin versión corregida publicada (ver Pendientes); los lockfiles no cambiaron en el sprint |
 | Migraciones | Tres migraciones aditivas: `202611090001_us018_incidencias_entrega`, `202611170001_us020_confirmar_ruta`, `202611170002_us021_registrar_sostenibilidad`. US-022 y US-023 son consultas de solo lectura y no necesitan migraciones |
 
@@ -60,7 +61,7 @@ Detalle por historia: [US-018](01%20US-018%20Registrar%20incidencias%20V_1_0_0.m
 | Elemento | Estado | Tratamiento |
 |---|---|---|
 | Integración en `main` | US-018 a US-021 están en `main` desde el [PR #22](https://github.com/RicardoF1/DistriRapido/pull/22); US-022 y US-023 están en `sprint-4` ([PR #23](https://github.com/RicardoF1/DistriRapido/pull/23) y [PR #24](https://github.com/RicardoF1/DistriRapido/pull/24)) | Abrir el PR de `sprint-4` hacia `main` |
-| Registro en Jira | El «SCRUM Sprint 4» se creó y HGR-37 a HGR-40 se movieron a Finalizada el 2026-11-18, al cierre del periodo, por lo que su burndown no refleja el avance diario. HGR-41 y HGR-42 pertenecen al Sprint 4 y se corrigen en Jira de la misma forma | Incorporar HGR-41 y HGR-42 al «SCRUM Sprint 4» y moverlas a Finalizada con su PR de cierre (#23 y #24) |
+| Registro tardío en Jira | El «SCRUM Sprint 4» se creó y HGR-37 a HGR-40 se movieron a Finalizada el 2026-11-18, al cierre del periodo, y HGR-41 y HGR-42 el 2026-11-19, por lo que el burndown no refleja el avance diario | En el trabajo posterior, mover las historias en Jira a medida que avanzan |
 | Roles «Supervisor» y «Planificador» | No existen en el sistema; por decisión del equipo los ejercen Administrador y Operador / Técnico, también en US-022 y US-023 | Si se crean, basta con añadirlos a `OPERATIONS_ROLES` y a `PlanningGuard` |
 | Aviso de seguridad de `picomatch` (GHSA-fc5q-39xc-vjpf) | Detectado durante US-020. No hay versión corregida publicada, así que ninguna actualización lo resuelve todavía; es el único hallazgo que deja `npm audit` en rojo | Aplicar la versión corregida con `overrides` en cuanto se publique |
 | HGR-43 / US-024 (deuda del Sprint 3) | Sigue en el backlog | Reprogramar y replanificar pedidos no entregados |
@@ -72,6 +73,6 @@ Detalle por historia: [US-018](01%20US-018%20Registrar%20incidencias%20V_1_0_0.m
 | Versión | Fecha | Cambio |
 |---|---|---|
 | V_1_0_0 | 2026-11-18 | Versión inicial de la Revisión del Sprint 4, con el estado de Jira al 2026-11-18. |
-| V_1_0_0 (actualización) | 2026-11-19 | Se incorporan US-022 y US-023, implementadas dentro del Sprint 4 por ser el último del proyecto (30 SP). Se retira la indicación de que pasaban al siguiente sprint, se actualizan la evidencia de calidad, la demostración y los pendientes, y se registra que en Jira ambas historias se incorporan al «SCRUM Sprint 4». |
+| V_1_0_0 (actualización) | 2026-11-19 | Se incorporan US-022 y US-023, implementadas dentro del Sprint 4 por ser el último del proyecto (30 SP). Se retira la indicación de que pasaban al siguiente sprint, se actualizan la evidencia de calidad (incluida la ejecución E2E en tres navegadores), la demostración y los pendientes, y se registra que en Jira ambas historias se incorporaron al «SCRUM Sprint 4» como Finalizadas. |
 
 [← Volver al README principal](../../../README.md)

@@ -169,6 +169,18 @@ Ejecución local del 2026-11-19 con `npx playwright test -c playwright.ci.config
 | WebKit 26.6 | 9 | 0 | 22.5 s |
 | Firefox 155 | — | — | No ejecutable en el equipo local: Windows impide lanzar `firefox.exe` (`spawn UNKNOWN`). Se ejecuta en GitHub Actions (Ubuntu) dentro de `tests.yml` |
 
+**Ejecución en GitHub Actions.** Tras integrar `sprint4-operations.spec.ts` en `sprint-4`, el workflow `tests.yml` ([ejecución n.º 13](https://github.com/RicardoF1/DistriRapido/actions/runs/44588259745), 2026-11-19, commit `28080ba`) ejecutó la suite simulada completa, incluidos los 9 tests nuevos, con todos los jobs en verde:
+
+| Job | Resultado | Duración |
+|---|---|---|
+| Backend (unitarias e integración) | Aprobado | 2 min 3 s |
+| Frontend (Vitest) | Aprobado | 1 min 45 s |
+| E2E Playwright (Chromium) | Aprobado | 3 min 38 s |
+| E2E Playwright (Firefox) | Aprobado | 5 min 38 s |
+| E2E Playwright (WebKit) | Aprobado | 16 min 24 s |
+
+Los reportes HTML de cada navegador quedan como artifacts de la ejecución (`playwright-report-chromium`, `playwright-report-firefox`, `playwright-report-webkit`), con 14 días de retención. Así, los tests del Sprint 4 también quedan verificados en Firefox.
+
 ## 3. Monitoreo de rendimiento
 
 **Método.** `performance.spec.ts` registra un `PerformanceObserver` de `largest-contentful-paint` (con `buffered: true`) antes de que cargue la página. Lee el TTFB de `PerformanceNavigationTiming.responseStart` y el FCP de la entrada `first-contentful-paint`, después de que los datos están en pantalla. Los tiempos de API se miden de dos formas: en el navegador, con `page.waitForResponse` y `request().timing().responseEnd`, y de forma directa, con el cliente `request` de Playwright (3 a 5 muestras por endpoint, por el límite de 10 peticiones por minuto del backend). Se hicieron 3 corridas separadas por 65 s y se informa la mediana.
@@ -245,7 +257,7 @@ El login es el endpoint más lento porque verifica la contraseña con Argon2id, 
 - **12 tests fuera de la CI.** Los `@cobertura-privada` solo se ejecutan en local con el paquete aprovisionado; en esta revisión no se ejecutaron porque el paquete no está en este equipo.
 - **Historias sin E2E.** Registrar incidencias (US-018) no tiene spec E2E simulado y Seguimiento operativo (US-019) solo está cubierto por los specs contra el entorno levantado; ambas tienen pruebas de Vitest y de integración con PostgreSQL. US-020 a US-023 se cubren desde el 2026-11-19 con `sprint4-operations.spec.ts` (sección 2.5).
 - **Fuera de la CI.** `performance.spec.ts` y `resilience.spec.ts` necesitan backend, base de datos y credenciales, por lo que no forman parte de `tests.yml`.
-- **Workflow todavía sin ejecutar en GitHub.** `tests.yml` corre por primera vez con el PR de esta rama; los resultados de esta sección son locales. La CI usa Node 24 y el equipo local Node 26.
+- **Resultados locales y de la CI.** Las tablas de las secciones 2.4 y 3 son de ejecuciones locales; desde el 2026-11-19, `tests.yml` también ejecuta la suite en GitHub Actions en los tres navegadores (sección 2.5). La CI usa Node 24 y el equipo local Node 26.
 - **Sin despliegue público.** `deploy-production.yml` queda pendiente hasta que se decida la plataforma, así que no se midió la disponibilidad de un entorno público.
 
 ### Reproducir las mediciones
@@ -268,6 +280,6 @@ Las credenciales se pasan siempre por variables de entorno de la sesión y nunca
 | Versión | Fecha | Cambio |
 |---|---|---|
 | V_1_0_0 | 2026-11-18 | Versión inicial: E2E en tres navegadores, rendimiento y resiliencia del Sprint 4. |
-| V_1_0_0 (actualización) | 2026-11-19 | Se añaden los specs E2E de US-020 a US-023 (`sprint4-operations.spec.ts`, 9 tests) y sus resultados (sección 2.5). |
+| V_1_0_0 (actualización) | 2026-11-19 | Se añaden los specs E2E de US-020 a US-023 (`sprint4-operations.spec.ts`, 9 tests), sus resultados locales y la ejecución en verde de `tests.yml` en Chromium, Firefox y WebKit (sección 2.5). |
 
 [← Volver al README principal](../../../README.md)
