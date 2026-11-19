@@ -81,6 +81,7 @@ Informes técnicos de las historias:
 - [03 US-020 Confirmar ruta V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/03%20US-020%20Confirmar%20ruta%20V_1_0_0.md)
 - [04 US-021 Registrar sostenibilidad V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/04%20US-021%20Registrar%20sostenibilidad%20V_1_0_0.md)
 - [05 US-022 Consultar indicadores V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/05%20US-022%20Consultar%20indicadores%20V_1_0_0.md)
+- [06 US-023 Consultar historial V_1_0_0](../docs/03%20Implementaci%C3%B3n/Sprint%2004/06%20US-023%20Consultar%20historial%20V_1_0_0.md)
 
 La Revisión del Sprint registra como pendientes la integración en `main` y la aceptación de las historias en Jira.
 

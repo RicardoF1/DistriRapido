@@ -3,20 +3,22 @@ import { ApiBadRequestResponse, ApiBearerAuth, ApiCookieAuth, ApiForbiddenRespon
 import { SkipThrottle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RequestOriginGuard } from '../common/request-origin';
+import { HistoryQueryDto } from './dto/history-query.dto';
 import { IndicatorsQueryDto } from './dto/indicators-query.dto';
+import { HistoryService } from './history.service';
 import { OperationsQueryDto } from './dto/operations-query.dto';
 import { IndicatorsService } from './indicators.service';
 import { OperationsGuard } from './operations.guard';
 import { OperationsService } from './operations.service';
 
-@ApiTags('Seguimiento operativo (US-019) e indicadores (US-022)')
+@ApiTags('Seguimiento operativo (US-019), indicadores (US-022) e historial (US-023)')
 @ApiBearerAuth() @ApiCookieAuth('session')
 @ApiUnauthorizedResponse() @ApiForbiddenResponse()
 @UseGuards(JwtAuthGuard, OperationsGuard, RequestOriginGuard)
 @SkipThrottle()
 @Controller('operations')
 export class OperationsController {
-  constructor(private readonly operations: OperationsService, private readonly indicatorsService: IndicatorsService) {}
+  constructor(private readonly operations: OperationsService, private readonly indicatorsService: IndicatorsService, private readonly history: HistoryService) {}
 
   @Get('summary') @Header('Cache-Control', 'no-store')
   @ApiOkResponse({ description: 'Totales de rutas en operación, entregas por estado e incidencias.' })
@@ -26,6 +28,16 @@ export class OperationsController {
   @ApiOkResponse({ description: 'US-022: indicadores de las rutas completadas en el periodo (entregas, incidencias, duración y sostenibilidad).' })
   @ApiBadRequestResponse({ description: 'Fecha con formato inválido o inexistente, periodo invertido o superior a 366 días.' })
   indicators(@Query() query: IndicatorsQueryDto) { return this.indicatorsService.indicators(query); }
+
+  @Get('history') @Header('Cache-Control', 'no-store')
+  @ApiOkResponse({ description: 'US-023: operaciones terminadas (rutas completadas), filtradas y paginadas por fecha de finalización.' })
+  @ApiBadRequestResponse({ description: 'Filtro no permitido o con formato inválido.' })
+  historyList(@Query() query: HistoryQueryDto) { return this.history.list(query); }
+
+  @Get('history/:id') @Header('Cache-Control', 'no-store')
+  @ApiOkResponse({ description: 'US-023: trazabilidad completa de una operación terminada.' })
+  @ApiNotFoundResponse({ description: 'La operación no existe o todavía no ha terminado.' })
+  historyDetail(@Param('id', ParseUUIDPipe) id: string) { return this.history.detail(id); }
 
   @Get('routes') @Header('Cache-Control', 'no-store')
   @ApiOkResponse({ description: 'Rutas en operación con progreso de entregas, filtradas y paginadas.' })

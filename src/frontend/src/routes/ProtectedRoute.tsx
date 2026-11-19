@@ -46,6 +46,7 @@ export function ProtectedRoute() {
     location.pathname === '/rutas' ||
     location.pathname === '/seguimiento' ||
     location.pathname === '/indicadores' ||
+    location.pathname === '/historial' ||
     location.pathname.startsWith('/rutas/') ||
     location.pathname === '/conductores' ||
     location.pathname.startsWith('/conductores/') ||
