@@ -144,7 +144,7 @@ En la ejecución 1, Firefox mostró los mismos fallos de mocks y de cobertura en
 
 | Chromium | Firefox | WebKit |
 |---|---|---|
-| ![Reporte HTML Chromium](evidencias/playwright/ci-chromium-resumen.png) | ![Reporte HTML Firefox](evidencias/playwright/ci-firefox-resumen.png) | ![Reporte HTML WebKit](evidencias/playwright/ci-webkit-resumen.png) |
+| ![Reporte HTML Chromium](../../otros/soporte-sprint-04/evidencias/playwright/ci-chromium-resumen.png) | ![Reporte HTML Firefox](../../otros/soporte-sprint-04/evidencias/playwright/ci-firefox-resumen.png) | ![Reporte HTML WebKit](../../otros/soporte-sprint-04/evidencias/playwright/ci-webkit-resumen.png) |
 
 ### 2.5 Specs del Sprint 4 (US-020 a US-023)
 
@@ -206,9 +206,9 @@ Los reportes HTML de cada navegador quedan como artifacts de la ejecución (`pla
 
 El login es el endpoint más lento porque verifica la contraseña con Argon2id, un costo deliberado como protección contra ataques de fuerza bruta. `GET /routes/:id` recalcula las advertencias vigentes de la ruta contra la base de datos en cada consulta.
 
-![Reporte HTML de la corrida 3](evidencias/playwright/live-corrida3-resumen.png)
+![Reporte HTML de la corrida 3](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-resumen.png)
 
-![Muestras directas de las APIs en el reporte](evidencias/playwright/live-corrida3-performance-detalle.png)
+![Muestras directas de las APIs en el reporte](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-performance-detalle.png)
 
 ## 4. Disponibilidad y resiliencia
 
@@ -236,7 +236,7 @@ El login es el endpoint más lento porque verifica la contraseña con Argon2id, 
 
 | 409 al confirmar | 500 en Seguimiento operativo |
 |---|---|
-| ![Prueba 409 en el reporte](evidencias/playwright/live-corrida3-resilience-409.png) | ![Prueba 500 en el reporte](evidencias/playwright/live-corrida3-resilience-500.png) |
+| ![Prueba 409 en el reporte](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-resilience-409.png) | ![Prueba 500 en el reporte](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-resilience-500.png) |
 
 ## 5. Conclusiones y limitaciones
 
