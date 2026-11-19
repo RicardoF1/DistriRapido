@@ -50,7 +50,7 @@ Inspección documental sobre `main`, commit `7cdde3b765aa4898ef61789640900bad491
 | Sprint 1: US-001 a US-005 | Acceso, sesión, usuarios, registro y consulta de pedidos. Informes históricos V_1_0_0 conservados; aceptación formal y cierre requieren evidencia del equipo. |
 | Sprint 2: US-006 a US-009 | Estados de pedidos, vehículos, conductores y disponibilidad integrados en PR #5–#7. Gestión V_1_1_0 preparada a partir de evidencia técnica; no se declara cierre. |
 | Sprint 3: HGR-32 a HGR-36 | Consulta/comparación, asignación, panel del conductor y entregas. Los informes registran cierre administrativo en Jira y evidencia local de noviembre; esto no implica aceptación docente del producto completo. |
-| Sprint 04 — entregables | Informes técnicos de US-018 a US-021, Revisión y Retrospectiva del Sprint y Análisis Playwright (E2E en Chromium, Firefox y WebKit, rendimiento y resiliencia). La evaluación de usabilidad (SUS) y el despliegue a producción siguen pendientes. [Ver entregables](#sprint-04--entregables). |
+| Sprint 04 — entregables | Informes técnicos de US-018 a US-023, Revisión y Retrospectiva del Sprint y Análisis Playwright (E2E en Chromium, Firefox y WebKit, rendimiento y resiliencia). La evaluación de usabilidad (SUS) y el despliegue a producción siguen pendientes. [Ver entregables](#sprint-04--entregables). |
 | Inspección 04 — Green IT | Entrega independiente de reducción del impacto ambiental y estándares; conserva resultados históricos y limitaciones de evidencia. |
 
 La **interfaz sí permite asignar rutas**: [RouteAssignmentPanel](src/frontend/src/features/routes/RouteAssignmentPanel.tsx), integrado en [RouteDetailPage](src/frontend/src/pages/RouteDetailPage.tsx), con endpoint `PATCH /routes/:id/assignment`. Desde US-020 solo se asignan rutas confirmadas antes con `PATCH /routes/:id/confirmation`. La afirmación anterior de interfaz pendiente describía el estado previo al commit `7745ef3`.
@@ -228,8 +228,8 @@ Los cinco informes mantienen V_1_1_0 como versión posterior justificada; no se 
 
 Entregables de cierre para la Inspección 5 (2026-11-20). Cada documento enlaza de vuelta a este README.
 
-- [01 Revisión del Sprint V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/01%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
-- [02 Retrospectiva del Sprint V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
+- [01 Revisión del Sprint V_1_1_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/01%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md)
+- [02 Retrospectiva del Sprint V_1_1_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/02%20Retrospectiva%20del%20Sprint%20V_1_1_0.md)
 - [03 Analisis PlayWrigth V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/03%20Analisis%20PlayWrigth%20V_1_0_0.md)
 - 04 Usabilidad V_1_0_0 — pendiente: se publicará cuando se hayan reunido las respuestas SUS de al menos 5 personas.
 
