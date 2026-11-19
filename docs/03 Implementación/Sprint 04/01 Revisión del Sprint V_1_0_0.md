@@ -6,7 +6,7 @@
 
 **Líder del Proyecto:** Rupay Chira, Rosalyn Exkra
 
-> Sprint 4 · Versión V_1_1_0 · Fecha de corte: 2026-11-19 (America/Lima). El estado técnico corresponde a la rama `sprint-4` (`d2224e2`), que contiene las seis historias del sprint (US-018 a US-023). El Sprint 4 es el último sprint del proyecto.
+> Sprint 4 · Versión V_1_0_0 (actualizada el 2026-11-19) · Fecha de corte: 2026-11-19 (America/Lima). El estado técnico corresponde a la rama `sprint-4` (`d2224e2`), que contiene las seis historias del sprint (US-018 a US-023). El Sprint 4 es el último sprint del proyecto.
 
 ## Historias de Usuario completadas en este Sprint
 
@@ -53,7 +53,7 @@ Detalle por historia: [US-018](01%20US-018%20Registrar%20incidencias%20V_1_0_0.m
 - **US-023:** con filtros en la URL, el formulario los carga y aparece el mensaje de sin registros; el detalle de una ruta no terminada responde 404 y un rango invertido 400. Sin desbordamiento a 375 px.
 - **US-019, y los escenarios con datos de US-022 y US-023:** verificados con pruebas de integración contra PostgreSQL (`operations.integration.ts`, `indicators.integration.ts` e `history.integration.ts`).
 
-**Demostración a los stakeholders:** se presenta al docente en la Inspección 5 del 2026-11-20, de 18:20 a 18:40. Recorrido previsto: planificar una ruta → confirmarla (US-020) → asignarla al conductor → registrar una incidencia desde el panel del conductor (US-018) → consultarla en «Seguimiento operativo» con filtros (US-019) → registrar la información de sostenibilidad de la ruta (US-021) → completar las entregas desde el panel del conductor → consultar los indicadores del periodo (US-022) → revisar la operación terminada en el «Historial» (US-023). Los indicadores y el historial solo muestran rutas completadas, por lo que la ruta de la demostración debe terminarse antes de esos dos pasos. La retroalimentación recibida se registrará en la versión V_1_2_0 de este documento.
+**Demostración a los stakeholders:** se presenta al docente en la Inspección 5 del 2026-11-20, de 18:20 a 18:40. Recorrido previsto: planificar una ruta → confirmarla (US-020) → asignarla al conductor → registrar una incidencia desde el panel del conductor (US-018) → consultarla en «Seguimiento operativo» con filtros (US-019) → registrar la información de sostenibilidad de la ruta (US-021) → completar las entregas desde el panel del conductor → consultar los indicadores del periodo (US-022) → revisar la operación terminada en el «Historial» (US-023). Los indicadores y el historial solo muestran rutas completadas, por lo que la ruta de la demostración debe terminarse antes de esos dos pasos. La retroalimentación recibida se registrará en este documento después de la Inspección 5.
 
 ## Pendientes
 
@@ -72,6 +72,6 @@ Detalle por historia: [US-018](01%20US-018%20Registrar%20incidencias%20V_1_0_0.m
 | Versión | Fecha | Cambio |
 |---|---|---|
 | V_1_0_0 | 2026-11-18 | Versión inicial de la Revisión del Sprint 4, con el estado de Jira al 2026-11-18. |
-| V_1_1_0 | 2026-11-19 | Se incorporan US-022 y US-023, implementadas dentro del Sprint 4 por ser el último del proyecto (30 SP). Se retira la indicación de que pasaban al siguiente sprint, se actualizan la evidencia de calidad, la demostración y los pendientes, y se registra que en Jira ambas historias se incorporan al «SCRUM Sprint 4». |
+| V_1_0_0 (actualización) | 2026-11-19 | Se incorporan US-022 y US-023, implementadas dentro del Sprint 4 por ser el último del proyecto (30 SP). Se retira la indicación de que pasaban al siguiente sprint, se actualizan la evidencia de calidad, la demostración y los pendientes, y se registra que en Jira ambas historias se incorporan al «SCRUM Sprint 4». |
 
 [← Volver al README principal](../../../README.md)

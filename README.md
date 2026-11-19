@@ -169,10 +169,10 @@ Se conservan los trece tipos de documento, sus nombres y sus versiones. Las fuen
 | 06. Requisitos funcionales | [V_1_1_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_0_0.md) |
 | 07. Requisitos no funcionales | [V_1_0_0](docs/01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_0_0.md) | Sin versión anterior adicional |
 | 08. Usuarios | [V_1_0_0](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) | Sin versión anterior adicional |
-| 09. Reglas de negocio | [V_1_1_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_0_0.md) |
+| 09. Reglas de negocio | [V_1_2_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_0_0.md) |
 | 10. Stack tecnológico | [V_1_1_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_0_0.md) |
-| 11. Base de datos | [V_1_1_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_0_0.md) |
-| 12. Modelo C4 | [V_1_1_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_0_0.md) |
+| 11. Base de datos | [V_1_2_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_0_0.md) |
+| 12. Modelo C4 | [V_1_2_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_0_0.md) |
 | 13. Restricciones | [V_1_1_0](docs/01%20Inicio/13.%20Restricciones%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/13.%20Restricciones%20V_1_0_0.md) |
 
 *Referencia vigente dentro de la serie documental disponible; no implica aceptación humana ni vigencia de todas sus afirmaciones sobre el software actual. Se conserva cada versión anterior.
@@ -228,10 +228,10 @@ Los cinco informes mantienen V_1_1_0 como versión posterior justificada; no se 
 
 Entregables de cierre para la Inspección 5 (2026-11-20). Cada documento enlaza de vuelta a este README.
 
-- [01 Revisión del Sprint V_1_1_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/01%20Revisi%C3%B3n%20del%20Sprint%20V_1_1_0.md)
-- [02 Retrospectiva del Sprint V_1_1_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/02%20Retrospectiva%20del%20Sprint%20V_1_1_0.md)
+- [01 Revisión del Sprint V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/01%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
+- [02 Retrospectiva del Sprint V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
 - [03 Analisis PlayWrigth V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/03%20Analisis%20PlayWrigth%20V_1_0_0.md)
-- 04 Usabilidad V_1_0_0 — pendiente: se publicará cuando se hayan reunido las respuestas SUS de al menos 5 personas.
+- 04 Usabilidad V_1_0_0 — pendiente: se publicará cuando se hayan reunido las respuestas SUS de al menos 5 personas. Material de aplicación: [Guía de aplicación SUS V_1_0_0](docs/otros/soporte-sprint-04/usabilidad/Gu%C3%ADa%20de%20aplicaci%C3%B3n%20SUS%20V_1_0_0.md) y cálculo con `node scripts/sus-score.cjs`.
 
 Workflows de GitHub Actions: [ci.yml](.github/workflows/ci.yml) (typecheck, lint, pruebas, build, auditoría y CodeQL) · [tests.yml](.github/workflows/tests.yml) (backend, Vitest y E2E en Chromium, Firefox y WebKit, con el reporte HTML como artifact). `deploy-production.yml` queda pendiente hasta que el equipo elija la plataforma de despliegue.
 

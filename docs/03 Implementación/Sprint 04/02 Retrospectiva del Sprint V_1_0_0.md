@@ -6,7 +6,7 @@
 
 **Líder del Proyecto:** Rupay Chira, Rosalyn Exkra
 
-> Sprint 4 · Versión V_1_1_0 · Fecha: 2026-11-19 (America/Lima). El Sprint 4 es el último sprint del proyecto.
+> Sprint 4 · Versión V_1_0_0 (actualizada el 2026-11-19) · Fecha: 2026-11-19 (America/Lima). El Sprint 4 es el último sprint del proyecto.
 
 ## ¿Qué aprendimos?
 
@@ -70,6 +70,6 @@
 | Versión | Fecha | Cambio |
 |---|---|---|
 | V_1_0_0 | 2026-11-18 | Versión inicial de la Retrospectiva del Sprint 4. |
-| V_1_1_0 | 2026-11-19 | Se reflejan US-022 y US-023, implementadas dentro del Sprint 4 por ser el último del proyecto. Se actualizan los aprendizajes, las cifras de pruebas y cobertura, y el estado de la integración. Las acciones que remitían al «siguiente sprint» pasan a plazos antes del cierre del proyecto, y la acción de replanificar HGR-41 y HGR-42 se sustituye por su actualización en Jira y la decisión sobre HGR-43. |
+| V_1_0_0 (actualización) | 2026-11-19 | Se reflejan US-022 y US-023, implementadas dentro del Sprint 4 por ser el último del proyecto. Se actualizan los aprendizajes, las cifras de pruebas y cobertura, y el estado de la integración. Las acciones que remitían al «siguiente sprint» pasan a plazos antes del cierre del proyecto, y la acción de replanificar HGR-41 y HGR-42 se sustituye por su actualización en Jira y la decisión sobre HGR-43. |
 
 [← Volver al README principal](../../../README.md)
