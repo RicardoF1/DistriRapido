@@ -1,20 +1,69 @@
+/*
+ * Sistema de diseño de EcoRuta Huancayo (rediseño UI/UX).
+ * Toda la interfaz toma sus colores, tipografía, espacios, bordes y sombras de estos tokens.
+ * Contraste: los pares texto/fondo cumplen WCAG AA (≥ 4,5:1 para texto normal).
+ */
 :root {
-  --color-primary: #006948; --color-primary-hover: #005137; --color-primary-container: #00855d;
-  --color-on-primary: #fff; --color-surface: #f8f9ff; --color-card: #fff;
-  --color-surface-low: #eff4ff; --color-surface-container: #e5eeff;
-  --color-text: #0b1c30; --color-text-muted: #565e74; --color-border: #bccac0; --color-border-subtle: #e2e8f0;
-  --color-error: #93000a; --color-error-surface: #ffdad6;
-  --color-planned-bg: #f1f5f9; --color-planned-text: #475569;
-  --color-in-transit-bg: #ecfdf5; --color-in-transit-text: #065f46;
-  --color-delivered-bg: #f0fdf4; --color-delivered-text: #15803d;
-  --color-incident-bg: #fef3c7; --color-incident-text: #b45309;
-  --font-heading: 'Outfit', system-ui, sans-serif;
-  /* Green IT (área 5): fuentes nativas del sistema para el texto; sin descarga de Inter. */
+  /* Marca: verde EcoRuta (sostenibilidad). */
+  --brand-50: #ecf8f2; --brand-100: #d3f0e1; --brand-200: #a8dfc4; --brand-500: #0f8a5f;
+  --brand-600: #00704d; --brand-700: #005a3e; --brand-800: #044532;
+
+  /* Neutros (gris pizarra con matiz frío). */
+  --gray-0: #ffffff; --gray-25: #fafbfc; --gray-50: #f4f6f8; --gray-100: #eceff3; --gray-200: #dfe4ea;
+  --gray-300: #c8d0da; --gray-400: #98a2b3; --gray-500: #667085; --gray-600: #4b5565; --gray-700: #364152;
+  --gray-800: #202939; --gray-900: #121926;
+
+  /* Semánticos. */
+  --info-50: #eff6ff; --info-100: #dbeafe; --info-600: #0b6bcb; --info-700: #0a5aa8; --info-800: #123e74;
+  --success-50: #ecfdf3; --success-100: #d1fadf; --success-700: #067647;
+  --warning-50: #fffaeb; --warning-100: #fef0c7; --warning-300: #f5c96b; --warning-800: #7a4b00;
+  --danger-50: #fef3f2; --danger-100: #fee4e2; --danger-300: #f3b6b0; --danger-700: #b42318; --danger-800: #912018;
+  --violet-600: #7c3aed; --magenta-600: #b5237d;
+
+  /* Roles usados por los componentes (nombres históricos conservados). */
+  --color-primary: var(--brand-600); --color-primary-hover: var(--brand-700); --color-primary-container: var(--brand-500);
+  --color-primary-soft: var(--brand-50); --color-on-primary: #fff;
+  --color-surface: var(--gray-50); --color-card: var(--gray-0);
+  --color-surface-low: var(--gray-25); --color-surface-container: var(--brand-50);
+  --color-text: var(--gray-900); --color-text-muted: var(--gray-600); --color-text-subtle: var(--gray-500);
+  --color-border: var(--gray-300); --color-border-subtle: var(--gray-200);
+  --color-error: var(--danger-700); --color-error-surface: var(--danger-50);
+  --color-planned-bg: var(--gray-100); --color-planned-text: var(--gray-700);
+  --color-in-transit-bg: var(--brand-50); --color-in-transit-text: var(--brand-700);
+  --color-delivered-bg: var(--success-50); --color-delivered-text: var(--success-700);
+  --color-incident-bg: var(--warning-50); --color-incident-text: var(--warning-800);
+  --color-info-bg: var(--info-50); --color-info-text: var(--info-700);
+
+  /* Tipografía: fuentes nativas del sistema (Green IT, área 5: sin descargas). */
   --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: var(--font-body);
+  --text-xs: .75rem; --text-sm: .875rem; --text-md: 1rem; --text-lg: 1.125rem; --text-xl: 1.375rem; --text-2xl: 1.75rem;
+  --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700;
+
+  /* Espacios. */
   --space-2xs: .25rem; --space-xs: .5rem; --space-sm: .75rem; --space-md: 1rem;
   --space-lg: 1.5rem; --space-xl: 2rem; --space-2xl: 3rem;
-  --gutter-mobile: .875rem; --gutter-desktop: 1.5rem;
-  --radius-sm: .25rem; --radius-md: .375rem; --radius-lg: .5rem; --radius-xl: .75rem; --radius-pill: 9999px;
-  --touch-min: 3rem; --touch-primary: 3.5rem;
-  --shadow-card: 0 1px 3px rgba(15, 23, 42, .06), 0 6px 24px rgba(15, 23, 42, .025);
+  --gutter-mobile: 1rem; --gutter-desktop: 2rem;
+
+  /* Bordes y radios. */
+  --radius-sm: .375rem; --radius-md: .5rem; --radius-lg: .625rem; --radius-xl: .875rem; --radius-pill: 9999px;
+
+  /* Tamaños táctiles (WCAG 2.5.5: objetivos de al menos 44 px). */
+  --touch-min: 2.75rem; --touch-primary: 2.75rem;
+
+  /* Elevación. */
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, .05);
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, .04), 0 1px 3px rgba(16, 24, 40, .06);
+  --shadow-md: 0 4px 8px -2px rgba(16, 24, 40, .08), 0 2px 4px -2px rgba(16, 24, 40, .04);
+  --shadow-lg: 0 12px 24px -4px rgba(16, 24, 40, .1), 0 4px 8px -4px rgba(16, 24, 40, .05);
+
+  /* Foco visible común (WCAG 2.4.7). */
+  --focus-ring: 0 0 0 3px rgba(15, 138, 95, .35);
+
+  /* Transiciones (desactivadas con prefers-reduced-motion). */
+  --transition-fast: .15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --transition-fast: 0s; }
 }

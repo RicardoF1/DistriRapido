@@ -9,7 +9,7 @@ import { RouteConfirmationPanel } from '../features/routes/RouteConfirmationPane
 import { confirmationPending } from '../features/routes/route-confirmation';
 import { RouteSustainabilityPanel, RouteSustainabilitySummary } from '../features/routes/RouteSustainabilityPanel';
 import { initialSustainabilityForm } from '../features/routes/route-sustainability';
-import { ROUTE_STATE_LABELS } from '../features/routes/route-states';
+import { RouteLifecycle } from '../features/routes/RouteLifecycle';
 import { routeMethod } from '../features/routes/route-method';
 import { warningLabel } from '../features/routes/route-warnings';
 import type { RouteAssignment, RouteConfirmation, RouteDetail, RouteState, RouteSustainability } from '../types/routes';
@@ -60,23 +60,39 @@ function RouteVersionDetail({ data, v, onVersionChange, onConfirmed, onAssigned,
   const sustainabilityBlocked = sustainabilityBlock(data, v);
   let sustainability: ReactNode;
   if (data.sostenibilidad) sustainability = <RouteSustainabilitySummary record={data.sostenibilidad} />;
-  else if (sustainabilityBlocked) sustainability = <p>{sustainabilityBlocked}</p>;
+  else if (sustainabilityBlocked) sustainability = <p className="detail-hint">{sustainabilityBlocked}</p>;
   else sustainability = <RouteSustainabilityPanel key={`${data.ruta_id}-${v.numero}`} routeId={data.ruta_id} routeState={data.estado} initial={initialSustainabilityForm(v)} onRegistered={onRegistered} onReload={onReload} onSessionExpired={onSessionExpired} />;
   const confirmable = data.estado === 'GENERADA' && !data.conductor_id && v.numero === data.current_version;
   return <>
-    <h2>{data.alternativa.ejecucion.version.planificacion.etiqueta}</h2><p>Versión {v.numero} · {routeMethod(data.alternativa.metodo)} · Sin optimización genética.{v.resultado.estrategia ? ' Estrategia: ' + v.resultado.estrategia.nombre + '.' : ''}</p><label>Versión registrada<select value={v.numero} onChange={e => onVersionChange(Number(e.target.value))}>{Array.from({ length: data.current_version }, (_, i) => <option key={i} value={i + 1}>{i + 1}</option>)}</select></label>
-    <RouteMap version={v} />
-    <dl className="driver-detail"><div><dt>Origen</dt><dd>{v.resultado.origin.label}</dd></div><div><dt>Finalización</dt><dd>{v.resultado.return_to_origin ? 'Regresa al origen' : 'Último pedido'}</dd></div><div><dt>Distancia calculada</dt><dd>{(Number(v.distancia_m) / 1000).toFixed(2)} km</dd></div><div><dt>Viaje estimado</dt><dd>{(Number(v.duracion_s) / 60).toFixed(1)} min</dd></div><div><dt>Duración con atención y esperas</dt><dd>{(v.resultado.operational_duration_s / 60).toFixed(1)} min</dd></div><div><dt>Fin estimado</dt><dd>{date(v.resultado.end)}</dd></div></dl>
-    <p>Proveedor: {v.resultado.provenance.provider} · Perfil: {v.resultado.provenance.profile} · Revisión: {v.resultado.provenance.revision} · Datos OSM: {v.resultado.provenance.data_version ?? 'Versión no informada'} · Cálculo: {date(v.resultado.provenance.calculated_at)}</p>
-    <p>No implica tráfico en tiempo real ni confirmación operativa.</p>
-    <h2>Confirmación</h2><dl className="driver-detail"><div><dt>Estado</dt><dd>{ROUTE_STATE_LABELS[data.estado] ?? data.estado}</dd></div><div><dt>Confirmada el</dt><dd>{data.confirmado_en ? date(data.confirmado_en) : 'Sin confirmar'}</dd></div><div><dt>Confirmada por</dt><dd>{data.confirmador?.email ?? 'Sin confirmar'}</dd></div><div><dt>Versión confirmada</dt><dd>{data.version_confirmada ?? 'Sin confirmar'}</dd></div></dl>
-    {confirmable && <RouteConfirmationPanel routeId={data.ruta_id} pending={confirmationPending(data, v)} onConfirmed={onConfirmed} onReload={onReload} onSessionExpired={onSessionExpired} />}
-    <h2>Asignación</h2><dl className="driver-detail"><div><dt>Conductor</dt><dd>{data.conductor?.nombre_completo ?? 'Sin asignar'}</dd></div><div><dt>Asignada el</dt><dd>{data.asignado_en ? date(data.asignado_en) : 'Sin asignar'}</dd></div></dl>
-    {block ? <p>{block}</p> : <RouteAssignmentPanel routeId={data.ruta_id} onAssigned={onAssigned} onReload={onReload} onSessionExpired={onSessionExpired} />}
-    <h2>Sostenibilidad</h2>
-    {sustainability}
-    {v.resultado.warnings.length > 0 && <div role="status"><strong>Restricciones y datos no evaluables:</strong><ul>{v.resultado.warnings.map(w => <li key={w}><span>{warningLabel(w)}</span> <code>{w}</code></li>)}</ul></div>}
-    {data.current_warnings.length > 0 && <p role="status">Los pedidos actuales difieren de esta versión histórica. No se recalculó ni modificó el recorrido.</p>}
-    <h2>Paradas ordenadas</h2><div className="table-scroll" tabIndex={0} role="region" aria-label="Paradas del recorrido"><table><thead><tr><th>Orden</th><th>Pedido y destino</th><th>Llegada estimada</th><th>Atención y salida</th><th>Estado actual</th></tr></thead><tbody>{v.paradas.map(p => <tr key={p.pedido_id}><td>{p.secuencia}</td><td><Link to={'/pedidos/' + p.pedido_id}>{p.pedido_id}</Link><p>{p.datos.direccion}</p></td><td>{date(p.datos.arrival)}</td><td>{p.datos.service_minutes} min · {date(p.datos.departure)}</td><td>{p.pedido.estado}</td></tr>)}</tbody></table></div>
+    <div className="route-summary-head">
+      <div><h2>{data.alternativa.ejecucion.version.planificacion.etiqueta}</h2><p className="route-meta">Versión {v.numero} · {routeMethod(data.alternativa.metodo)} · Sin optimización genética.{v.resultado.estrategia ? ' Estrategia: ' + v.resultado.estrategia.nombre + '.' : ''}</p></div>
+      <label className="route-version-select">Versión registrada<select value={v.numero} onChange={e => onVersionChange(Number(e.target.value))}>{Array.from({ length: data.current_version }, (_, i) => <option key={i} value={i + 1}>{i + 1}</option>)}</select></label>
+    </div>
+    <RouteLifecycle state={data.estado} />
+    <section className="detail-section" aria-label="Resumen del recorrido">
+      <dl className="route-stats"><div><dt>Distancia calculada</dt><dd>{(Number(v.distancia_m) / 1000).toFixed(2)} km</dd></div><div><dt>Viaje estimado</dt><dd>{(Number(v.duracion_s) / 60).toFixed(1)} min</dd></div><div><dt>Duración con atención y esperas</dt><dd>{(v.resultado.operational_duration_s / 60).toFixed(1)} min</dd></div><div><dt>Fin estimado</dt><dd>{date(v.resultado.end)}</dd></div><div><dt>Origen</dt><dd>{v.resultado.origin.label}</dd></div><div><dt>Finalización</dt><dd>{v.resultado.return_to_origin ? 'Regresa al origen' : 'Último pedido'}</dd></div></dl>
+      <RouteMap version={v} />
+      <p className="route-provenance">Proveedor: {v.resultado.provenance.provider} · Perfil: {v.resultado.provenance.profile} · Revisión: {v.resultado.provenance.revision} · Datos OSM: {v.resultado.provenance.data_version ?? 'Versión no informada'} · Cálculo: {date(v.resultado.provenance.calculated_at)}</p>
+      <p className="route-provenance">No implica tráfico en tiempo real ni confirmación operativa.</p>
+      {v.resultado.warnings.length > 0 && <div role="status" className="route-warnings"><strong>Restricciones y datos no evaluables:</strong><ul>{v.resultado.warnings.map(w => <li key={w}><span>{warningLabel(w)}</span> <code>{w}</code></li>)}</ul></div>}
+      {data.current_warnings.length > 0 && <p role="status" className="route-warnings">Los pedidos actuales difieren de esta versión histórica. No se recalculó ni modificó el recorrido.</p>}
+    </section>
+    <div className="detail-grid">
+      <section className="detail-section">
+        <h2>Confirmación</h2><dl className="detail-facts"><div><dt>Confirmada el</dt><dd>{data.confirmado_en ? date(data.confirmado_en) : 'Sin confirmar'}</dd></div><div><dt>Confirmada por</dt><dd>{data.confirmador?.email ?? 'Sin confirmar'}</dd></div><div><dt>Versión confirmada</dt><dd>{data.version_confirmada ?? 'Sin confirmar'}</dd></div></dl>
+        {confirmable && <RouteConfirmationPanel routeId={data.ruta_id} pending={confirmationPending(data, v)} onConfirmed={onConfirmed} onReload={onReload} onSessionExpired={onSessionExpired} />}
+      </section>
+      <section className="detail-section">
+        <h2>Asignación</h2><dl className="detail-facts"><div><dt>Conductor</dt><dd>{data.conductor?.nombre_completo ?? 'Sin asignar'}</dd></div><div><dt>Asignada el</dt><dd>{data.asignado_en ? date(data.asignado_en) : 'Sin asignar'}</dd></div></dl>
+        {block ? <p className="detail-hint">{block}</p> : <RouteAssignmentPanel routeId={data.ruta_id} onAssigned={onAssigned} onReload={onReload} onSessionExpired={onSessionExpired} />}
+      </section>
+    </div>
+    <section className="detail-section">
+      <h2>Sostenibilidad</h2>
+      {sustainability}
+    </section>
+    <section className="detail-section">
+      <h2>Paradas ordenadas</h2><div className="table-scroll" tabIndex={0} role="region" aria-label="Paradas del recorrido"><table><thead><tr><th>Orden</th><th>Pedido y destino</th><th>Llegada estimada</th><th>Atención y salida</th><th>Estado actual</th></tr></thead><tbody>{v.paradas.map(p => <tr key={p.pedido_id}><td>{p.secuencia}</td><td><Link to={'/pedidos/' + p.pedido_id}>{p.pedido_id}</Link><p>{p.datos.direccion}</p></td><td>{date(p.datos.arrival)}</td><td>{p.datos.service_minutes} min · {date(p.datos.departure)}</td><td>{p.pedido.estado}</td></tr>)}</tbody></table></div>
+    </section>
   </>;
 }
