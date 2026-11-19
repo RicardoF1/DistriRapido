@@ -98,7 +98,7 @@ Este material permite consultar procedencia, decisiones y respaldo técnico; **n
 
 | Material | Acceso | Procedencia |
 |---|---|---|
-| Antecedentes Sprint 01 | [Índice técnico original](otros/antecedentes-sprint-01/README.md) · [Mejoras posteriores V_1_1_0](otros/antecedentes-sprint-01/05%20Mejoras%20posteriores%20al%20Sprint%201%20V_1_1_0.md) | Informes de US-001–US-004 y addendum posterior al Sprint 1. |
+| Antecedentes Sprint 01 | [Índice técnico original](otros/antecedentes-sprint-01/README.md) · [Mejoras posteriores V_1_1_0](otros/antecedentes-sprint-01/05%20Mejoras%20posteriores%20al%20Sprint%201%20V_1_1_0.md) · [Prototipos de pantallas](otros/antecedentes-sprint-01/prototipos) | Informes de US-001–US-004 y addendum posterior al Sprint 1. |
 | Soporte Sprint 02 | [Integración Sprints 1 y 2](otros/soporte-sprint-02/Integraci%C3%B3n%20Sprints%201%20y%202%20V_1_1_0.md) · [Diseños, implementación y SQL originales](otros/soporte-sprint-02) | Material técnico original de US-008 y US-009; SQL documental, no ejecutado. |
 | Soporte Sprint 03 | [Informes técnicos](otros/soporte-sprint-03) · [Índice anterior conservado](otros/soporte-sprint-03/README.md) · [Evidencias originales](otros/soporte-sprint-03/evidencias/README.md) | Se agrupan los informes auxiliares, la evidencia técnica 06 y las capturas, sin duplicar la antigua jerarquía. |
 | Soporte Sprint 04 | [Informes técnicos US-018 a US-023](otros/soporte-sprint-04) · [Capturas de Playwright](otros/soporte-sprint-04/evidencias/playwright) · [Material SUS](otros/soporte-sprint-04/usabilidad) | Informes por historia y capturas que respaldan los entregables; la carpeta del sprint conserva solo los cuatro documentos que pide la consigna. |
