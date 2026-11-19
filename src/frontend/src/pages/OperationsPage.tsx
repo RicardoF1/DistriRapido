@@ -45,14 +45,14 @@ const hasFilters = (filters: OperationsFilters) => Object.keys(filters).length >
 function SummaryPanel({ summary, error, onRefresh }: Readonly<{ summary: OperationsSummary | null; error: string; onRefresh: () => void }>) {
   // Las tarjetas se pintan desde el inicio con «…» para reservar su espacio y evitar desplazamientos (CLS).
   const metrics = [
-    ['Rutas asignadas', summary?.routes.ASIGNADA], ['Rutas en curso', summary?.routes.EN_CURSO], ['Rutas completadas', summary?.routes.COMPLETADA],
-    ['Entregas pendientes', summary?.deliveries.PENDIENTE], ['Entregas realizadas', summary?.deliveries.ENTREGADA], ['Entregas no realizadas', summary?.deliveries.NO_ENTREGADA],
-    ['Incidencias registradas', summary?.incidents],
+    ['Rutas asignadas', summary?.routes.ASIGNADA, 'info route'], ['Rutas en curso', summary?.routes.EN_CURSO, 'warning route'], ['Rutas completadas', summary?.routes.COMPLETADA, 'success check'],
+    ['Entregas pendientes', summary?.deliveries.PENDIENTE, 'neutral clock'], ['Entregas realizadas', summary?.deliveries.ENTREGADA, 'success check'], ['Entregas no realizadas', summary?.deliveries.NO_ENTREGADA, 'danger cross'],
+    ['Incidencias registradas', summary?.incidents, 'warning alert'],
   ] as const;
   return <section className="admin-summary operations-summary" aria-labelledby="operations-summary-title">
     <div className="admin-summary-heading"><h2 id="operations-summary-title">Resumen general de la operación</h2><button type="button" className="button button-secondary" onClick={onRefresh}>Actualizar resumen</button></div>
     {error ? <p role="alert" className="admin-summary-error">{error}</p>
-      : <>{!summary && <p role="status" className="sr-only">Cargando resumen…</p>}<dl className="admin-metrics operations-metrics" aria-busy={!summary}>{metrics.map(([label, value]) => <div className="admin-metric" key={label}><dt>{label}</dt><dd>{value ?? '…'}</dd></div>)}</dl></>}
+      : <>{!summary && <p role="status" className="sr-only">Cargando resumen…</p>}<dl className="admin-metrics operations-metrics" aria-busy={!summary}>{metrics.map(([label, value, look]) => { const [tone, icon] = look.split(' '); return <div className={`admin-metric kpi kpi-${tone} kpi-icon-${icon}`} key={label}><dt>{label}</dt><dd>{value ?? '…'}</dd></div>; })}</dl></>}
   </section>;
 }
 
@@ -181,7 +181,7 @@ export function OperationsPage() {
                   <td>{route.version?.vehiculo.placa ?? 'No disponible'}</td>
                   <td><span className={`status-badge route-${route.estado.toLowerCase()}`}>{ROUTE_STATE_LABELS[route.estado]}</span></td>
                   <td>{formatDateTime(route.asignado_en)}</td>
-                  <td>{route.deliveries.processed}/{route.deliveries.total} ({route.deliveries.percentage}%)</td>
+                  <td><span className="progress-cell">{route.deliveries.processed}/{route.deliveries.total} ({route.deliveries.percentage}%)<span className="bar-track" aria-hidden="true"><span className="bar-fill bar-progress" style={{ width: `${route.deliveries.percentage}%` }} /></span></span></td>
                   <td>{route.deliveries.not_delivered}</td>
                   <td>{route.incidents}</td>
                   <td><button type="button" className="button button-secondary" aria-expanded={selected === route.ruta_id} aria-label={`Ver entregas de la ruta ${route.version?.vehiculo.placa ?? ''} de ${route.conductor?.nombre_completo ?? 'conductor sin asignar'}`.replace(/\s+/g, ' ')} data-route-id={route.ruta_id} onClick={() => setSelected(route.ruta_id)}>Ver entregas</button></td>

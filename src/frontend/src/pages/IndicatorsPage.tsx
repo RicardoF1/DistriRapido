@@ -20,19 +20,25 @@ const number = (value: number, digits = 2) => value.toLocaleString('es-PE', { ma
 export const show = (value: number | null | undefined, unit = '', digits = 2) => value === null ? INSUFFICIENT : value === undefined ? '…' : `${number(value, digits)}${unit}`;
 const day = (value: string) => { const [year, month, date] = value.split('-'); return `${date}/${month}/${year}`; };
 
-type Metric = readonly [label: string, value: string, detail?: string];
+type Tone = 'brand' | 'success' | 'danger' | 'warning' | 'info' | 'neutral';
+interface Metric { label: string; value: string; detail?: string; icon: string; tone: Tone; percent?: number | null }
 
-function MetricGrid({ title, metrics, loading }: Readonly<{ title: string; metrics: Metric[]; loading: boolean }>) {
+/** Tarjetas de indicadores: icono y color por tipo (CSS) y barra de progreso para los porcentajes. */
+function MetricGrid({ title, subtitle, variant, metrics, loading }: Readonly<{ title: string; subtitle: string; variant: 'ops' | 'sus'; metrics: Metric[]; loading: boolean }>) {
   const id = useId();
-  return <section className="admin-summary indicators-section" aria-labelledby={id}>
-    <h2 id={id}>{title}</h2>
-    <dl className="admin-metrics" aria-busy={loading}>{metrics.map(([label, value, detail]) => <div className="admin-metric" key={label}>
+  return <section className="indicators-section" aria-labelledby={id}>
+    <div className="section-head"><h2 id={id}>{title}</h2><p>{subtitle}</p></div>
+    <dl className={`admin-metrics kpi-grid kpi-grid-${variant}`} aria-busy={loading}>{metrics.map(({ label, value, detail, icon, tone, percent }) => <div className={`admin-metric kpi kpi-${tone} kpi-icon-${icon}`} key={label}>
       <dt>{label}</dt>
       <dd className={value === INSUFFICIENT ? 'admin-metric-value-muted' : undefined}>{value}</dd>
-      {detail && <dd className="admin-metric-value-muted">{detail}</dd>}
+      {percent !== undefined && <dd className="kpi-bar" aria-hidden="true"><span style={{ width: `${Math.max(0, Math.min(100, percent ?? 0))}%` }} /></dd>}
+      {detail && <dd className="admin-metric-value-muted kpi-detail">{detail}</dd>}
     </div>)}</dl>
   </section>;
 }
+
+const limaToday = () => new Date(Date.now() - 5 * 3_600_000).toISOString().slice(0, 10);
+const shiftDays = (date: string, days: number) => new Date(Date.parse(`${date}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10);
 
 export function IndicatorsPage() {
   const { acceptSession } = useAuth();
@@ -73,6 +79,7 @@ export function IndicatorsPage() {
     setAttempt(value => value + 1);
   }
   function reset() { setDraft({}); setDateError(''); setParams(new URLSearchParams()); }
+  function preset(desde: string, hasta: string) { setDraft({ desde, hasta }); setDateError(''); setParams(new URLSearchParams({ desde, hasta })); }
   const set = (key: keyof IndicatorsPeriod, value: string) => setDraft(current => {
     const next = { ...current, [key]: value };
     if (!value) delete next[key];
@@ -83,59 +90,91 @@ export function IndicatorsPage() {
   const shown = loading ? null : data;
   const op = shown?.operacion; const sus = shown?.sostenibilidad;
   const operation: Metric[] = [
-    ['Rutas completadas', show(op?.rutas_completadas, '', 0)],
-    ['Entregas realizadas', show(op?.entregas.realizadas, '', 0)],
-    ['Entregas no realizadas', show(op?.entregas.no_realizadas, '', 0)],
-    ['Tasa de entregas exitosas', show(op?.entregas.tasa_exito, ' %'), 'Realizadas ÷ (realizadas + no realizadas)'],
-    ['Incidencias registradas', show(op?.incidencias.total, '', 0)],
-    ['Duración media de la ruta', show(op?.duracion_media_min, ' min'), 'Del inicio al fin de cada ruta'],
+    { label: 'Rutas completadas', value: show(op?.rutas_completadas, '', 0), icon: 'route', tone: 'brand' },
+    { label: 'Entregas realizadas', value: show(op?.entregas.realizadas, '', 0), icon: 'check', tone: 'success' },
+    { label: 'Entregas no realizadas', value: show(op?.entregas.no_realizadas, '', 0), icon: 'cross', tone: 'danger' },
+    { label: 'Tasa de entregas exitosas', value: show(op?.entregas.tasa_exito, ' %'), detail: 'Realizadas ÷ (realizadas + no realizadas)', icon: 'gauge', tone: 'success', percent: op ? op.entregas.tasa_exito : undefined },
+    { label: 'Incidencias registradas', value: show(op?.incidencias.total, '', 0), icon: 'alert', tone: 'warning' },
+    { label: 'Duración media de la ruta', value: show(op?.duracion_media_min, ' min'), detail: 'Del inicio al fin de cada ruta', icon: 'clock', tone: 'info' },
   ];
   const sustainability: Metric[] = [
-    ['Cobertura del registro', show(sus?.cobertura, ' %'), sus ? `${sus.rutas_con_registro} de ${op?.rutas_completadas ?? 0} rutas con registro de sostenibilidad` : undefined],
-    ['Distancia recorrida', show(sus?.distancia_km, ' km', 3)],
-    ['Combustible consumido', show(sus?.combustible_l, ' L', 3)],
-    ['Emisiones de CO₂', show(sus?.co2_kg, ' kg', 4)],
-    ['CO₂ por entrega exitosa', show(sus?.co2_por_entrega_kg, ' kg', 4), 'Solo rutas con registro'],
-    ['Costo de combustible', sus?.costo_combustible === undefined ? '…' : sus.costo_combustible === null ? INSUFFICIENT : `S/ ${number(sus.costo_combustible)}`, sus ? `${sus.registros_con_costo} registros informan el costo` : undefined],
-    ['Origen de los datos', sus ? `${sus.origen.ESTIMADO} estimados · ${sus.origen.MEDIDO} medidos` : '…'],
+    { label: 'Cobertura del registro', value: show(sus?.cobertura, ' %'), detail: sus ? `${sus.rutas_con_registro} de ${op?.rutas_completadas ?? 0} rutas con registro de sostenibilidad` : undefined, icon: 'leaf', tone: 'brand', percent: sus ? sus.cobertura : undefined },
+    { label: 'Distancia recorrida', value: show(sus?.distancia_km, ' km', 3), icon: 'route', tone: 'info' },
+    { label: 'Combustible consumido', value: show(sus?.combustible_l, ' L', 3), icon: 'fuel', tone: 'warning' },
+    { label: 'Emisiones de CO₂', value: show(sus?.co2_kg, ' kg', 4), icon: 'cloud', tone: 'neutral' },
+    { label: 'CO₂ por entrega exitosa', value: show(sus?.co2_por_entrega_kg, ' kg', 4), detail: 'Solo rutas con registro', icon: 'leaf', tone: 'success' },
+    { label: 'Costo de combustible', value: sus?.costo_combustible === undefined ? '…' : sus.costo_combustible === null ? INSUFFICIENT : `S/ ${number(sus.costo_combustible)}`, detail: sus ? `${sus.registros_con_costo} registros informan el costo` : undefined, icon: 'coin', tone: 'warning' },
+    { label: 'Origen de los datos', value: sus ? `${sus.origen.ESTIMADO} estimados · ${sus.origen.MEDIDO} medidos` : '…', icon: 'database', tone: 'neutral' },
   ];
+  const maxIncidents = op ? Math.max(1, ...INCIDENT_TYPES.map(type => op.incidencias.por_tipo[type] ?? 0)) : 1;
+  const today = limaToday();
+
+  const deliveries = op?.entregas;
+  const deliveryTotal = deliveries ? deliveries.realizadas + deliveries.no_realizadas + deliveries.pendientes : 0;
+  const share = (part: number) => deliveryTotal ? Math.round(part * 1000 / deliveryTotal) / 10 : 0;
+  const month = `${today.slice(0, 8)}01`;
+  const week = shiftDays(today, -6);
 
   return <AppLayout title="Indicadores" navigationLabel="Indicadores de la operación">
-    <section className="users-panel operations-panel" aria-labelledby="indicators-title">
-      <div className="page-heading"><h1 id="indicators-title">Indicadores de la operación</h1></div>
-      <p>Resultados de las rutas completadas en el periodo: entregas, incidencias, duración y sostenibilidad. Las rutas que siguen en curso se revisan en «Seguimiento operativo».</p>
+    <section className="users-panel dashboard" aria-labelledby="indicators-title">
+      <div className="dashboard-head">
+        <h1 id="indicators-title">Indicadores de la operación</h1>
+        <p className="dashboard-subtitle">Resultados de las rutas completadas en el periodo: entregas, incidencias, duración y sostenibilidad. Las rutas que siguen en curso se revisan en «Seguimiento operativo».</p>
+      </div>
 
-      <form className="operations-filters" onSubmit={apply} aria-labelledby={`${id}-period`} noValidate>
-        <h2 id={`${id}-period`}>Periodo</h2>
-        <div className="operations-filter-grid">
-          <label className="form-field">Desde
-            <input type="date" value={draft.desde ?? ''} aria-invalid={dateError ? true : undefined} aria-describedby={dateError ? `${id}-date-error` : undefined} onChange={event => set('desde', event.target.value)} />
-          </label>
-          <label className="form-field">Hasta
-            <input type="date" value={draft.hasta ?? ''} aria-invalid={dateError ? true : undefined} aria-describedby={dateError ? `${id}-date-error` : undefined} onChange={event => set('hasta', event.target.value)} />
-          </label>
+      <form className="period-toolbar" onSubmit={apply} aria-labelledby={`${id}-period`} noValidate>
+        <div className="period-toolbar-row">
+          <h2 id={`${id}-period`} className="period-title">Periodo</h2>
+          <div className="period-presets" role="group" aria-label="Periodos rápidos">
+            <button type="button" className="period-preset" aria-pressed={!appliedKey} onClick={reset}>Últimos 30 días</button>
+            <button type="button" className="period-preset" aria-pressed={applied.desde === week && applied.hasta === today} onClick={() => preset(week, today)}>Últimos 7 días</button>
+            <button type="button" className="period-preset" aria-pressed={applied.desde === month && applied.hasta === today} onClick={() => preset(month, today)}>Este mes</button>
+          </div>
+          <div className="period-range">
+            <label className="period-field">Desde
+              <input type="date" value={draft.desde ?? ''} aria-invalid={dateError ? true : undefined} aria-describedby={dateError ? `${id}-date-error` : undefined} onChange={event => set('desde', event.target.value)} />
+            </label>
+            <label className="period-field">Hasta
+              <input type="date" value={draft.hasta ?? ''} aria-invalid={dateError ? true : undefined} aria-describedby={dateError ? `${id}-date-error` : undefined} onChange={event => set('hasta', event.target.value)} />
+            </label>
+            <button type="submit" className="button button-primary">Consultar periodo</button>
+          </div>
         </div>
-        <p className="admin-metric-value-muted">Sin fechas se muestran los últimos 30 días. El periodo admite hasta 366 días, en hora de Lima.</p>
         {dateError && <p id={`${id}-date-error`} className="field-error" role="alert">{dateError}</p>}
-        <div className="driver-actions">
-          <button type="submit" className="button button-primary">Consultar periodo</button>
-          <button type="button" className="button button-secondary" onClick={reset} disabled={!appliedKey && !draft.desde && !draft.hasta}>Últimos 30 días</button>
-        </div>
+        <p className="period-hint">Sin fechas se muestran los últimos 30 días. Días completos en hora de Lima; el periodo admite hasta 366 días.</p>
       </form>
 
       {error ? <div className="indicators-error"><p role="alert">{error}</p><button type="button" className="button button-secondary" onClick={() => setAttempt(value => value + 1)}>Reintentar consulta</button></div>
         : <>
-          <p role="status">{loading || !data ? 'Calculando indicadores…'
+          <p role="status" className={`period-status${data && !loading && !data.datos_suficientes ? ' is-empty' : ''}`}>{loading || !data ? 'Calculando indicadores…'
             : `Periodo del ${day(data.periodo.desde)} al ${day(data.periodo.hasta)}.${data.datos_suficientes ? '' : ' No existen datos suficientes para presentar indicadores en este periodo: no hay rutas completadas.'}`}</p>
-          <MetricGrid title="Operación" metrics={operation} loading={loading} />
-          <MetricGrid title="Sostenibilidad" metrics={sustainability} loading={loading} />
-          <section aria-labelledby={`${id}-incidents`} aria-busy={loading}>
-            <h2 id={`${id}-incidents`}>Incidencias por tipo</h2>
-            <div className="table-scroll" tabIndex={0} role="region" aria-label="Tabla de incidencias por tipo"><table>
-              <thead><tr><th scope="col">Tipo de incidencia</th><th scope="col">Cantidad</th></tr></thead>
-              <tbody>{INCIDENT_TYPES.map(type => <tr key={type}><td>{INCIDENT_TYPE_LABELS[type]}</td><td>{op ? number(op.incidencias.por_tipo[type] ?? 0, 0) : '…'}</td></tr>)}</tbody>
-            </table></div>
-          </section>
+          <MetricGrid title="Operación" subtitle="Rutas completadas en el periodo" variant="ops" metrics={operation} loading={loading} />
+          <div className="dashboard-row">
+            <section className="dashboard-card" aria-labelledby={`${id}-incidents`} aria-busy={loading}>
+              <div className="section-head"><h2 id={`${id}-incidents`}>Incidencias por tipo</h2><p>Registradas por los conductores en sus entregas</p></div>
+              <div className="table-scroll" tabIndex={0} role="region" aria-label="Tabla de incidencias por tipo"><table className="compact-table">
+                <thead><tr><th scope="col">Tipo de incidencia</th><th scope="col">Cantidad</th></tr></thead>
+                <tbody>{INCIDENT_TYPES.map(type => <tr key={type}><td>{INCIDENT_TYPE_LABELS[type]}</td><td><span className="bar-cell"><span className="bar-track" aria-hidden="true"><span className="bar-fill" style={{ width: `${op ? Math.round((op.incidencias.por_tipo[type] ?? 0) * 100 / maxIncidents) : 0}%` }} /></span><span className="bar-value">{op ? number(op.incidencias.por_tipo[type] ?? 0, 0) : '…'}</span></span></td></tr>)}</tbody>
+              </table></div>
+            </section>
+            <section className="dashboard-card" aria-labelledby={`${id}-deliveries`} aria-busy={loading}>
+              <div className="section-head"><h2 id={`${id}-deliveries`}>Distribución de entregas</h2><p>Resultado de las paradas de las rutas completadas</p></div>
+              <div className="stacked-bar" aria-hidden="true">
+                {deliveries && deliveryTotal > 0 && <>
+                  <span className="stacked-ok" style={{ width: `${share(deliveries.realizadas)}%` }} />
+                  <span className="stacked-fail" style={{ width: `${share(deliveries.no_realizadas)}%` }} />
+                  <span className="stacked-pending" style={{ width: `${share(deliveries.pendientes)}%` }} />
+                </>}
+              </div>
+              <ul className="stacked-legend">
+                <li><span className="legend-dot stacked-ok" aria-hidden="true" />Realizadas<strong>{deliveries ? number(deliveries.realizadas, 0) : '…'}</strong><small>{deliveryTotal ? `${number(share(deliveries!.realizadas), 1)} %` : '—'}</small></li>
+                <li><span className="legend-dot stacked-fail" aria-hidden="true" />No realizadas<strong>{deliveries ? number(deliveries.no_realizadas, 0) : '…'}</strong><small>{deliveryTotal ? `${number(share(deliveries!.no_realizadas), 1)} %` : '—'}</small></li>
+                <li><span className="legend-dot stacked-pending" aria-hidden="true" />Pendientes<strong>{deliveries ? number(deliveries.pendientes, 0) : '…'}</strong><small>{deliveryTotal ? `${number(share(deliveries!.pendientes), 1)} %` : '—'}</small></li>
+              </ul>
+              {deliveries && deliveryTotal === 0 && <p className="card-empty">Sin entregas en el periodo seleccionado.</p>}
+            </section>
+          </div>
+          <MetricGrid title="Sostenibilidad" subtitle="Datos ambientales registrados por ruta" variant="sus" metrics={sustainability} loading={loading} />
         </>}
     </section>
   </AppLayout>;
