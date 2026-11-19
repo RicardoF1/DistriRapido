@@ -4,6 +4,7 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { OperationsController } from './operations.controller';
 import { OperationsGuard } from './operations.guard';
 import { OperationsService } from './operations.service';
+import { IndicatorsService } from './indicators.service';
 
-@Module({ imports: [AuthModule, PrismaModule], controllers: [OperationsController], providers: [OperationsGuard, OperationsService] })
+@Module({ imports: [AuthModule, PrismaModule], controllers: [OperationsController], providers: [OperationsGuard, OperationsService, IndicatorsService] })
 export class OperationsModule {}
