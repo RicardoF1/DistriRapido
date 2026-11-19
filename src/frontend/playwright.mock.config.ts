@@ -14,6 +14,7 @@ export default defineConfig({
     '**/order-marker-sync.spec.ts', '**/order-coverage.spec.ts',
     '**/order-consultation.spec.ts', '**/order-navigation.spec.ts',
     '**/responsive.spec.ts', '**/admin-welcome.spec.ts', '**/admin-summary.spec.ts',
+    '**/sprint4-operations.spec.ts',
   ],
   workers: 1,
   fullyParallel: false,

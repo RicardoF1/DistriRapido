@@ -6,7 +6,7 @@
 
 **Líder del Proyecto:** Rupay Chira, Rosalyn Exkra
 
-> Sprint 4 · Versión V_1_0_0 · Fecha de medición: 2026-11-18 (America/Lima). Código de la aplicación: `cc3ad8c` (US-021), sin cambios posteriores en `src/`. Pruebas ejecutadas en la rama `docs/sprint-4-cierre`, commits `7b20a39` (mediciones) y `d62dc99` (suite por navegador).
+> Sprint 4 · Versión V_1_0_0 · Fecha de medición: 2026-11-18 (America/Lima). Código de la aplicación: `cc3ad8c` (US-021), sin cambios posteriores en `src/`. Pruebas ejecutadas en la rama `docs/sprint-4-cierre`, commits `7b20a39` (mediciones) y `d62dc99` (suite por navegador). Actualizado el 2026-11-19 con los specs E2E de US-020 a US-023 (sección 2.5), sobre el código de `sprint-4` (`d2224e2`).
 
 ## 1. Configuración del entorno de pruebas
 
@@ -14,7 +14,7 @@
 
 | Elemento | Contenido |
 |---|---|
-| `*.spec.ts` simulados (16 archivos en la allowlist) | Interceptan la API con `page.route` y no escriben datos reales: autenticación, panel de administración, usuarios, vehículos, conductores, cuentas y credenciales de conductor, disponibilidad, pedidos, planificación y rutas, panel del conductor y diseño adaptable. |
+| `*.spec.ts` simulados (17 archivos en la allowlist, incluido `sprint4-operations.spec.ts`) | Interceptan la API con `page.route` y no escriben datos reales: autenticación, panel de administración, usuarios, vehículos, conductores, cuentas y credenciales de conductor, disponibilidad, pedidos, planificación y rutas, panel del conductor y diseño adaptable. |
 | `performance.spec.ts` | Web Vitals y tiempos de API contra el entorno levantado (sección 3). |
 | `resilience.spec.ts` | Códigos HTTP reales y mensajes de la interfaz ante fallos de la API (sección 4). |
 | `live-env.ts` | Variables del entorno en vivo (`E2E_LIVE`, `E2E_API_URL`, credenciales). Ninguna credencial se versiona. |
@@ -26,7 +26,7 @@
 | Archivo | Uso | Navegadores |
 |---|---|---|
 | `playwright.config.ts` | Configuración histórica contra el servidor de desarrollo, proyectos `mobile` (390 px) y `desktop` (1440 px). | Edge (`channel: msedge`) |
-| `playwright.mock.config.ts` | Allowlist de los 16 specs simulados, `workers: 1`. | Edge (`channel: msedge`) |
+| `playwright.mock.config.ts` | Allowlist de los 17 specs simulados, `workers: 1`. | Edge (`channel: msedge`) |
 | `playwright.ci.config.ts` | Hereda la allowlist del anterior y la ejecuta contra el build de producción (`vite preview`) en los tres motores, con `retries: 1`, reporte HTML, trazas y capturas solo en fallos. Excluye los tests `@cobertura-privada` (sección 2.3). | Chromium, Firefox, WebKit |
 | `playwright.live.config.ts` | `performance.spec.ts` y `resilience.spec.ts` contra el entorno levantado; carpetas propias `playwright-report-live/` y `test-results-live/`. | Chromium |
 
@@ -72,6 +72,11 @@ export default defineConfig({
 | Flujos de rutas | `routes`, `resilience` | Consulta de una ruta persistida (390–1440 px), geometría corrupta, rutas denegadas a Conductor y Auditor, migración ausente, accesibilidad del mapa, 404 de ruta inexistente y 409 al confirmar una ruta ya asignada |
 | Seguimiento operativo (US-019) | `performance`, `resilience` | La página carga resumen y rutas con datos reales; ante fallos de la API muestra el mensaje y permite reintentar |
 | Incidencias (US-018) | Sin spec E2E | Cubierto por Vitest y por `driver-incidents.integration.ts` (ver sección 5) |
+| Confirmar ruta (US-020) | `sprint4-operations` | Confirmación de una ruta revisada (envío de `expected_estado` y `confirmed`), aparición del panel de asignación y alerta con las condiciones pendientes ante un 409 |
+| Registrar sostenibilidad (US-021) | `sprint4-operations` | Formulario precargado con la distancia y los datos del vehículo, origen de los datos obligatorio sin llamar al servidor y registro con el cuerpo esperado |
+| Indicadores (US-022) | `sprint4-operations` | Indicadores de operación, sostenibilidad e incidencias por tipo; periodo elegido reflejado en la URL y en la consulta; «Sin datos suficientes» en lugar de ceros |
+| Historial (US-023) | `sprint4-operations` | Listado de operaciones terminadas, detalle con la línea de tiempo y gestión del foco, y mensaje de periodo sin registros |
+| Control de acceso del Sprint 4 | `sprint4-operations` | El Conductor no accede a «Indicadores» ni a «Historial» y no ve sus enlaces |
 | Formularios | `drivers`, `availability`, `driver-accounts`, `driver-credentials`, `sprint2-mocked`, `order-consultation`, `order-coverage`, `order-marker-sync` | Alta y edición de conductores, disponibilidad con conflictos, vinculación de cuentas, restablecimiento de credenciales, registro de vehículos (HGR-24), estado de pedidos (HGR-22), filtros y paginación de pedidos, destino dentro de la cobertura |
 | Diseño adaptable | `responsive`, `admin-summary` y los bucles por ancho de los specs anteriores | Sin desplazamiento horizontal de 320 a 1440 px; el menú conserva los formularios |
 
@@ -140,6 +145,29 @@ En la ejecución 1, Firefox mostró los mismos fallos de mocks y de cobertura en
 | Chromium | Firefox | WebKit |
 |---|---|---|
 | ![Reporte HTML Chromium](evidencias/playwright/ci-chromium-resumen.png) | ![Reporte HTML Firefox](evidencias/playwright/ci-firefox-resumen.png) | ![Reporte HTML WebKit](evidencias/playwright/ci-webkit-resumen.png) |
+
+### 2.5 Specs del Sprint 4 (US-020 a US-023)
+
+`sprint4-operations.spec.ts` añade 9 tests con la API simulada, incluidos en la allowlist y, por tanto, en `tests.yml`:
+
+| # | Test | Historia |
+|---|---|---|
+| 1 | Confirma una ruta revisada y habilita la asignación | US-020 |
+| 2 | Muestra las condiciones pendientes que devuelve el backend (409) | US-020 |
+| 3 | Precarga los datos, exige el origen y registra la información | US-021 |
+| 4 | Muestra los indicadores y consulta el periodo elegido | US-022 |
+| 5 | Sin datos suficientes no muestra ceros engañosos | US-022 |
+| 6 | Lista las operaciones terminadas y abre su trazabilidad | US-023 |
+| 7 | Un periodo sin operaciones informa que no hay registros | US-023 |
+| 8 y 9 | El conductor no accede a `/indicadores` ni a `/historial` | US-022 y US-023 |
+
+Ejecución local del 2026-11-19 con `npx playwright test -c playwright.ci.config.ts --project=<navegador> e2e/sprint4-operations.spec.ts --retries=0`:
+
+| Navegador | Pasadas | Fallidas | Duración |
+|---|---|---|---|
+| Chromium 153 | 9 | 0 | 11.6 s |
+| WebKit 26.6 | 9 | 0 | 22.5 s |
+| Firefox 155 | — | — | No ejecutable en el equipo local: Windows impide lanzar `firefox.exe` (`spawn UNKNOWN`). Se ejecuta en GitHub Actions (Ubuntu) dentro de `tests.yml` |
 
 ## 3. Monitoreo de rendimiento
 
@@ -215,7 +243,7 @@ El login es el endpoint más lento porque verifica la contraseña con Argon2id, 
 - **Muestras limitadas.** El backend limita `/auth/login` y `/routes/*` a 10 peticiones por minuto por cliente, por lo que se tomaron 3 muestras directas de esos endpoints y 5 de los de `/operations`.
 - **Imágenes Docker de la aplicación.** No se construyeron porque requieren el paquete INEI privado (sección 1.3).
 - **12 tests fuera de la CI.** Los `@cobertura-privada` solo se ejecutan en local con el paquete aprovisionado; en esta revisión no se ejecutaron porque el paquete no está en este equipo.
-- **Historias sin E2E.** No hay specs E2E simulados para registrar incidencias (US-018), confirmar ruta (US-020) ni registrar sostenibilidad (US-021). Seguimiento operativo (US-019) solo está cubierto por los specs contra el entorno levantado. Estas historias tienen pruebas de Vitest y de integración con PostgreSQL (informes US-018 a US-021).
+- **Historias sin E2E.** Registrar incidencias (US-018) no tiene spec E2E simulado y Seguimiento operativo (US-019) solo está cubierto por los specs contra el entorno levantado; ambas tienen pruebas de Vitest y de integración con PostgreSQL. US-020 a US-023 se cubren desde el 2026-11-19 con `sprint4-operations.spec.ts` (sección 2.5).
 - **Fuera de la CI.** `performance.spec.ts` y `resilience.spec.ts` necesitan backend, base de datos y credenciales, por lo que no forman parte de `tests.yml`.
 - **Workflow todavía sin ejecutar en GitHub.** `tests.yml` corre por primera vez con el PR de esta rama; los resultados de esta sección son locales. La CI usa Node 24 y el equipo local Node 26.
 - **Sin despliegue público.** `deploy-production.yml` queda pendiente hasta que se decida la plataforma, así que no se midió la disponibilidad de un entorno público.
@@ -240,5 +268,6 @@ Las credenciales se pasan siempre por variables de entorno de la sesión y nunca
 | Versión | Fecha | Cambio |
 |---|---|---|
 | V_1_0_0 | 2026-11-18 | Versión inicial: E2E en tres navegadores, rendimiento y resiliencia del Sprint 4. |
+| V_1_0_0 (actualización) | 2026-11-19 | Se añaden los specs E2E de US-020 a US-023 (`sprint4-operations.spec.ts`, 9 tests) y sus resultados (sección 2.5). |
 
 [← Volver al README principal](../../../README.md)
