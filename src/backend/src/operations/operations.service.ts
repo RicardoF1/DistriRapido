@@ -7,11 +7,11 @@ import { DEFAULT_PAGE_SIZE } from '../common/pagination';
 // US-019 / RF-016: consulta de solo lectura del estado de rutas en ejecución y sus entregas.
 // Las rutas GENERADA pertenecen a la planificación (US-013) y no forman parte de la operación.
 // Se usa siempre la versión vigente (la de mayor número), igual que el panel del conductor.
-const LIMA_OFFSET_MS = 5 * 3_600_000; // America/Lima: UTC−05:00 sin horario de verano.
-const DAY_MS = 86_400_000;
+export const LIMA_OFFSET_MS = 5 * 3_600_000; // America/Lima: UTC−05:00 sin horario de verano.
+export const DAY_MS = 86_400_000;
 
 // Inicio del día indicado en America/Lima. Rechaza fechas inexistentes como 2026-02-30.
-function limaDay(value: string, field: string) {
+export function limaDay(value: string, field: string) {
   const [year, month, day] = value.split('-').map(Number);
   const utc = Date.UTC(year, month - 1, day);
   const check = new Date(utc);

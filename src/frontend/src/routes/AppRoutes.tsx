@@ -28,6 +28,7 @@ const PlanningPage = lazyPage(() => import('../pages/PlanningPage'), 'PlanningPa
 const RoutesPage = lazyPage(() => import('../pages/RoutesPage'), 'RoutesPage');
 const RouteDetailPage = lazyPage(() => import('../pages/RouteDetailPage'), 'RouteDetailPage');
 const OperationsPage = lazyPage(() => import('../pages/OperationsPage'), 'OperationsPage');
+const IndicatorsPage = lazyPage(() => import('../pages/IndicatorsPage'), 'IndicatorsPage');
 
 export function AppRoutes() {
   return (
@@ -69,6 +70,7 @@ export function AppRoutes() {
           <Route path="/rutas/:id" element={<RouteDetailPage />} />
         </Route>
         <Route path="/seguimiento" element={<OperationsPage />} />
+        <Route path="/indicadores" element={<IndicatorsPage />} />
         <Route element={<DriversLayout />}>
           <Route
             path="/conductores"
