@@ -39,7 +39,7 @@ Las seis historias están implementadas y verificadas con pruebas automatizadas 
 | `npm audit --audit-level=high` | No aprobado por un único aviso de `picomatch` sin versión corregida publicada (ver Pendientes); los lockfiles no cambiaron en el sprint |
 | Migraciones | Tres migraciones aditivas: `202611090001_us018_incidencias_entrega`, `202611170001_us020_confirmar_ruta`, `202611170002_us021_registrar_sostenibilidad`. US-022 y US-023 son consultas de solo lectura y no necesitan migraciones |
 
-Detalle por historia: [US-018](01%20US-018%20Registrar%20incidencias%20V_1_0_0.md) · [US-019](02%20US-019%20Consultar%20estado%20operativo%20V_1_0_0.md) · [US-020](03%20US-020%20Confirmar%20ruta%20V_1_0_0.md) · [US-021](04%20US-021%20Registrar%20sostenibilidad%20V_1_0_0.md) · [US-022](05%20US-022%20Consultar%20indicadores%20V_1_0_0.md) · [US-023](06%20US-023%20Consultar%20historial%20V_1_0_0.md).
+Detalle por historia: [US-018](../../otros/soporte-sprint-04/01%20US-018%20Registrar%20incidencias%20V_1_0_0.md) · [US-019](../../otros/soporte-sprint-04/02%20US-019%20Consultar%20estado%20operativo%20V_1_0_0.md) · [US-020](../../otros/soporte-sprint-04/03%20US-020%20Confirmar%20ruta%20V_1_0_0.md) · [US-021](../../otros/soporte-sprint-04/04%20US-021%20Registrar%20sostenibilidad%20V_1_0_0.md) · [US-022](../../otros/soporte-sprint-04/05%20US-022%20Consultar%20indicadores%20V_1_0_0.md) · [US-023](../../otros/soporte-sprint-04/06%20US-023%20Consultar%20historial%20V_1_0_0.md).
 
 ## Demostración del trabajo completado
 

@@ -235,14 +235,14 @@ Entregables de cierre para la Inspección 5 (2026-11-20). Cada documento enlaza 
 
 Workflows de GitHub Actions: [ci.yml](.github/workflows/ci.yml) (typecheck, lint, pruebas, build, auditoría y CodeQL) · [tests.yml](.github/workflows/tests.yml) (backend, Vitest y E2E en Chromium, Firefox y WebKit, con el reporte HTML como artifact). `deploy-production.yml` queda pendiente hasta que el equipo elija la plataforma de despliegue.
 
-Informes técnicos de las historias del sprint:
+Informes técnicos de las historias del sprint (material de soporte, fuera de la carpeta de entregables):
 
-- [01 US-018 Registrar incidencias V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/01%20US-018%20Registrar%20incidencias%20V_1_0_0.md)
-- [02 US-019 Consultar estado operativo V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/02%20US-019%20Consultar%20estado%20operativo%20V_1_0_0.md)
-- [03 US-020 Confirmar ruta V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/03%20US-020%20Confirmar%20ruta%20V_1_0_0.md)
-- [04 US-021 Registrar sostenibilidad V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/04%20US-021%20Registrar%20sostenibilidad%20V_1_0_0.md)
-- [05 US-022 Consultar indicadores V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/05%20US-022%20Consultar%20indicadores%20V_1_0_0.md)
-- [06 US-023 Consultar historial V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/06%20US-023%20Consultar%20historial%20V_1_0_0.md)
+- [01 US-018 Registrar incidencias V_1_0_0](docs/otros/soporte-sprint-04/01%20US-018%20Registrar%20incidencias%20V_1_0_0.md)
+- [02 US-019 Consultar estado operativo V_1_0_0](docs/otros/soporte-sprint-04/02%20US-019%20Consultar%20estado%20operativo%20V_1_0_0.md)
+- [03 US-020 Confirmar ruta V_1_0_0](docs/otros/soporte-sprint-04/03%20US-020%20Confirmar%20ruta%20V_1_0_0.md)
+- [04 US-021 Registrar sostenibilidad V_1_0_0](docs/otros/soporte-sprint-04/04%20US-021%20Registrar%20sostenibilidad%20V_1_0_0.md)
+- [05 US-022 Consultar indicadores V_1_0_0](docs/otros/soporte-sprint-04/05%20US-022%20Consultar%20indicadores%20V_1_0_0.md)
+- [06 US-023 Consultar historial V_1_0_0](docs/otros/soporte-sprint-04/06%20US-023%20Consultar%20historial%20V_1_0_0.md)
 
 ### Inspección 04 — Green IT
 
