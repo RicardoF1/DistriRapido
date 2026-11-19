@@ -823,23 +823,92 @@ th, td { overflow-wrap: break-word; word-break: normal; }
 .kpi-grid { display: grid; gap: 1rem; margin: 0; padding: 0; background: transparent; }
 .kpi-icon-database dd:not(.kpi-bar):not(.kpi-detail) { font-size: 1.1rem; line-height: 1.35; }
 
-/* Panel del conductor (US-016 a US-018): rutas y entregas como tarjetas. */
+/* ==========================================================================
+   Panel del conductor (US-016 a US-018): jornada, rutas y entregas.
+   Escritorio: jornada + cuenta arriba; rutas (izquierda) y entregas (derecha).
+   ========================================================================== */
+.driver-panel-grid { display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1fr); }
+.driver-panel-card { padding: 1.25rem; }
+.driver-panel-card h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.driver-empty { padding: 1.25rem; border: 1px dashed var(--gray-300); border-radius: var(--radius-lg); background: var(--gray-25); color: var(--gray-600); font-size: var(--text-sm); text-align: center; }
+@media (min-width: 768px) {
+  .driver-panel-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+  .driver-day { grid-column: auto; }
+  .driver-routes, .driver-deliveries { grid-column: 1 / -1; }
+}
+@media (min-width: 1100px) {
+  .driver-panel-grid { grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); }
+  .driver-routes { grid-column: 1; align-self: start; }
+  .driver-deliveries { grid-column: 2; }
+  .driver-day { grid-column: 1 / 2; }
+  #mi-cuenta { grid-column: 2; }
+}
+.driver-panel-grid { align-items: start; }
+#mi-cuenta > .button { align-self: flex-start; width: auto; }
+.driver-route-card .button:hover:not(:disabled) { filter: none; }
+
+/* Mi jornada: resumen con tres cifras. */
+.driver-day-summary { margin: 0 0 .9rem; color: var(--gray-600); font-size: var(--text-sm); }
+.driver-day-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; margin: 0; }
+.driver-day-stats > div { padding: .65rem .75rem; border-radius: var(--radius-md); background: var(--gray-50); }
+.driver-day-stats dt { color: var(--gray-600); font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+.driver-day-stats dd { margin: 2px 0 0; color: var(--gray-900); font-size: 1.4rem; font-weight: var(--weight-bold); font-variant-numeric: tabular-nums; }
+.driver-day-stats .is-done { background: var(--success-50); }
+.driver-day-stats .is-done dd { color: var(--success-700); }
+.driver-day-stats .is-pending { background: var(--info-50); }
+.driver-day-stats .is-pending dd { color: var(--info-700); }
+
+/* Mis rutas: tarjetas seleccionables. */
 .driver-route-list, .driver-stops { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
-.driver-route-card { display: flex; flex-direction: column; gap: 4px; padding: 1rem 1.1rem; border: 1px solid var(--gray-200); border-left: 4px solid var(--brand-500); border-radius: var(--radius-lg); background: var(--gray-25); color: var(--gray-700); font-size: var(--text-sm); }
-.driver-route-card strong { color: var(--gray-900); font-size: 1rem; }
-.driver-route-card .button { align-self: flex-start; margin-top: 8px; }
-.driver-progress { display: block; height: 8px; margin: 6px 0 2px; }
-.driver-stop-progress { font-weight: var(--weight-semibold); color: var(--gray-800); }
-.driver-stop { position: relative; padding: 1rem 1.1rem; border: 1px solid var(--gray-200); border-left: 4px solid var(--gray-300); border-radius: var(--radius-lg); background: var(--gray-0); color: var(--gray-700); font-size: var(--text-sm); line-height: 1.6; }
-.driver-stop > strong { color: var(--gray-900); font-size: 1rem; }
+.driver-route-card { display: flex; flex-direction: column; gap: .5rem; padding: 1rem; border: 1px solid var(--gray-200); border-radius: var(--radius-lg); background: var(--gray-0); transition: border-color var(--transition-fast), box-shadow var(--transition-fast); }
+.driver-route-card:hover { border-color: var(--gray-300); box-shadow: var(--shadow-xs); }
+.driver-route-card.is-selected { border-color: var(--brand-500); box-shadow: 0 0 0 3px var(--brand-50); }
+.driver-route-top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .75rem; }
+.driver-route-icon { width: 2.4rem; height: 2.4rem; border-radius: var(--radius-md); background: var(--brand-50); position: relative; }
+.driver-route-icon::after { content: ''; position: absolute; inset: .55rem; background: var(--brand-700); -webkit-mask: var(--truck) center / contain no-repeat; mask: var(--truck) center / contain no-repeat; }
+.driver-route-icon { --truck: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 6h11v10H2zM13 9h4l4 4v3h-8z'/%3E%3Ccircle cx='6' cy='18' r='2'/%3E%3Ccircle cx='17' cy='18' r='2'/%3E%3C/svg%3E"); }
+.driver-route-name { display: flex; flex-direction: column; min-width: 0; }
+.driver-route-name strong { color: var(--gray-900); font-size: 1.05rem; letter-spacing: .02em; }
+.driver-route-name span { color: var(--gray-600); font-size: var(--text-xs); }
+.driver-route-progress { display: flex; justify-content: space-between; gap: .5rem; color: var(--gray-600); font-size: var(--text-xs); }
+.driver-route-progress strong { color: var(--gray-900); font-variant-numeric: tabular-nums; }
+.driver-progress { display: block; flex: none; height: 8px; margin: 0; }
+.driver-route-card .button { width: 100%; min-height: 40px; margin-top: .25rem; }
+
+/* Mis entregas: cabecera de la ruta y paradas numeradas. */
+.driver-delivery-head { display: grid; gap: .35rem; margin-bottom: 1rem; padding: .9rem 1rem; border-radius: var(--radius-lg); background: var(--gray-50); }
+.driver-delivery-route { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+.driver-delivery-route strong { color: var(--gray-900); font-size: 1.05rem; }
+.driver-delivery-meta { margin: 0; color: var(--gray-600); font-size: var(--text-sm); }
+.driver-stop-progress { display: grid; gap: .4rem; margin: .25rem 0 0; color: var(--gray-800); font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+.driver-stop { padding: 1rem; border: 1px solid var(--gray-200); border-left: 4px solid var(--gray-300); border-radius: var(--radius-lg); background: var(--gray-0); color: var(--gray-700); font-size: var(--text-sm); }
 .driver-stop.is-pendiente { border-left-color: var(--info-600); }
-.driver-stop.is-entregada { border-left-color: var(--success-700); background: var(--success-50); }
-.driver-stop.is-no_entregada { border-left-color: var(--danger-700); background: var(--danger-50); }
-.driver-stop-actions { display: grid; grid-template-columns: auto 1fr auto; align-items: end; gap: .75rem; margin: .9rem 0 .5rem; padding: .9rem; border-radius: var(--radius-md); background: var(--gray-50); }
+.driver-stop.is-entregada { border-left-color: var(--success-700); }
+.driver-stop.is-no_entregada { border-left-color: var(--danger-700); }
+.driver-stop-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .75rem; }
+.driver-stop-number { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--info-50); color: var(--info-700); font-weight: var(--weight-bold); font-variant-numeric: tabular-nums; }
+.is-entregada .driver-stop-number { background: var(--success-50); color: var(--success-700); }
+.is-no_entregada .driver-stop-number { background: var(--danger-50); color: var(--danger-700); }
+.driver-stop-info { display: flex; flex-direction: column; min-width: 0; }
+.driver-stop-info strong { color: var(--gray-900); font-size: .95rem; }
+.driver-stop-address { color: var(--gray-600); overflow-wrap: anywhere; }
+.driver-stop-note { margin: .6rem 0 0 2.75rem; color: var(--gray-600); font-size: var(--text-xs); }
+
+/* Acciones: entregar (principal) o registrar el motivo de no entrega. */
+.driver-stop-actions { display: grid; gap: .75rem; margin: .9rem 0 0; padding: .9rem; border-radius: var(--radius-md); background: var(--gray-50); }
 .driver-stop-actions .button { min-height: 44px; }
-.driver-cause { gap: 4px; }
+.driver-deliver { justify-self: start; min-width: 12rem; }
+.driver-fail { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: .75rem; padding-top: .75rem; border-top: 1px solid var(--gray-200); }
+.driver-cause { gap: 4px; margin: 0; color: var(--gray-700); font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+.driver-cause input { font-weight: var(--weight-regular, 400); }
+.driver-fail-button { border-color: var(--danger-100); color: var(--danger-700); }
+.driver-fail-button:hover:not(:disabled) { background: var(--danger-50); border-color: var(--danger-700); }
 .driver-stop .delivery-incidents { margin: .75rem 0 0; }
-@media (max-width: 767px) {
-  .driver-stop-actions { grid-template-columns: minmax(0, 1fr); }
-  .driver-stop-actions .button, .driver-route-card .button { width: 100%; }
+.driver-stop .delivery-incidents > .button { align-self: start; justify-self: start; width: auto; min-height: 36px; padding: .35rem .9rem; font-size: var(--text-xs); }
+@media (max-width: 600px) {
+  .driver-fail { grid-template-columns: minmax(0, 1fr); }
+  .driver-deliver, .driver-fail-button { width: 100%; justify-self: stretch; }
+  .driver-stop-note { margin-left: 0; }
+  .driver-stop-head { grid-template-columns: auto minmax(0, 1fr); }
+  .driver-stop-head .status-badge { grid-column: 2; justify-self: start; }
 }
