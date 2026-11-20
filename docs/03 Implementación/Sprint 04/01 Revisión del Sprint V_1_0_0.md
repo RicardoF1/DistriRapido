@@ -43,7 +43,9 @@ Detalle por historia: [US-018](../../otros/soporte-sprint-04/01%20US-018%20Regis
 
 ## Demostración del trabajo completado
 
-**Entorno:** local (frontend Vite en `localhost:5173`, backend NestJS en `localhost:3000`, PostgreSQL 16 y OSRM local), con datos de prueba.
+**Entorno de validación:** local (frontend Vite en `localhost:5173`, backend NestJS en `localhost:3000`, PostgreSQL 16 y OSRM local), con datos de prueba.
+
+**Entorno de producción:** desde el 2026-11-19 el sistema está desplegado en Render en **https://distrirapido.onrender.com** (frontend con nginx, API NestJS, OSRM con el grafo de Huancayo y PostgreSQL 16). `deploy-production.yml` lo publica automáticamente después de que `tests.yml` termina en verde sobre `main`; la primera ejecución completa en verde fue la del commit `073264b` ([guía de despliegue](../../otros/despliegue/Despliegue%20en%20Render%20V_1_0_0.md)). La base de producción empieza vacía y las cuentas de la demostración se crean desde la propia aplicación.
 
 **Validación manual realizada por el equipo durante el sprint** (registrada en cada informe técnico):
 
@@ -60,13 +62,17 @@ Detalle por historia: [US-018](../../otros/soporte-sprint-04/01%20US-018%20Regis
 
 | Elemento | Estado | Tratamiento |
 |---|---|---|
-| Integración en `main` | US-018 a US-021 están en `main` desde el [PR #22](https://github.com/RicardoF1/DistriRapido/pull/22); US-022 y US-023 están en `sprint-4` ([PR #23](https://github.com/RicardoF1/DistriRapido/pull/23) y [PR #24](https://github.com/RicardoF1/DistriRapido/pull/24)) | Abrir el PR de `sprint-4` hacia `main` |
+| Integración en `main` | Resuelto el 2026-11-19: `sprint-4` se fusionó en `main` con el [PR #31](https://github.com/RicardoF1/DistriRapido/pull/31), con la CI en verde en Chromium, Firefox y WebKit | — |
 | Registro tardío en Jira | El «SCRUM Sprint 4» se creó y HGR-37 a HGR-40 se movieron a Finalizada el 2026-11-18, al cierre del periodo, y HGR-41 y HGR-42 el 2026-11-19, por lo que el burndown no refleja el avance diario | En el trabajo posterior, mover las historias en Jira a medida que avanzan |
 | Roles «Supervisor» y «Planificador» | No existen en el sistema; por decisión del equipo los ejercen Administrador y Operador / Técnico, también en US-022 y US-023 | Si se crean, basta con añadirlos a `OPERATIONS_ROLES` y a `PlanningGuard` |
 | Aviso de seguridad de `picomatch` (GHSA-fc5q-39xc-vjpf) | Detectado durante US-020. No hay versión corregida publicada, así que ninguna actualización lo resuelve todavía; es el único hallazgo que deja `npm audit` en rojo | Aplicar la versión corregida con `overrides` en cuanto se publique |
 | HGR-43 / US-024 (deuda del Sprint 3) | Sigue en el backlog | Reprogramar y replanificar pedidos no entregados |
 | Corrección de registros de sostenibilidad | Fuera de alcance de US-021 (un solo registro por ruta) | Requiere una historia propia con trazabilidad del cambio |
 | Exportación del historial | Fuera de alcance de US-023 (la historia no la pide) | Requiere una historia propia |
+| Cobertura INEI en producción | Para la Inspección 5 se desplegó con la cobertura INEI v1.0.0, cuyo permiso de redistribución sigue sin confirmar; el frontend público sirve `coverage.geojson` | Reemplazarla por límites de OpenStreetMap o confirmar el permiso del INEI |
+| Plan gratuito de Render | Los servicios se duermen tras 15 minutos sin tráfico y la base de datos vence el 2026-12-19 | Para un uso real, plan de pago o exportar los datos con `pg_dump` antes del vencimiento |
+| `TRUST_PROXY` en producción | Sin configurar: detrás del proxy, el límite de 10 peticiones por minuto se comparte entre todos los usuarios | Medir los saltos del proxy y configurar el valor (ver la guía de despliegue) |
+| Mejoras de usabilidad | Seis mejoras propuestas a partir de la evaluación SUS ([04 Usabilidad](04%20Usabilidad%20V_1_0_0.md), sección 3.4) | Implementarlas en el mantenimiento del producto |
 
 ---
 
@@ -74,5 +80,6 @@ Detalle por historia: [US-018](../../otros/soporte-sprint-04/01%20US-018%20Regis
 |---|---|---|
 | V_1_0_0 | 2026-11-18 | Versión inicial de la Revisión del Sprint 4, con el estado de Jira al 2026-11-18. |
 | V_1_0_0 (actualización) | 2026-11-19 | Se incorporan US-022 y US-023, implementadas dentro del Sprint 4 por ser el último del proyecto (30 SP). Se retira la indicación de que pasaban al siguiente sprint, se actualizan la evidencia de calidad (incluida la ejecución E2E en tres navegadores), la demostración y los pendientes, y se registra que en Jira ambas historias se incorporaron al «SCRUM Sprint 4» como Finalizadas. |
+| V_1_0_0 (actualización) | 2026-11-19 | Se registran el entorno de producción en Render y la integración de `sprint-4` en `main` (PR #31), y se añaden como pendientes la cobertura INEI en producción, el plan gratuito de Render, `TRUST_PROXY` y las mejoras de usabilidad. |
 
 [← Volver al README principal](../../../README.md)

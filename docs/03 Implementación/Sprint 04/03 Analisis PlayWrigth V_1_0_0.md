@@ -210,6 +210,39 @@ El login es el endpoint más lento porque verifica la contraseña con Argon2id, 
 
 ![Muestras directas de las APIs en el reporte](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-performance-detalle.png)
 
+### 3.3 Entorno desplegado (Render)
+
+**Fecha:** 2026-11-20, 03:09–03:20 UTC (2026-11-19, 22:09–22:20 en Lima) · **Commit:** `073264b` · **Entorno:** https://distrirapido.onrender.com, plan Free de Render en la región Ohio, medido desde un equipo en Huancayo por internet.
+
+Las páginas y APIs con sesión no se midieron en producción: requieren una cuenta de la base de producción y sus credenciales no se usan en mediciones automatizadas. Se midió lo público: la página de login, con Playwright, y los recursos sin sesión, con `curl`.
+
+**Web Vitals de `/login` (Chromium, 5 cargas en contextos nuevos, 1440 × 900)**
+
+| Carga | TTFB | FCP | LCP | Transferido |
+|---|---|---|---|---|
+| 1 | 2875 ms | 3140 ms | 3140 ms | 202 KB |
+| 2 | 208 ms | 440 ms | 440 ms | 202 KB |
+| 3 | 183 ms | 468 ms | 468 ms | 202 KB |
+| 4 | 164 ms | 868 ms | 868 ms | 202 KB |
+| 5 | 164 ms | 456 ms | 456 ms | 202 KB |
+| **Mediana** | **183 ms** | **468 ms** | **468 ms** | |
+
+La mediana cumple los umbrales «buenos» (TTFB ≤ 800 ms, FCP ≤ 1800 ms, LCP ≤ 2500 ms). La primera carga incluye la resolución DNS y el establecimiento TLS del navegador recién abierto, y supera los umbrales de FCP y LCP; las siguientes, no. La única llamada a la API de esa página, `GET /api/auth/me`, respondió 401 (sin sesión) en las cinco cargas, a través del proxy `/api` de nginx.
+
+**Tiempo hasta el primer byte de los recursos públicos (`curl`, 7 muestras seguidas)**
+
+| Recurso | Primera muestra | Mediana de las 7 | ¿< 500 ms? |
+|---|---|---|---|
+| `/` | 480 ms | 192 ms | Sí |
+| `/login` | 423 ms | 195 ms | Sí |
+| `/api/health` (API + consulta a PostgreSQL) | 224 ms | 230 ms | Sí |
+| `/geodata/coverage/v1/coverage.geojson` | 184 ms | 184 ms | Sí |
+| OSRM `/route/v1/driving/…` (1 km en el centro de Huancayo) | 6207 ms | 207 ms (5 muestras) | Sí, salvo el arranque en frío |
+
+La primera petición a OSRM tardó 6,2 s porque el servicio estaba dormido: en el plan Free, Render detiene cada servicio tras 15 minutos sin tráfico y lo vuelve a iniciar con la siguiente petición. Por eso la API usa en producción `OSRM_TIMEOUT_MS=30000` y `OSRM_TOTAL_TIMEOUT_MS=60000`, para que el primer cálculo de una ruta no falle mientras OSRM despierta.
+
+Además, cada ejecución de `deploy-production.yml` mide los mismos recursos desde GitHub Actions al terminar el despliegue. En la del commit `073264b`, `/`, `/login`, `/api/health` y la cobertura respondieron 200 con un TTFB de 196 a 274 ms.
+
 ## 4. Disponibilidad y resiliencia
 
 `resilience.spec.ts` pasó 10 de 10 tests en cada una de las 3 corridas.
@@ -238,6 +271,29 @@ El login es el endpoint más lento porque verifica la contraseña con Argon2id, 
 |---|---|
 | ![Prueba 409 en el reporte](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-resilience-409.png) | ![Prueba 500 en el reporte](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-resilience-500.png) |
 
+### 4.3 Disponibilidad y códigos HTTP en el entorno desplegado
+
+**Disponibilidad.** Sondeo cada 30 s durante 10 minutos (2026-11-20, 03:09–03:20 UTC), 20 rondas, cada una con tres peticiones:
+
+| Servicio | Respuestas 200 | Mediana | Percentil 90 | Máximo |
+|---|---|---|---|---|
+| API (`/api/health`, a través del frontend) | 20 de 20 | 239 ms | 456 ms | 686 ms |
+| Frontend (`/login`) | 20 de 20 | 197 ms | 217 ms | 412 ms |
+| OSRM (`/nearest`) | 20 de 20 | 208 ms | 429 ms | 13 276 ms (primera ronda, arranque en frío) |
+
+Disponibilidad observada en la ventana: 100 % (60 de 60 peticiones con 200). Es una ventana corta, que no sustituye un monitoreo continuo; ver las limitaciones.
+
+**Códigos HTTP en producción (sin sesión)**
+
+| Código | Caso verificado |
+|---|---|
+| 200 | `/api/health` (`{"status":"ok","database":"up","version":"073264b…"}`); una ruta inexistente de la SPA (`/ruta-que-no-existe`) devuelve `index.html` |
+| 400 | `POST /api/auth/login` con un correo inválido, con los mensajes de validación |
+| 401 | `GET /api/auth/me`, `GET /api/operations/summary` y `GET /api/routes/:id` sin sesión |
+| 404 | `GET /api/no-existe`; `GET /assets/no-existe.js` en nginx |
+
+Las respuestas del frontend incluyen las cabeceras `Content-Security-Policy` (con `connect-src 'self'`, gracias al proxy `/api`), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` y `Cache-Control: no-cache` en el documento.
+
 ## 5. Conclusiones y limitaciones
 
 **Conclusiones**
@@ -246,11 +302,12 @@ El login es el endpoint más lento porque verifica la contraseña con Argon2id, 
 - Las tres páginas medidas cumplen con amplio margen los umbrales «buenos» de Web Vitals. El LCP más alto es de 428 ms, en Seguimiento operativo.
 - Las cuatro APIs clave responden en menos de 500 ms. La más lenta es el login, con 169–175 ms.
 - El backend devuelve los códigos esperados (200, 400, 401, 403, 404 y 409), y la interfaz muestra mensajes comprensibles y permite reintentar ante caídas o errores 500.
+- En el entorno desplegado en Render, la página de login cumple los umbrales de Web Vitals (mediana: TTFB 183 ms, LCP 468 ms), los recursos públicos responden en menos de 500 ms y los tres servicios respondieron 60 de 60 peticiones durante 10 minutos de sondeo. La excepción es el arranque en frío del plan Free, que llegó a 13,3 s en OSRM.
 - Ejecutar la suite contra el build de producción reveló dos defectos de las pruebas que no aparecían contra el servidor de desarrollo: mocks demasiado amplios y contratos no paginados. Ambos se corrigieron sin tocar la aplicación.
 
 **Limitaciones**
 
-- **Entorno local y sin red.** Las mediciones se hicieron en un único equipo, con todos los servicios en `localhost`, sin limitar CPU ni red y con un volumen de datos sintético pequeño (20 rutas). Un despliegue real sumará la latencia de red y, con más datos, los listados pueden tardar más. Las cifras son útiles para comparar entre versiones, no como rendimiento de producción. En una corrida de prueba previa, que no se incluye en las tablas, `GET /operations/routes` llegó a 2.2 s mientras la suite de tres navegadores ocupaba la CPU del mismo equipo.
+- **Entorno local y sin red (secciones 3.1 y 3.2).** Esas mediciones se hicieron en un único equipo, con todos los servicios en `localhost`, sin limitar CPU ni red y con un volumen de datos sintético pequeño (20 rutas). Un despliegue real sumará la latencia de red y, con más datos, los listados pueden tardar más. Las cifras son útiles para comparar entre versiones, no como rendimiento de producción. En una corrida de prueba previa, que no se incluye en las tablas, `GET /operations/routes` llegó a 2.2 s mientras la suite de tres navegadores ocupaba la CPU del mismo equipo.
 - **Solo Chromium para Web Vitals.** WebKit no expone LCP, así que las métricas de rendimiento se tomaron en un único motor.
 - **Muestras limitadas.** El backend limita `/auth/login` y `/routes/*` a 10 peticiones por minuto por cliente, por lo que se tomaron 3 muestras directas de esos endpoints y 5 de los de `/operations`.
 - **Imágenes Docker de la aplicación.** No se construyeron porque requieren el paquete INEI privado (sección 1.3).
@@ -258,7 +315,8 @@ El login es el endpoint más lento porque verifica la contraseña con Argon2id, 
 - **Historias sin E2E.** Registrar incidencias (US-018) no tiene spec E2E simulado y Seguimiento operativo (US-019) solo está cubierto por los specs contra el entorno levantado; ambas tienen pruebas de Vitest y de integración con PostgreSQL. US-020 a US-023 se cubren desde el 2026-11-19 con `sprint4-operations.spec.ts` (sección 2.5).
 - **Fuera de la CI.** `performance.spec.ts` y `resilience.spec.ts` necesitan backend, base de datos y credenciales, por lo que no forman parte de `tests.yml`.
 - **Resultados locales y de la CI.** Las tablas de las secciones 2.4 y 3 son de ejecuciones locales; desde el 2026-11-19, `tests.yml` también ejecuta la suite en GitHub Actions en los tres navegadores (sección 2.5). La CI usa Node 24 y el equipo local Node 26.
-- **Sin despliegue público.** `deploy-production.yml` queda pendiente hasta que se decida la plataforma, así que no se midió la disponibilidad de un entorno público.
+- **Producción sin sesión.** En el entorno desplegado solo se midieron la página de login y los recursos públicos (secciones 3.3 y 4.3); las páginas con sesión se midieron en local.
+- **Disponibilidad en una ventana corta.** El 100 % corresponde a 10 minutos de sondeo, no a un monitoreo continuo. El plan Free de Render duerme los servicios sin tráfico, así que la primera petición tras un periodo inactivo tarda varios segundos.
 
 ### Reproducir las mediciones
 
@@ -281,5 +339,6 @@ Las credenciales se pasan siempre por variables de entorno de la sesión y nunca
 |---|---|---|
 | V_1_0_0 | 2026-11-18 | Versión inicial: E2E en tres navegadores, rendimiento y resiliencia del Sprint 4. |
 | V_1_0_0 (actualización) | 2026-11-19 | Se añaden los specs E2E de US-020 a US-023 (`sprint4-operations.spec.ts`, 9 tests), sus resultados locales y la ejecución en verde de `tests.yml` en Chromium, Firefox y WebKit (sección 2.5). |
+| V_1_0_0 (actualización) | 2026-11-19 | Se añaden las mediciones del entorno desplegado en Render: Web Vitals de login, tiempos de los recursos públicos, arranque en frío, disponibilidad en 10 minutos y códigos HTTP (secciones 3.3 y 4.3). |
 
 [← Volver al README principal](../../../README.md)
