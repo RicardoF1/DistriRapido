@@ -1,6 +1,6 @@
 # Green IT & Performance Audit (v1.0.0)
 # Levanta DistriRapido como en producción (PostgreSQL efímero, API NestJS y build de Vite servido por
-# nginx con src/frontend/nginx.conf) y ejecuta Lighthouse CI con los umbrales de la rúbrica.
+# nginx con la plantilla src/frontend/nginx.conf) y ejecuta Lighthouse CI con los umbrales de la rúbrica.
 # Los informes se conservan como artefacto privado del workflow; no se publican en servicios externos.
 name: Green IT & Performance Audit
 
@@ -35,7 +35,8 @@ jobs:
     env:
       DATABASE_URL: postgresql://green_audit@localhost:5432/distrirapido_audit
       FRONTEND_ORIGIN: http://localhost:5173
-      VITE_API_URL: http://localhost:3000
+      # La SPA llama a /api en su propio origen; nginx lo reenvía a la API local.
+      VITE_API_URL: /api
       BOOTSTRAP_ADMIN_EMAIL: lhci-admin@example.test
       LHCI_VERSION: 0.15.1
     steps:
@@ -82,9 +83,10 @@ jobs:
 
       - name: Serve frontend with production nginx configuration
         run: |
-          docker run -d --name green-audit-web -p 5173:80 \
+          docker run -d --name green-audit-web --network host \
+            -e PORT=5173 -e API_UPSTREAM=http://127.0.0.1:3000 \
             -v "$GITHUB_WORKSPACE/src/frontend/dist:/usr/share/nginx/html:ro" \
-            -v "$GITHUB_WORKSPACE/src/frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro" \
+            -v "$GITHUB_WORKSPACE/src/frontend/nginx.conf:/etc/nginx/templates/default.conf.template:ro" \
             nginx:1.28-alpine
           for attempt in $(seq 1 15); do
             curl -sf -o /dev/null http://localhost:5173/login && echo "nginx disponible" && exit 0

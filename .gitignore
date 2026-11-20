@@ -21,6 +21,11 @@ LEVANTAR.md
 *.temp
 *.swp
 *~
+
+# Archivos basura del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
 .vscode/
 .idea/
 

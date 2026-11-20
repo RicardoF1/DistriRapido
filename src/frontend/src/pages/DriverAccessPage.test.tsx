@@ -27,7 +27,7 @@ it('US-018: registra una incidencia, la muestra en la entrega y no cambia su est
   await userEvent.click(screen.getByRole('button', { name: 'Guardar incidencia' }));
   expect(await screen.findByRole('status')).toHaveTextContent('Incidencia registrada y asociada a la entrega.');
   expect(screen.getByRole('region', { name: 'Incidencias registradas (1)' })).toHaveTextContent('Nadie atiende');
-  expect(screen.getByText(/Estado: PENDIENTE/)).toBeVisible();
+  expect(screen.getByText('Pendiente', { selector: '.status-badge' })).toBeVisible();
   expect(driverProfileApi.updateDelivery).not.toHaveBeenCalled();
 });
 it('muestra estado vacío sin inventar rutas', async () => { vi.mocked(driverProfileApi.routes).mockResolvedValue([]); open(); expect(await screen.findByText('No tienes rutas asignadas.')).toBeVisible(); });
@@ -39,7 +39,7 @@ it('muestra el rechazo real del backend, mantiene la entrega PENDIENTE y no rein
   await userEvent.click(await screen.findByRole('button', { name: 'Marcar entregada' }));
   expect(await screen.findByRole('alert')).toHaveTextContent(message);
   expect(screen.queryByText('Ya existe un usuario con ese correo electrónico.')).not.toBeInTheDocument();
-  expect(screen.getByText(/Estado: PENDIENTE/)).toBeVisible();
+  expect(screen.getByText('Pendiente', { selector: '.status-badge' })).toBeVisible();
   expect(screen.getByText('Progreso: 0/1 (0%)')).toBeVisible();
   expect(screen.getByRole('button', { name: 'Marcar entregada' })).toBeEnabled();
   await new Promise(resolve => setTimeout(resolve, 50));
@@ -101,11 +101,11 @@ it('muestra los textos del panel en UTF-8', async () => {
   await openLoaded();
   expect(screen.getByText('EcoRuta Huancayo · Mi espacio')).toBeVisible();
   expect(screen.getByText('✓')).toBeVisible();
-  expect(screen.getByText(/· ASIGNADA/)).toBeVisible();
+  expect(screen.getByText('Asignada', { selector: '.status-badge' })).toBeVisible();
   expect(screen.getByText(/1\.00 km · 10\.0 min/)).toBeVisible();
   await userEvent.click(screen.getByRole('button', { name: 'Ver entregas' }));
-  expect(await screen.findByText('Ruta ASIGNADA · ABC-123 · Inicio: No iniciado')).toBeVisible();
-  expect(screen.getByText(/· Destino de prueba/)).toBeVisible();
+  expect(await screen.findByText('Inicio: No iniciado')).toBeVisible();
+  expect(screen.getByText('Destino de prueba')).toBeVisible();
   expect(document.body.textContent).not.toMatch(/[ÃÂ]|â[€œ]/);
 });
 it('muestra Vehículo no disponible y los estados de carga con puntos suspensivos correctos', async () => {

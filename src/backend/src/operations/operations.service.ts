@@ -7,11 +7,11 @@ import { DEFAULT_PAGE_SIZE } from '../common/pagination';
 // US-019 / RF-016: consulta de solo lectura del estado de rutas en ejecución y sus entregas.
 // Las rutas GENERADA pertenecen a la planificación (US-013) y no forman parte de la operación.
 // Se usa siempre la versión vigente (la de mayor número), igual que el panel del conductor.
-const LIMA_OFFSET_MS = 5 * 3_600_000; // America/Lima: UTC−05:00 sin horario de verano.
-const DAY_MS = 86_400_000;
+export const LIMA_OFFSET_MS = 5 * 3_600_000; // America/Lima: UTC−05:00 sin horario de verano.
+export const DAY_MS = 86_400_000;
 
 // Inicio del día indicado en America/Lima. Rechaza fechas inexistentes como 2026-02-30.
-function limaDay(value: string, field: string) {
+export function limaDay(value: string, field: string) {
   const [year, month, day] = value.split('-').map(Number);
   const utc = Date.UTC(year, month - 1, day);
   const check = new Date(utc);
@@ -55,7 +55,7 @@ export class OperationsService {
     };
 
     if (query.estado_entrega || query.con_incidencias === 'true') {
-      const ids = await this.routesMatchingDeliveries(query.estado_entrega, query.con_incidencias === 'true');
+      const ids = await routesMatchingDeliveries(this.prisma, query.estado_entrega, query.con_incidencias === 'true');
       where.ruta_id = { in: ids };
     }
 
@@ -169,22 +169,26 @@ export class OperationsService {
       stops,
     };
   }
+}
 
-  private async routesMatchingDeliveries(state: string | undefined, withIncidents: boolean) {
-    const rows = await this.prisma.$queryRaw<{ ruta_id: string }[]>`
-      WITH vigente AS (
-        SELECT DISTINCT ON (rv.ruta_id) rv.ruta_id, rv.ruta_version_id
-        FROM rutas_versiones rv
-        ORDER BY rv.ruta_id, rv.numero DESC
-      )
-      SELECT v.ruta_id
-      FROM vigente v
-      WHERE (${state ?? null}::text IS NULL OR EXISTS (
-              SELECT 1 FROM paradas_ruta p
-              WHERE p.ruta_version_id = v.ruta_version_id AND p.estado_entrega = ${state ?? null}::text))
-        AND (${withIncidents} = false OR EXISTS (
-              SELECT 1 FROM paradas_ruta p JOIN incidencias_entrega i ON i.parada_id = p.parada_id
-              WHERE p.ruta_version_id = v.ruta_version_id))`;
-    return rows.map(row => row.ruta_id);
-  }
+/**
+ * Rutas cuya versión vigente tiene alguna entrega en el estado indicado y/o alguna incidencia.
+ * Compartida por el seguimiento (US-019) y el historial (US-023).
+ */
+export async function routesMatchingDeliveries(prisma: PrismaService, state: string | undefined, withIncidents: boolean) {
+  const rows = await prisma.$queryRaw<{ ruta_id: string }[]>`
+    WITH vigente AS (
+      SELECT DISTINCT ON (rv.ruta_id) rv.ruta_id, rv.ruta_version_id
+      FROM rutas_versiones rv
+      ORDER BY rv.ruta_id, rv.numero DESC
+    )
+    SELECT v.ruta_id
+    FROM vigente v
+    WHERE (${state ?? null}::text IS NULL OR EXISTS (
+            SELECT 1 FROM paradas_ruta p
+            WHERE p.ruta_version_id = v.ruta_version_id AND p.estado_entrega = ${state ?? null}::text))
+      AND (${withIncidents} = false OR EXISTS (
+            SELECT 1 FROM paradas_ruta p JOIN incidencias_entrega i ON i.parada_id = p.parada_id
+            WHERE p.ruta_version_id = v.ruta_version_id))`;
+  return rows.map(row => row.ruta_id);
 }

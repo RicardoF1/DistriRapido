@@ -1,5 +1,7 @@
 # Cobertura administrativa preparada — v1.0.0
 
+> **Despliegue de producción (decisión del 2026-11-19).** Para la Inspección 5, el equipo decidió desplegar con esta cobertura sin cambiar `publicReleaseAllowed`. El paquete sigue fuera de Git: entra en las imágenes como GitHub Secret, las imágenes de GHCR son privadas y el frontend desplegado sirve `coverage.geojson` a quien lo visite. Detalle y alternativa (límites OSM): [Despliegue en Render V_1_0_0](../docs/otros/despliegue/Despliegue%20en%20Render%20V_1_0_0.md#2-decisión-sobre-la-cobertura-inei).
+
 Estado actual: v1.0.0 aprobada provisionalmente e integrada en frontend y backend. La publicación pública de datos e imágenes permanece bloqueada hasta aclarar permisos de redistribución.
 Consulta: 8 de octubre de 2026, America/Lima.
 

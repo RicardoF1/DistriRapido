@@ -47,6 +47,7 @@ jobs:
         working-directory: .
         run: |
           node --test scripts/geodata-tools.test.cjs
+          node --test scripts/sus-score.test.cjs
           node scripts/check-geodata-publication.cjs
   frontend:
     runs-on: ubuntu-latest
