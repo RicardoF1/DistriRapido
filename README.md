@@ -2,6 +2,7 @@
 
 [![DistriRapido checks](https://github.com/RicardoF1/DistriRapido/actions/workflows/ci.yml/badge.svg)](https://github.com/RicardoF1/DistriRapido/actions/workflows/ci.yml)
 [![DistriRapido tests](https://github.com/RicardoF1/DistriRapido/actions/workflows/tests.yml/badge.svg)](https://github.com/RicardoF1/DistriRapido/actions/workflows/tests.yml)
+[![DistriRapido deploy](https://github.com/RicardoF1/DistriRapido/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/RicardoF1/DistriRapido/actions/workflows/deploy-production.yml)
 
 Plataforma web para gestionar la distribución y las entregas de última milla en Huancayo. Proyecto del curso **Taller de Proyectos 2**.
 
@@ -233,7 +234,7 @@ Entregables de cierre para la Inspección 5 (2026-11-20). Cada documento enlaza 
 - [03 Analisis PlayWrigth V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/03%20Analisis%20PlayWrigth%20V_1_0_0.md)
 - 04 Usabilidad V_1_0_0 — pendiente: se publicará cuando se hayan reunido las respuestas SUS de al menos 5 personas. Material de aplicación: [Guía de aplicación SUS V_1_0_0](docs/otros/soporte-sprint-04/usabilidad/Gu%C3%ADa%20de%20aplicaci%C3%B3n%20SUS%20V_1_0_0.md) y cálculo con `node scripts/sus-score.cjs`.
 
-Workflows de GitHub Actions: [ci.yml](.github/workflows/ci.yml) (typecheck, lint, pruebas, build, auditoría y CodeQL) · [tests.yml](.github/workflows/tests.yml) (backend, Vitest y E2E en Chromium, Firefox y WebKit, con el reporte HTML como artifact). `deploy-production.yml` queda pendiente hasta que el equipo elija la plataforma de despliegue.
+Workflows de GitHub Actions: [ci.yml](.github/workflows/ci.yml) (typecheck, lint, pruebas, build, auditoría y CodeQL) · [tests.yml](.github/workflows/tests.yml) (backend, Vitest y E2E en Chromium, Firefox y WebKit, con el reporte HTML como artifact). [deploy-production.yml](.github/workflows/deploy-production.yml) (tras `tests.yml` en verde sobre `main`: imágenes en GHCR, migraciones, despliegue en Render y verificación de la URL pública). Configuración y operación: [Despliegue en Render V_1_0_0](docs/otros/despliegue/Despliegue%20en%20Render%20V_1_0_0.md).
 
 Informes técnicos de las historias del sprint (material de soporte, fuera de la carpeta de entregables):
 
@@ -269,5 +270,6 @@ El commit `33e7601` tiene evidencia histórica de pruebas, SonarQube y demostrac
 |---|---|---|
 | Adecuación TP2 | 2026-11-12 | Completa secciones de la guía; separa antecedentes de estado vigente; enlaza gestión Sprint 2 y ruta oficial Sprint 3; declara limitaciones. |
 | Cierre Sprint 04 | 2026-11-18 | Badges de `ci.yml` y `tests.yml`; sección «Sprint 04 — entregables» con Revisión, Retrospectiva, Análisis Playwright e informes US-018 a US-021. |
+| Despliegue | 2026-11-19 | Workflow `deploy-production.yml` y su badge; guía de despliegue en Render. |
 
 Las seis referencias oficiales de Drive no pudieron consultarse en esta sesión. Los requisitos se aplican desde la transcripción proporcionada por el equipo; no se atribuyen otros requisitos a archivos no leídos.

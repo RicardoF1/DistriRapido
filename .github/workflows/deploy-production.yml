@@ -1,0 +1,239 @@
+# Despliegue continuo a producción (Render).
+# Se ejecuta solo cuando «DistriRapido tests» termina en verde tras un push a main, o a mano.
+# 1) Construye las imágenes del backend, el frontend y OSRM y las publica en GHCR (paquetes privados).
+# 2) Aplica las migraciones de Prisma sobre la base de producción.
+# 3) Pide a Render que despliegue exactamente esas imágenes (deploy hooks con imgURL).
+# 4) Comprueba la URL pública: /api/health debe informar el commit desplegado y la base de datos activa.
+# Todas las credenciales viven en GitHub Secrets; ver docs/otros/despliegue/Despliegue en Render V_1_0_0.md.
+name: DistriRapido deploy
+
+on:
+  workflow_run:
+    workflows: ["DistriRapido tests"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      rebuild_osrm:
+        description: Reconstruir el grafo OSRM aunque su Dockerfile no haya cambiado
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  DEPLOY_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+jobs:
+  build:
+    name: Construir y publicar imágenes
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.names.outputs.backend }}
+      frontend: ${{ steps.names.outputs.frontend }}
+      osrm: ${{ steps.names.outputs.osrm }}
+      osrm_build: ${{ steps.osrm.outputs.build }}
+      deploy: ${{ steps.config.outputs.deploy }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.DEPLOY_SHA }}
+
+      - name: Comprobar configuración
+        id: config
+        # La cobertura y la base de datos son obligatorias. Los deploy hooks y la URL se configuran
+        # después de crear los servicios en Render (necesitan que las imágenes ya existan en GHCR):
+        # mientras falten, el workflow publica imágenes y migra, pero no despliega.
+        env:
+          COVERAGE: ${{ secrets.COVERAGE_V1_TAR_XZ_B64 }}
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+          HOOK_BACKEND: ${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}
+          HOOK_FRONTEND: ${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}
+          HOOK_OSRM: ${{ secrets.RENDER_DEPLOY_HOOK_OSRM }}
+          PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+        run: |
+          missing=""
+          for name in COVERAGE DATABASE_URL; do [ -n "${!name}" ] || missing="$missing $name"; done
+          if [ -n "$missing" ]; then
+            echo "::error::Falta configurar en GitHub:$missing (ver la guía de despliegue)."
+            exit 1
+          fi
+          pending=""
+          for name in HOOK_BACKEND HOOK_FRONTEND HOOK_OSRM PRODUCTION_URL; do [ -n "${!name}" ] || pending="$pending $name"; done
+          if [ -n "$pending" ]; then
+            echo "::warning::Sin despliegue en Render: falta$pending. Se publican las imágenes y se migra la base."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Nombres de imagen
+        id: names
+        run: |
+          owner="$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')"
+          osrm_tag="osrm-$(sha256sum infra/osrm/Dockerfile | cut -c1-12)"
+          {
+            echo "backend=ghcr.io/${owner}/distrirapido-backend:${DEPLOY_SHA}"
+            echo "frontend=ghcr.io/${owner}/distrirapido-frontend:${DEPLOY_SHA}"
+            echo "osrm=ghcr.io/${owner}/distrirapido-osrm:${osrm_tag}"
+            echo "owner=${owner}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Aprovisionar la cobertura privada v1.0.0
+        # El paquete INEI no se versiona: llega como Secret (tar.xz en base64) y se verifica contra
+        # los SHA-256 de geodata/coverage-release.json antes de entrar en las imágenes.
+        env:
+          COVERAGE: ${{ secrets.COVERAGE_V1_TAR_XZ_B64 }}
+        run: |
+          source="$RUNNER_TEMP/coverage-source"
+          mkdir -p "$source"
+          printf '%s' "$COVERAGE" | base64 -d | tar -xJ -C "$source"
+          node scripts/provision-coverage.cjs --source "$source/coverage/v1"
+          rm -rf "$source"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Backend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/backend/Dockerfile
+          push: true
+          build-args: APP_VERSION=${{ env.DEPLOY_SHA }}
+          tags: |
+            ${{ steps.names.outputs.backend }}
+            ghcr.io/${{ steps.names.outputs.owner }}/distrirapido-backend:latest
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+      - name: Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/frontend/Dockerfile
+          push: true
+          build-args: VITE_API_URL=/api
+          tags: |
+            ${{ steps.names.outputs.frontend }}
+            ghcr.io/${{ steps.names.outputs.owner }}/distrirapido-frontend:latest
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+      - name: ¿Hace falta reconstruir OSRM?
+        id: osrm
+        # El grafo solo se regenera si cambia infra/osrm/Dockerfile (la etiqueta es su hash) o si se pide.
+        run: |
+          if [ "${{ inputs.rebuild_osrm }}" = "true" ] || ! docker manifest inspect "${{ steps.names.outputs.osrm }}" > /dev/null 2>&1; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "build=false" >> "$GITHUB_OUTPUT"
+            echo "La imagen ${{ steps.names.outputs.osrm }} ya existe; se reutiliza."
+          fi
+
+      - name: OSRM (grafo vial de Huancayo)
+        if: steps.osrm.outputs.build == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: infra/osrm
+          file: infra/osrm/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.names.outputs.osrm }}
+            ghcr.io/${{ steps.names.outputs.owner }}/distrirapido-osrm:latest
+
+      - name: Revisión del grafo OSRM
+        run: |
+          docker pull -q "${{ steps.names.outputs.osrm }}" > /dev/null
+          revision="$(docker run --rm --entrypoint cat "${{ steps.names.outputs.osrm }}" /data/REVISION)"
+          echo "OSRM_DATA_REVISION=${revision}"
+          echo "**OSRM_DATA_REVISION:** \`${revision}\`" >> "$GITHUB_STEP_SUMMARY"
+
+  migrate:
+    name: Migraciones de base de datos
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+        run: |
+          docker run --rm -e DATABASE_URL "${{ needs.build.outputs.backend }}" \
+            node node_modules/prisma/build/index.js migrate deploy
+
+  deploy:
+    name: Desplegar en Render
+    needs: [build, migrate]
+    if: needs.build.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+    steps:
+      - name: Disparar los deploy hooks
+        env:
+          HOOK_BACKEND: ${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}
+          HOOK_FRONTEND: ${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}
+          HOOK_OSRM: ${{ secrets.RENDER_DEPLOY_HOOK_OSRM }}
+          IMAGE_BACKEND: ${{ needs.build.outputs.backend }}
+          IMAGE_FRONTEND: ${{ needs.build.outputs.frontend }}
+          IMAGE_OSRM: ${{ needs.build.outputs.osrm }}
+          OSRM_BUILT: ${{ needs.build.outputs.osrm_build }}
+        run: |
+          hook() {
+            local url="$1" image="$2" encoded
+            encoded="$(jq -rn --arg v "$image" '$v|@uri')"
+            curl -fsS -X POST -o /dev/null "${url}&imgURL=${encoded}"
+            echo "Despliegue solicitado: ${image}"
+          }
+          if [ "$OSRM_BUILT" = "true" ]; then hook "$HOOK_OSRM" "$IMAGE_OSRM"; fi
+          hook "$HOOK_BACKEND" "$IMAGE_BACKEND"
+          hook "$HOOK_FRONTEND" "$IMAGE_FRONTEND"
+
+      - name: Verificar la URL pública
+        env:
+          PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+        run: |
+          base="${PRODUCTION_URL%/}"
+          # Render tarda unos minutos en descargar e iniciar las imágenes; se espera hasta 15 minutos
+          # a que /api/health informe el commit nuevo.
+          for attempt in $(seq 1 60); do
+            body="$(curl -fsS --max-time 60 "$base/api/health" || true)"
+            version="$(echo "$body" | jq -r '.version // empty' 2>/dev/null || true)"
+            if [ "$version" = "$DEPLOY_SHA" ] && [ "$(echo "$body" | jq -r .database)" = "up" ]; then
+              echo "API en línea con ${version}"; break
+            fi
+            [ "$attempt" = 60 ] && { echo "::error::La API no informó el commit ${DEPLOY_SHA} a tiempo. Última respuesta: ${body}"; exit 1; }
+            sleep 15
+          done
+          {
+            echo "## Producción"
+            echo ""
+            echo "URL: ${base}"
+            echo ""
+            echo "| Recurso | HTTP | TTFB (s) | Total (s) |"
+            echo "|---|---|---|---|"
+          } >> "$GITHUB_STEP_SUMMARY"
+          for path in / /login /api/health /geodata/coverage/v1/coverage.geojson; do
+            read -r code ttfb total < <(curl -sS -o /dev/null --max-time 60 -w '%{http_code} %{time_starttransfer} %{time_total}' "$base$path")
+            echo "| \`${path}\` | ${code} | ${ttfb} | ${total} |" >> "$GITHUB_STEP_SUMMARY"
+            [ "$code" = "200" ] || { echo "::error::${path} respondió ${code}"; exit 1; }
+          done
+          echo "Frontend, API y cobertura disponibles en ${base}"

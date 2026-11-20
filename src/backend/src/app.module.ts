@@ -13,11 +13,12 @@ import { AdminModule } from './admin/admin.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { PlanningModule } from './planning/planning.module';
 import { OperationsModule } from './operations/operations.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env', '../.env'], validate: validateEnvironment }),
-    ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]), AuthModule, UsersModule, RolesModule, OrdersModule, AdminModule, DriversModule, AvailabilityModule, VehiclesModule, PlanningModule, OperationsModule,
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]), AuthModule, UsersModule, RolesModule, OrdersModule, AdminModule, DriversModule, AvailabilityModule, VehiclesModule, PlanningModule, OperationsModule, HealthModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
