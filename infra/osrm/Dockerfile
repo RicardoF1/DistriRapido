@@ -6,12 +6,12 @@
 ARG OSRM_IMAGE=ghcr.io/project-osrm/osrm-backend:v26.10.0-debian@sha256:55dbfd47d984c2cacd64e32901b4321c86b5ec761438e69aa053dc78698a786f
 
 FROM debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2 AS extract
-# Extracto fechado (AAMMDD) y su SHA-256, calculado el 2026-11-19 sobre dos descargas idénticas.
-# El .md5 que publica Geofabrik para este archivo no coincidía con el contenido servido, por eso se fija
-# el SHA-256. Para actualizar el grafo: cambiar fecha y hash; cambia el hash de este Dockerfile y el
-# workflow de despliegue reconstruye la imagen.
+# Extracto fechado (AAMMDD). Geofabrik sirve bytes distintos para el mismo archivo según el servidor
+# que responda (su .md5 tampoco coincide), así que no se puede fijar un hash del PBF: se descarga por
+# HTTPS, se valida que osmium pueda leerlo completo y se registra el SHA-256 real del PBF y del recorte
+# en /data/PROVENANCE y /data/REVISION. Para actualizar el grafo: cambiar la fecha; cambia el hash de
+# este Dockerfile y el workflow de despliegue reconstruye la imagen.
 ARG PBF_DATE=261118
-ARG PBF_SHA256=85a4f3844dde21e77ffdf4d2a0d1a3e2058484b1e8b9c1455571656f1c141d9d
 ARG BBOX=-75.40,-12.25,-74.80,-11.75
 RUN apt-get update \
  && apt-get install -y --no-install-recommends ca-certificates curl osmium-tool \
@@ -20,13 +20,14 @@ WORKDIR /data
 RUN set -eu; \
     url="https://download.geofabrik.de/south-america/peru/peru-${PBF_DATE}.osm.pbf"; \
     curl -fsSL --retry 3 -o peru.osm.pbf "$url"; \
-    echo "${PBF_SHA256}  peru.osm.pbf" | sha256sum -c -; \
+    pbf_sha="$(sha256sum peru.osm.pbf | cut -d' ' -f1)"; \
+    osmium fileinfo --extended --no-progress peru.osm.pbf > /dev/null; \
     osmium extract -b "$BBOX" --strategy complete_ways --no-progress -o huancayo.osm.pbf peru.osm.pbf; \
     rm peru.osm.pbf; \
     sha="$(sha256sum huancayo.osm.pbf | cut -d' ' -f1)"; \
     short="$(echo "$sha" | cut -c1-12)"; \
     echo "geofabrik-peru-${PBF_DATE}-sha256:${short}-car-mld-osrm-v26.10.0" > REVISION; \
-    printf 'pbf_url=%s\npbf_sha256=%s\nbbox=%s\nstrategy=complete_ways\nextract_sha256=%s\n' "$url" "$PBF_SHA256" "$BBOX" "$sha" > PROVENANCE; \
+    printf 'pbf_url=%s\npbf_sha256=%s\nbbox=%s\nstrategy=complete_ways\nextract_sha256=%s\n' "$url" "$pbf_sha" "$BBOX" "$sha" > PROVENANCE; \
     cat PROVENANCE REVISION
 
 FROM ${OSRM_IMAGE} AS graph
