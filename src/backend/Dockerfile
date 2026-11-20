@@ -22,6 +22,9 @@ COPY --from=build /app/src/backend/src/roles ./src/roles
 COPY --from=build /app/src/backend/package*.json ./
 COPY --from=build /app/src/backend/tsconfig.json ./
 COPY --from=build /app/geodata/coverage/v1/ /app/geodata/coverage/v1/
+# Commit desplegado; lo informa GET /health para confirmar que la versión nueva ya está en línea.
+ARG APP_VERSION=local
+ENV APP_VERSION=$APP_VERSION
 USER node
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
