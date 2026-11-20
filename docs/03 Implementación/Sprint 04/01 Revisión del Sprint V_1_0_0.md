@@ -56,7 +56,17 @@ Detalle por historia: [US-018](../../otros/soporte-sprint-04/01%20US-018%20Regis
 - **US-023:** con filtros en la URL, el formulario los carga y aparece el mensaje de sin registros; el detalle de una ruta no terminada responde 404 y un rango invertido 400. Sin desbordamiento a 375 px.
 - **US-019, y los escenarios con datos de US-022 y US-023:** verificados con pruebas de integración contra PostgreSQL (`operations.integration.ts`, `indicators.integration.ts` e `history.integration.ts`).
 
-**Demostración a los stakeholders:** se presenta al docente en la Inspección 5 del 2026-11-20, de 18:20 a 18:40. Recorrido previsto: planificar una ruta → confirmarla (US-020) → asignarla al conductor → registrar una incidencia desde el panel del conductor (US-018) → consultarla en «Seguimiento operativo» con filtros (US-019) → registrar la información de sostenibilidad de la ruta (US-021) → completar las entregas desde el panel del conductor → consultar los indicadores del periodo (US-022) → revisar la operación terminada en el «Historial» (US-023). Los indicadores y el historial solo muestran rutas completadas, por lo que la ruta de la demostración debe terminarse antes de esos dos pasos. La retroalimentación recibida se registrará en este documento después de la Inspección 5.
+**Demostración a los stakeholders:** se presenta al docente en la Inspección 5 del 2026-11-20, de 18:20 a 18:40. Recorrido previsto: planificar una ruta → confirmarla (US-020) → asignarla al conductor → registrar una incidencia desde el panel del conductor (US-018) → consultarla en «Seguimiento operativo» con filtros (US-019) → registrar la información de sostenibilidad de la ruta (US-021) → completar las entregas desde el panel del conductor → consultar los indicadores del periodo (US-022) → revisar la operación terminada en el «Historial» (US-023). Los indicadores y el historial solo muestran rutas completadas, por lo que la ruta de la demostración debe terminarse antes de esos dos pasos. La retroalimentación del docente en la Inspección 5 se incorpora como nueva actualización de este documento al terminar la sesión.
+
+**Evidencias de la demostración** (capturas de los reportes HTML de Playwright, también citadas en el [Análisis Playwright](03%20Analisis%20PlayWrigth%20V_1_0_0.md)):
+
+| Evidencia | Qué muestra |
+|---|---|
+| [Resumen de la corrida contra producción](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-resumen.png) | Suite ejecutada contra el backend real (corrida 3) |
+| [Rendimiento y tiempos de API](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-performance-detalle.png) | Muestras de Web Vitals y tiempos de respuesta de las APIs |
+| [Resiliencia ante 409](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-resilience-409.png) y [ante 500](../../otros/soporte-sprint-04/evidencias/playwright/live-corrida3-resilience-500.png) | Mensajes de la interfaz ante conflictos y errores del servidor |
+| [Chromium](../../otros/soporte-sprint-04/evidencias/playwright/ci-chromium-resumen.png) · [Firefox](../../otros/soporte-sprint-04/evidencias/playwright/ci-firefox-resumen.png) · [WebKit](../../otros/soporte-sprint-04/evidencias/playwright/ci-webkit-resumen.png) | Suite E2E en verde en los tres navegadores en GitHub Actions |
+| [Análisis Playwright, sección 3.3](03%20Analisis%20PlayWrigth%20V_1_0_0.md#33-entorno-desplegado-render) | Web Vitals, arranque en frío y disponibilidad medidos sobre https://distrirapido.onrender.com |
 
 ## Pendientes
 
@@ -72,7 +82,7 @@ Detalle por historia: [US-018](../../otros/soporte-sprint-04/01%20US-018%20Regis
 | Cobertura INEI en producción | Para la Inspección 5 se desplegó con la cobertura INEI v1.0.0, cuyo permiso de redistribución sigue sin confirmar; el frontend público sirve `coverage.geojson` | Reemplazarla por límites de OpenStreetMap o confirmar el permiso del INEI |
 | Plan gratuito de Render | Los servicios se duermen tras 15 minutos sin tráfico y la base de datos vence el 2026-12-19 | Para un uso real, plan de pago o exportar los datos con `pg_dump` antes del vencimiento |
 | `TRUST_PROXY` en producción | Sin configurar: detrás del proxy, el límite de 10 peticiones por minuto se comparte entre todos los usuarios | Medir los saltos del proxy y configurar el valor (ver la guía de despliegue) |
-| Mejoras de usabilidad | Seis mejoras propuestas a partir de la evaluación SUS ([04 Usabilidad](04%20Usabilidad%20V_1_0_0.md), sección 3.4) | Implementarlas en el mantenimiento del producto |
+| Mejoras de usabilidad | Seis mejoras propuestas a partir de la evaluación SUS ([04 Usabilidad](04%20Usabilidad%20V_1_0_0.md), sección 3.4); la descripción de cada tipo de incidencia se aplicó el 2026-11-20 | Las cinco restantes, en la acción 9 de la [Retrospectiva](02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md) |
 
 ---
 
@@ -81,5 +91,6 @@ Detalle por historia: [US-018](../../otros/soporte-sprint-04/01%20US-018%20Regis
 | V_1_0_0 | 2026-11-18 | Versión inicial de la Revisión del Sprint 4, con el estado de Jira al 2026-11-18. |
 | V_1_0_0 (actualización) | 2026-11-19 | Se incorporan US-022 y US-023, implementadas dentro del Sprint 4 por ser el último del proyecto (30 SP). Se retira la indicación de que pasaban al siguiente sprint, se actualizan la evidencia de calidad (incluida la ejecución E2E en tres navegadores), la demostración y los pendientes, y se registra que en Jira ambas historias se incorporaron al «SCRUM Sprint 4» como Finalizadas. |
 | V_1_0_0 (actualización) | 2026-11-19 | Se registran el entorno de producción en Render y la integración de `sprint-4` en `main` (PR #31), y se añaden como pendientes la cobertura INEI en producción, el plan gratuito de Render, `TRUST_PROXY` y las mejoras de usabilidad. |
+| V_1_0_0 (actualización) | 2026-11-20 | Se añaden las evidencias de la demostración y del entorno de producción, y el estado de las mejoras de usabilidad. |
 
 [← Volver al README principal](../../../README.md)

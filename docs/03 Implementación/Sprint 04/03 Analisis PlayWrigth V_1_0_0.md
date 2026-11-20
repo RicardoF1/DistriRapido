@@ -2,7 +2,7 @@
 
 [← Volver al README principal](../../../README.md) · [Índice documental](../../README.md)
 
-**Nombre del Proyecto:** DistriRapido — Sistema de planificación y seguimiento de entregas de última milla
+**Nombre del Proyecto:** Huancayo GreenRoute Logistics (proyecto HGR en Jira) — sistema DistriRapido de planificación y seguimiento de entregas de última milla
 
 **Líder del Proyecto:** Rupay Chira, Rosalyn Exkra
 

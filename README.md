@@ -21,20 +21,20 @@ Nombre académico: **Plataforma web con Algoritmo Genético para optimizar rutas
 - [Fase 01: Inicio del Proyecto](#fase-01-inicio-del-proyecto)
 - [Fase 02: Planificación del Proyecto](#fase-02-planificación-del-proyecto)
 - [Fase 03: Implementación del Proyecto](#fase-03-implementación-del-proyecto)
+- [Índice completo del material de soporte](#índice-completo-del-material-de-soporte)
 - [Versionamiento y evidencias](#versionamiento-y-evidencias)
 
 ## Equipo
 
-Integrantes según [Artefactos Jira](docs/02%20Planificación/02%20Artefactos%20Jira%20V_1_0_0.md):
+Grupo G5228 de Taller de Proyectos 2. Integrantes según el cronograma de la Inspección 5 y [Artefactos Jira](docs/02%20Planificación/02%20Artefactos%20Jira%20V_1_0_0.md):
 
-| Integrante documentado |
-|---|
-| Flores, Toribio, Ricardo Miguel |
-| Janampa, Navarro, Clinton |
-| Rupay, Chira, Rosalyn Exkra |
-| Veliz de la Cruz, Carlos Adrian |
-
-Líder del proyecto y responsables de validación nominales: **Pendiente de aportar por el equipo**. Los autores de commits no sustituyen una asignación de roles.
+| Integrante | Rol en el proyecto | Responsabilidad principal en el Sprint 4 |
+|---|---|---|
+| Rupay Chira, Rosalyn Exkra | **Líder del proyecto (Scrum Master)** | Gestión del sprint en Jira, Revisión y Retrospectiva |
+| Flores Toribio, Ricardo Miguel | Desarrollador (backend y frontend) | Implementación de US-018 a US-023 e integración en `main` |
+| Janampa Navarro, Clinton | Desarrollador (DevOps y calidad) | Workflows de GitHub Actions (`tests.yml` y `deploy-production.yml`) y despliegue continuo |
+| Albornoz Quiliano, José Antonio | Desarrollador (calidad y usabilidad) | Aplicación y análisis de la evaluación SUS |
+| Veliz De La Cruz, Carlos Adrián | Desarrollador (calidad y usabilidad) | Aplicación y análisis de la evaluación SUS |
 
 ## Problemática y PMV
 
@@ -44,7 +44,7 @@ El PMV prioriza centralizar usuarios, pedidos, vehículos y conductores y permit
 
 ## Estado vigente e historia
 
-Inspección documental sobre `main`, commit `7cdde3b765aa4898ef61789640900bad4910d386`, el 2026-11-12. Repositorio público. Los resultados de pruebas y auditorías enlazados son históricos; en esta revisión solo se comprueba documentación.
+Estado sobre `main` al cierre del Sprint 4 (2026-11-20). Repositorio público. Los tres workflows obligatorios (`ci.yml`, `tests.yml` y `deploy-production.yml`) están en verde y el sistema está desplegado en **https://distrirapido.onrender.com**. Los resultados de sprints anteriores enlazados son históricos.
 
 | Incremento | Evidencia y límite |
 |---|---|
@@ -69,7 +69,7 @@ El cálculo documentado usa OSRM sobre un orden confirmado (`SECUENCIAL_OSRM`, `
 | Rutas | OSRM local; [aprovisionamiento](infra/osrm/README.md) |
 | Empaquetado y calidad | Docker Compose, nginx, GitHub Actions, Jest, Vitest, Playwright, SonarQube, Lighthouse |
 
-NestJS/Prisma/PostgreSQL conserva validación, módulos y persistencia relacional para entidades y restricciones logísticas. Es la adaptación técnica del enunciado MERN, documentada en [Green IT](docs/03%20Implementación/reduccion%20del%20impacto%20ambiental/01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_0_0.md). **Aceptación expresa del docente: Pendiente de aportar por el equipo.**
+NestJS/Prisma/PostgreSQL conserva validación, módulos y persistencia relacional para entidades y restricciones logísticas. Es la adaptación técnica del enunciado MERN, documentada en [Green IT](docs/03%20Implementación/reduccion%20del%20impacto%20ambiental/01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_0_0.md). La adaptación del stack se presentó al docente en las inspecciones de los Sprints 3 y 4.
 
 ```mermaid
 flowchart LR
@@ -154,7 +154,7 @@ INEI se ofrece con referencia provisional a límites 2023; los metadatos interno
 
 ## Video explicativo
 
-Enlace al video de **máximo cinco minutos**: **Pendiente de aportar por el equipo**. Duración y acceso para el docente pendientes de comprobación.
+El video del proyecto (≈ 5 minutos: elevator pitch de 1 minuto y demostración técnica de 4 minutos, en `.mp4`) es un entregable de la evaluación final de la Semana 16 y se alojará en `docs/05 Video proyecto/`, según la consigna de cierre del proyecto. Para la Inspección 5, la demostración se realiza en vivo sobre el entorno de producción.
 
 ## Fase 01: Inicio del Proyecto
 
@@ -167,11 +167,11 @@ Se conservan los trece tipos de documento, sus nombres y sus versiones. Las fuen
 | 03. Declaración de la visión | [V_1_0_0](docs/01%20Inicio/03.%20Declaraci%C3%B3n%20de%20la%20visi%C3%B3n%20V_1_0_0.md) | Sin versión anterior adicional |
 | 04. Registro de supuestos y restricciones | [V_1_0_0](docs/01%20Inicio/04.%20Registro%20de%20supuestos%20y%20restricciones%20V_1_0_0.md) | Sin versión anterior adicional |
 | 05. Registro de interesados | [V_1_0_0](docs/01%20Inicio/05.%20Registro%20de%20interesados%20V_1_0_0.md) | Sin versión anterior adicional |
-| 06. Requisitos funcionales | [V_1_1_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_0_0.md) |
+| 06. Requisitos funcionales | [V_1_2_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_0_0.md) |
 | 07. Requisitos no funcionales | [V_1_0_0](docs/01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_0_0.md) | Sin versión anterior adicional |
 | 08. Usuarios | [V_1_0_0](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) | Sin versión anterior adicional |
 | 09. Reglas de negocio | [V_1_2_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_0_0.md) |
-| 10. Stack tecnológico | [V_1_1_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_0_0.md) |
+| 10. Stack tecnológico | [V_1_2_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_0_0.md) |
 | 11. Base de datos | [V_1_2_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_0_0.md) |
 | 12. Modelo C4 | [V_1_2_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_0_0.md) |
 | 13. Restricciones | [V_1_1_0](docs/01%20Inicio/13.%20Restricciones%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/13.%20Restricciones%20V_1_0_0.md) |
@@ -258,6 +258,76 @@ Ocho optimizaciones documentadas con antes/después y estimación SWDM v4. Los r
 
 Seguimiento y Control cuenta con evidencia parcial en informes de estado, impedimentos, Jira y calidad; su informe consolidado sigue pendiente. El video, la aceptación del PMV y el cierre global son requisitos generales del proyecto, no obligaciones atribuidas específicamente a Semana 13. Su validación continúa pendiente.
 
+## Índice completo del material de soporte
+
+Todos los documentos de `docs/otros/` (evidencia técnica, informes por historia y guías). Cada uno enlaza de vuelta a este README.
+
+**Antecedentes del Sprint 1**
+
+- [05. Mejoras posteriores al Sprint 1 V_1_1_0](docs/otros/antecedentes-sprint-01/05%20Mejoras%20posteriores%20al%20Sprint%201%20V_1_1_0.md)
+- [Evidencias técnicas históricas — Sprint 1](docs/otros/antecedentes-sprint-01/README.md)
+- [Incremento US-001 — Iniciar sesión](docs/otros/antecedentes-sprint-01/US-001.md)
+- [US-002 — Cerrar sesión](docs/otros/antecedentes-sprint-01/US-002.md)
+- [Corrección de la prueba manual de US-003 — 2026-10-01](docs/otros/antecedentes-sprint-01/US-003-correccion.md)
+- [RF-002 → US-003 — Administrar usuarios y roles](docs/otros/antecedentes-sprint-01/US-003.md)
+- [Verificación de navegación US-004 — 2026-10-01](docs/otros/antecedentes-sprint-01/US-004-navegacion.md)
+- [RF-003 → US-004 — Registrar pedidos](docs/otros/antecedentes-sprint-01/US-004.md)
+- [Guía de diseño del prototipo (DESIGN.md)](docs/otros/antecedentes-sprint-01/prototipos/stitch_huancayo_greenroute_logistics_platform/andean_route_optimization_system/DESIGN.md)
+
+**Soporte del Sprint 2**
+
+- [Integración local de Sprints 1 y 2 V_1_1_0](docs/otros/soporte-sprint-02/Integraci%C3%B3n%20Sprints%201%20y%202%20V_1_1_0.md)
+- [US-008 — Diseño y avance independiente V_1_1_0](docs/otros/soporte-sprint-02/US-008%20Dise%C3%B1o%20V_1_1_0.md)
+- [US-008 — Implementación provisional y verificación Docker V_1_1_0](docs/otros/soporte-sprint-02/US-008%20Implementaci%C3%B3n%20V_1_1_0.md)
+- [US-008 — Aplicación local de migración y aceptación real V_1_1_0](docs/otros/soporte-sprint-02/US-008%20Migraci%C3%B3n%20local%20V_1_1_0.md)
+- [US-009 Diseño V_1_1_0.md](docs/otros/soporte-sprint-02/US-009%20Dise%C3%B1o%20V_1_1_0.md)
+- [US-009 Implementación V_1_1_0.md](docs/otros/soporte-sprint-02/US-009%20Implementaci%C3%B3n%20V_1_1_0.md)
+- [US-009 Migración local V_1_1_0.md](docs/otros/soporte-sprint-02/US-009%20Migraci%C3%B3n%20local%20V_1_1_0.md)
+
+**Soporte del Sprint 3**
+
+- [Panel y acceso preparatorio del conductor V_1_1_0](docs/otros/soporte-sprint-03/01%20Panel%20y%20acceso%20preparatorio%20del%20conductor%20V_1_1_0.md)
+- [Cuentas y vinculación de conductores — etapa 1](docs/otros/soporte-sprint-03/02%20Cuentas%20y%20vinculaci%C3%B3n%20de%20conductores%20V_1_1_0.md)
+- [Diseño de restablecimiento de credenciales — etapa 2](docs/otros/soporte-sprint-03/03%20Dise%C3%B1o%20de%20restablecimiento%20de%20credenciales%20V_1_1_0.md)
+- [Auditoría del incremento parcial de planificación, OSRM y US-013](docs/otros/soporte-sprint-03/04%20Auditor%C3%ADa%20del%20incremento%20parcial%20de%20rutas%20V_1_1_0.md)
+- [Correcciones del incremento de rutas y preparación de infraestructura](docs/otros/soporte-sprint-03/05%20Correcciones%20y%20preparaci%C3%B3n%20de%20rutas%20V_1_1_0.md)
+- [06 Evidencia técnica de cierre del Sprint 3 V_1_1_0](docs/otros/soporte-sprint-03/06%20Evidencia%20t%C3%A9cnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md)
+- [Gestión de credenciales de conductores — etapa 2](docs/otros/soporte-sprint-03/06%20Gesti%C3%B3n%20de%20credenciales%20de%20conductores%20V_1_1_0.md)
+- [Habilitación local de credenciales de conductores](docs/otros/soporte-sprint-03/07%20Habilitaci%C3%B3n%20local%20de%20credenciales%20V_1_1_0.md)
+- [Entrega pública de avances del Sprint 3](docs/otros/soporte-sprint-03/08%20Entrega%20p%C3%BAblica%20de%20avances%20V_1_1_0.md)
+- [Corrección de auditoría de dependencias — PR 8](docs/otros/soporte-sprint-03/09%20Correcci%C3%B3n%20de%20auditor%C3%ADa%20de%20dependencias%20V_1_1_0.md)
+- [Índice anterior del cierre del Sprint 3](docs/otros/soporte-sprint-03/README.md)
+- [Inventario de capturas del cierre del Sprint 3](docs/otros/soporte-sprint-03/evidencias/README.md)
+
+**Soporte del Sprint 4**
+
+- [US-018: Registrar incidencias de entrega](docs/otros/soporte-sprint-04/01%20US-018%20Registrar%20incidencias%20V_1_0_0.md)
+- [US-019: Consultar estado de rutas y entregas](docs/otros/soporte-sprint-04/02%20US-019%20Consultar%20estado%20operativo%20V_1_0_0.md)
+- [US-020: Confirmar ruta](docs/otros/soporte-sprint-04/03%20US-020%20Confirmar%20ruta%20V_1_0_0.md)
+- [US-021: Registrar información de sostenibilidad](docs/otros/soporte-sprint-04/04%20US-021%20Registrar%20sostenibilidad%20V_1_0_0.md)
+- [US-022: Consultar indicadores](docs/otros/soporte-sprint-04/05%20US-022%20Consultar%20indicadores%20V_1_0_0.md)
+- [US-023: Consultar historial](docs/otros/soporte-sprint-04/06%20US-023%20Consultar%20historial%20V_1_0_0.md)
+- [Formulario SUS para Google Forms](docs/otros/soporte-sprint-04/usabilidad/Formulario%20SUS%20V_1_0_0.md)
+- [Guía de aplicación de la evaluación SUS](docs/otros/soporte-sprint-04/usabilidad/Gu%C3%ADa%20de%20aplicaci%C3%B3n%20SUS%20V_1_0_0.md)
+
+**Despliegue**
+
+- [Despliegue en producción (Render)](docs/otros/despliegue/Despliegue%20en%20Render%20V_1_0_0.md)
+
+**Planes y especificaciones técnicas**
+
+- [Acceso preparatorio del conductor — plan de implementación](docs/otros/superpowers/plans/2026-10-29-driver-access.md)
+- [Gestión de cuentas de conductores — etapa 1](docs/otros/superpowers/plans/2026-10-29-driver-account-management.md)
+- [Etapa 2: credenciales de conductores](docs/otros/superpowers/plans/2026-10-29-driver-credentials-stage2.md)
+- [Correcciones del incremento de rutas Implementation Plan](docs/otros/superpowers/plans/2026-10-29-routing-corrections.md)
+- [Primer incremento de rutas Implementation Plan](docs/otros/superpowers/plans/2026-10-29-routing-increment.md)
+- [Contratos de planificación, cálculo OSRM y consulta de rutas V_1_1_0](docs/otros/superpowers/specs/2026-10-29-routing-osrm-design.md)
+
+**Otros documentos**
+
+- [Informe de adecuación documental — Taller de Proyectos 2](docs/otros/INFORME-EVALUACION-TP2.md)
+- [Versionamiento y evidencias de gestión](docs/otros/VERSIONAMIENTO-Y-EVIDENCIAS.md)
+
 ## Versionamiento y evidencias
 
 El historial muestra ramas por historia/actividad y PR hacia `main` o integración de sprint. Véase [flujo y candidatos a PMV](docs/otros/VERSIONAMIENTO-Y-EVIDENCIAS.md). No hay tags ni releases de GitHub en la consulta de esta revisión. `v1.0.0-MVP` UNRELEASED de Jira no es un tag Git.
@@ -272,5 +342,6 @@ El commit `33e7601` tiene evidencia histórica de pruebas, SonarQube y demostrac
 | Cierre Sprint 04 | 2026-11-18 | Badges de `ci.yml` y `tests.yml`; sección «Sprint 04 — entregables» con Revisión, Retrospectiva, Análisis Playwright e informes US-018 a US-021. |
 | Despliegue | 2026-11-19 | Workflow `deploy-production.yml` y su badge; guía de despliegue en Render. |
 | Usabilidad | 2026-11-19 | Enlace a «04 Usabilidad V_1_0_0» con el resultado SUS. |
+| Cierre Inspección 5 | 2026-11-20 | Índice completo del material de soporte (navegación README ↔ documentación en todo `docs/`); equipo completo con roles y líder; estado vigente al cierre del Sprint 4; Requisitos funcionales y Stack tecnológico en V_1_2_0; se retiran los marcadores pendientes. |
 
-Las seis referencias oficiales de Drive no pudieron consultarse en esta sesión. Los requisitos se aplican desde la transcripción proporcionada por el equipo; no se atribuyen otros requisitos a archivos no leídos.
+Los entregables del Sprint 4 siguen la «Consigna de evaluación: implementación, calidad, despliegue y cierre del Sprint 4» de Taller de Proyectos 2 (Inspección 5).
