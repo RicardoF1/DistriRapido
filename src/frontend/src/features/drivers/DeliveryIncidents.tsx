@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { ApiError } from '../../services/api';
-import { driverProfileApi, INCIDENT_TYPE_LABELS, INCIDENT_TYPES, type DeliveryIncident, type IncidentType } from '../../services/driver-profile-api';
+import { driverProfileApi, INCIDENT_TYPE_DESCRIPTIONS, INCIDENT_TYPE_LABELS, INCIDENT_TYPES, type DeliveryIncident, type IncidentType } from '../../services/driver-profile-api';
 
 // US-018 / RF-015: registro y consulta de incidencias de una entrega propia.
 type Field = 'tipo' | 'descripcion' | 'detalle_complementario';
@@ -108,10 +108,11 @@ export function DeliveryIncidents({ deliveryId, sequence, incidents, canRegister
           <p className="delivery-incident-hint">Los campos marcados con * son obligatorios.</p>
           <div className="form-field">
             <label htmlFor={fieldId('tipo')}>Tipo de incidencia *</label>
-            <select ref={refs.tipo} id={fieldId('tipo')} value={tipo} required aria-invalid={errors.tipo ? true : undefined} aria-describedby={describedBy('tipo')} onChange={event => setTipo(event.target.value as IncidentType | '')}>
+            <select ref={refs.tipo} id={fieldId('tipo')} value={tipo} required aria-invalid={errors.tipo ? true : undefined} aria-describedby={describedBy('tipo', tipo ? `${id}-type-hint` : undefined)} onChange={event => setTipo(event.target.value as IncidentType | '')}>
               <option value="">Selecciona un tipo</option>
               {INCIDENT_TYPES.map(type => <option key={type} value={type}>{INCIDENT_TYPE_LABELS[type]}</option>)}
             </select>
+            {tipo && <p id={`${id}-type-hint`} className="delivery-incident-hint">{INCIDENT_TYPE_DESCRIPTIONS[tipo]}</p>}
             {errors.tipo && <p id={errorId('tipo')} className="field-error">{errors.tipo}</p>}
           </div>
           <div className="form-field">

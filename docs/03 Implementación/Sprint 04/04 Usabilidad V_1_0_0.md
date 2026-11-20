@@ -153,14 +153,14 @@ En el ítem 3, P7 marcó 1 («totalmente en desacuerdo» con «fácil de usar»)
 
 ### 3.4 Mejoras propuestas
 
-Ninguna de estas mejoras está implementada todavía; quedan como propuestas para el mantenimiento del producto. Las primeras cuatro recogen lo que pidieron los propios participantes.
+Las primeras cuatro recogen lo que pidieron los propios participantes. Una ya está aplicada y verificada con pruebas automatizadas; las demás quedan planificadas en la acción 9 de la [Retrospectiva](02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md).
 
 | Mejora | Estado | Evidencia |
 |---|---|---|
 | Mostrar junto al botón «Confirmar» un resumen de las condiciones de confirmación y cuál falta cumplir | Propuesta | Pedido por P1 y P5 |
 | Mostrar los filtros activos de «Seguimiento operativo» como etiquetas, con una opción para quitarlos | Propuesta | Pedido por P8 |
 | Añadir un ejemplo del formato junto a los campos de fecha y hora del pedido | Propuesta | Pedido por P2 |
-| Añadir una descripción breve con un ejemplo de cada tipo de incidencia | Propuesta | Pedido por P10 |
+| Añadir una descripción breve con un ejemplo de cada tipo de incidencia | **Aplicada** (2026-11-20) | Pedido por P10. Al elegir un tipo, el formulario muestra su explicación con un ejemplo, enlazada al campo con `aria-describedby` para lectores de pantalla. Código: [`INCIDENT_TYPE_DESCRIPTIONS`](../../../src/frontend/src/services/driver-profile-api.ts) y [`DeliveryIncidents.tsx`](../../../src/frontend/src/features/drivers/DeliveryIncidents.tsx). Prueba: «explica el tipo de incidencia elegido con un ejemplo» en [`DeliveryIncidents.test.tsx`](../../../src/frontend/src/features/drivers/DeliveryIncidents.test.tsx), ejecutada por `tests.yml` |
 | Indicar en «Indicadores» qué periodo se está viendo y enlazar cada fila con su operación en «Historial» | Propuesta | 5 de 6 necesitaron ayuda en T5 |
 | Repetir la SUS sobre el sistema desplegado, con el formulario corregido (tareas por perfil) y una instrucción explícita sobre los ítems negativos | Propuesta | Secciones 1.2, 3.2 y 4 |
 
@@ -184,5 +184,6 @@ Ninguna de estas mejoras está implementada todavía; quedan como propuestas par
 | Versión | Fecha | Cambio |
 |---|---|---|
 | V_1_0_0 | 2026-11-19 | Versión inicial con los resultados de la evaluación SUS del Sprint 4 (n = 10). |
+| V_1_0_0 (actualización) | 2026-11-20 | Se aplica la mejora «descripción con ejemplo de cada tipo de incidencia» (cuello de botella señalado por P10) con su prueba automatizada; las demás mejoras quedan planificadas en la Retrospectiva. |
 
 [← Volver al README principal](../../../README.md)

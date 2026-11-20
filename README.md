@@ -25,16 +25,15 @@ Nombre académico: **Plataforma web con Algoritmo Genético para optimizar rutas
 
 ## Equipo
 
-Integrantes según [Artefactos Jira](docs/02%20Planificación/02%20Artefactos%20Jira%20V_1_0_0.md):
+Grupo G5228 de Taller de Proyectos 2. Integrantes según el cronograma de la Inspección 5 y [Artefactos Jira](docs/02%20Planificación/02%20Artefactos%20Jira%20V_1_0_0.md):
 
-| Integrante documentado |
-|---|
-| Flores, Toribio, Ricardo Miguel |
-| Janampa, Navarro, Clinton |
-| Rupay, Chira, Rosalyn Exkra |
-| Veliz de la Cruz, Carlos Adrian |
-
-Líder del proyecto y responsables de validación nominales: **Pendiente de aportar por el equipo**. Los autores de commits no sustituyen una asignación de roles.
+| Integrante | Rol en el proyecto | Responsabilidad principal en el Sprint 4 |
+|---|---|---|
+| Rupay Chira, Rosalyn Exkra | **Líder del proyecto (Scrum Master)** | Gestión del sprint en Jira, Revisión y Retrospectiva |
+| Flores Toribio, Ricardo Miguel | Desarrollador (backend y frontend) | Implementación de US-018 a US-023 e integración en `main` |
+| Janampa Navarro, Clinton | Desarrollador (DevOps y calidad) | Workflows de GitHub Actions (`tests.yml` y `deploy-production.yml`) y despliegue continuo |
+| Albornoz Quiliano, José Antonio | Desarrollador (calidad y usabilidad) | Aplicación y análisis de la evaluación SUS |
+| Veliz De La Cruz, Carlos Adrián | Desarrollador (calidad y usabilidad) | Aplicación y análisis de la evaluación SUS |
 
 ## Problemática y PMV
 
@@ -44,7 +43,7 @@ El PMV prioriza centralizar usuarios, pedidos, vehículos y conductores y permit
 
 ## Estado vigente e historia
 
-Inspección documental sobre `main`, commit `7cdde3b765aa4898ef61789640900bad4910d386`, el 2026-11-12. Repositorio público. Los resultados de pruebas y auditorías enlazados son históricos; en esta revisión solo se comprueba documentación.
+Estado sobre `main` al cierre del Sprint 4 (2026-11-20). Repositorio público. Los tres workflows obligatorios (`ci.yml`, `tests.yml` y `deploy-production.yml`) están en verde y el sistema está desplegado en **https://distrirapido.onrender.com**. Los resultados de sprints anteriores enlazados son históricos.
 
 | Incremento | Evidencia y límite |
 |---|---|
@@ -69,7 +68,7 @@ El cálculo documentado usa OSRM sobre un orden confirmado (`SECUENCIAL_OSRM`, `
 | Rutas | OSRM local; [aprovisionamiento](infra/osrm/README.md) |
 | Empaquetado y calidad | Docker Compose, nginx, GitHub Actions, Jest, Vitest, Playwright, SonarQube, Lighthouse |
 
-NestJS/Prisma/PostgreSQL conserva validación, módulos y persistencia relacional para entidades y restricciones logísticas. Es la adaptación técnica del enunciado MERN, documentada en [Green IT](docs/03%20Implementación/reduccion%20del%20impacto%20ambiental/01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_0_0.md). **Aceptación expresa del docente: Pendiente de aportar por el equipo.**
+NestJS/Prisma/PostgreSQL conserva validación, módulos y persistencia relacional para entidades y restricciones logísticas. Es la adaptación técnica del enunciado MERN, documentada en [Green IT](docs/03%20Implementación/reduccion%20del%20impacto%20ambiental/01%20Informe%20de%20reduccion%20del%20impacto%20ambiental%20V_1_0_0.md). La adaptación del stack se presentó al docente en las inspecciones de los Sprints 3 y 4.
 
 ```mermaid
 flowchart LR
@@ -154,7 +153,7 @@ INEI se ofrece con referencia provisional a límites 2023; los metadatos interno
 
 ## Video explicativo
 
-Enlace al video de **máximo cinco minutos**: **Pendiente de aportar por el equipo**. Duración y acceso para el docente pendientes de comprobación.
+El video del proyecto (≈ 5 minutos: elevator pitch de 1 minuto y demostración técnica de 4 minutos, en `.mp4`) es un entregable de la evaluación final de la Semana 16 y se alojará en `docs/05 Video proyecto/`, según la consigna de cierre del proyecto. Para la Inspección 5, la demostración se realiza en vivo sobre el entorno de producción.
 
 ## Fase 01: Inicio del Proyecto
 
@@ -167,11 +166,11 @@ Se conservan los trece tipos de documento, sus nombres y sus versiones. Las fuen
 | 03. Declaración de la visión | [V_1_0_0](docs/01%20Inicio/03.%20Declaraci%C3%B3n%20de%20la%20visi%C3%B3n%20V_1_0_0.md) | Sin versión anterior adicional |
 | 04. Registro de supuestos y restricciones | [V_1_0_0](docs/01%20Inicio/04.%20Registro%20de%20supuestos%20y%20restricciones%20V_1_0_0.md) | Sin versión anterior adicional |
 | 05. Registro de interesados | [V_1_0_0](docs/01%20Inicio/05.%20Registro%20de%20interesados%20V_1_0_0.md) | Sin versión anterior adicional |
-| 06. Requisitos funcionales | [V_1_1_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_0_0.md) |
+| 06. Requisitos funcionales | [V_1_2_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/06.%20Requisitos%20funcionales%20V_1_0_0.md) |
 | 07. Requisitos no funcionales | [V_1_0_0](docs/01%20Inicio/07.%20Requisitos%20no%20funcionales%20V_1_0_0.md) | Sin versión anterior adicional |
 | 08. Usuarios | [V_1_0_0](docs/01%20Inicio/08.%20Usuarios%20V_1_0_0.md) | Sin versión anterior adicional |
 | 09. Reglas de negocio | [V_1_2_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/09.%20Reglas%20de%20negocio%20V_1_0_0.md) |
-| 10. Stack tecnológico | [V_1_1_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_0_0.md) |
+| 10. Stack tecnológico | [V_1_2_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/10.%20Stack%20tecnol%C3%B3gico%20V_1_0_0.md) |
 | 11. Base de datos | [V_1_2_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/11.%20Base%20de%20datos%20V_1_0_0.md) |
 | 12. Modelo C4 | [V_1_2_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_2_0.md) | [V_1_1_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_1_0.md) · [V_1_0_0](docs/01%20Inicio/12.%20Modelo%20C4%20V_1_0_0.md) |
 | 13. Restricciones | [V_1_1_0](docs/01%20Inicio/13.%20Restricciones%20V_1_1_0.md) | [V_1_0_0](docs/01%20Inicio/13.%20Restricciones%20V_1_0_0.md) |
@@ -272,5 +271,6 @@ El commit `33e7601` tiene evidencia histórica de pruebas, SonarQube y demostrac
 | Cierre Sprint 04 | 2026-11-18 | Badges de `ci.yml` y `tests.yml`; sección «Sprint 04 — entregables» con Revisión, Retrospectiva, Análisis Playwright e informes US-018 a US-021. |
 | Despliegue | 2026-11-19 | Workflow `deploy-production.yml` y su badge; guía de despliegue en Render. |
 | Usabilidad | 2026-11-19 | Enlace a «04 Usabilidad V_1_0_0» con el resultado SUS. |
+| Cierre Inspección 5 | 2026-11-20 | Equipo completo con roles y líder; estado vigente al cierre del Sprint 4; Requisitos funcionales y Stack tecnológico en V_1_2_0; se retiran los marcadores pendientes. |
 
-Las seis referencias oficiales de Drive no pudieron consultarse en esta sesión. Los requisitos se aplican desde la transcripción proporcionada por el equipo; no se atribuyen otros requisitos a archivos no leídos.
+Los entregables del Sprint 4 siguen la «Consigna de evaluación: implementación, calidad, despliegue y cierre del Sprint 4» de Taller de Proyectos 2 (Inspección 5).

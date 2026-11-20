@@ -48,6 +48,18 @@ describe('US-018 / RF-015: registrar incidencias de entrega', () => {
     expect(driverProfileApi.createIncident).toHaveBeenCalledWith('stop', { tipo: 'CLIENTE_AUSENTE', descripcion: 'Nadie atiende' });
   });
 
+  it('explica el tipo de incidencia elegido con un ejemplo (mejora de usabilidad SUS)', async () => {
+    renderIncidents();
+    const form = await openForm();
+    const type = within(form).getByLabelText('Tipo de incidencia *');
+    expect(type).not.toHaveAttribute('aria-describedby');
+    await userEvent.selectOptions(type, 'Cliente ausente');
+    expect(type).toHaveAccessibleDescription('Nadie recibe el pedido en la dirección. Ejemplo: tocaste el timbre y nadie respondió.');
+    await userEvent.selectOptions(type, 'Vía bloqueada');
+    expect(within(form).getByText('El camino hacia la entrega está cerrado. Ejemplo: una obra, una marcha o un desvío policial.')).toBeInTheDocument();
+    expect(within(form).queryByText(/tocaste el timbre/)).not.toBeInTheDocument();
+  });
+
   it('rechaza información incompleta y señala cada dato faltante sin llamar al servidor', async () => {
     renderIncidents();
     const form = await openForm();

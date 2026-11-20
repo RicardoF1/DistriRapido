@@ -40,6 +40,16 @@ export const INCIDENT_TYPE_LABELS: Record<IncidentType, string> = {
   CARGA_DANADA: 'Carga dañada',
   OTRO: 'Otro',
 };
+// Mejora de usabilidad (SUS Sprint 4, pedido de P10): explicación breve con un ejemplo de cada tipo.
+export const INCIDENT_TYPE_DESCRIPTIONS: Record<IncidentType, string> = {
+  CLIENTE_AUSENTE: 'Nadie recibe el pedido en la dirección. Ejemplo: tocaste el timbre y nadie respondió.',
+  DIRECCION_INCORRECTA: 'La dirección no existe o no corresponde al cliente. Ejemplo: la numeración de la calle no coincide.',
+  ACCESO_RESTRINGIDO: 'No se puede ingresar al lugar de entrega. Ejemplo: el condominio no autoriza el ingreso.',
+  VIA_BLOQUEADA: 'El camino hacia la entrega está cerrado. Ejemplo: una obra, una marcha o un desvío policial.',
+  VEHICULO_AVERIADO: 'El vehículo no puede continuar la ruta. Ejemplo: una llanta pinchada o una falla mecánica.',
+  CARGA_DANADA: 'La carga está en mal estado. Ejemplo: una caja mojada o un producto roto.',
+  OTRO: 'Cualquier otra situación que impida o retrase la entrega. Explícala en la descripción.',
+};
 export interface DeliveryIncident {
   incidencia_id: string;
   tipo: IncidentType;
