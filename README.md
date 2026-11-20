@@ -51,7 +51,7 @@ Inspección documental sobre `main`, commit `7cdde3b765aa4898ef61789640900bad491
 | Sprint 1: US-001 a US-005 | Acceso, sesión, usuarios, registro y consulta de pedidos. Informes históricos V_1_0_0 conservados; aceptación formal y cierre requieren evidencia del equipo. |
 | Sprint 2: US-006 a US-009 | Estados de pedidos, vehículos, conductores y disponibilidad integrados en PR #5–#7. Gestión V_1_1_0 preparada a partir de evidencia técnica; no se declara cierre. |
 | Sprint 3: HGR-32 a HGR-36 | Consulta/comparación, asignación, panel del conductor y entregas. Los informes registran cierre administrativo en Jira y evidencia local de noviembre; esto no implica aceptación docente del producto completo. |
-| Sprint 04 — entregables | Informes técnicos de US-018 a US-023, Revisión y Retrospectiva del Sprint y Análisis Playwright (E2E en Chromium, Firefox y WebKit, rendimiento y resiliencia). La evaluación de usabilidad (SUS) y el despliegue a producción siguen pendientes. [Ver entregables](#sprint-04--entregables). |
+| Sprint 04 — entregables | Informes técnicos de US-018 a US-023, Revisión y Retrospectiva del Sprint y Análisis Playwright (E2E en Chromium, Firefox y WebKit, rendimiento y resiliencia). Evaluación de usabilidad SUS (n = 10, promedio 72,0) y despliegue continuo a producción en Render. [Ver entregables](#sprint-04--entregables). |
 | Inspección 04 — Green IT | Entrega independiente de reducción del impacto ambiental y estándares; conserva resultados históricos y limitaciones de evidencia. |
 
 La **interfaz sí permite asignar rutas**: [RouteAssignmentPanel](src/frontend/src/features/routes/RouteAssignmentPanel.tsx), integrado en [RouteDetailPage](src/frontend/src/pages/RouteDetailPage.tsx), con endpoint `PATCH /routes/:id/assignment`. Desde US-020 solo se asignan rutas confirmadas antes con `PATCH /routes/:id/confirmation`. La afirmación anterior de interfaz pendiente describía el estado previo al commit `7745ef3`.
@@ -232,7 +232,7 @@ Entregables de cierre para la Inspección 5 (2026-11-20). Cada documento enlaza 
 - [01 Revisión del Sprint V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/01%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
 - [02 Retrospectiva del Sprint V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/02%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
 - [03 Analisis PlayWrigth V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/03%20Analisis%20PlayWrigth%20V_1_0_0.md)
-- 04 Usabilidad V_1_0_0 — pendiente: se publicará cuando se hayan reunido las respuestas SUS de al menos 5 personas. Material de aplicación: [Guía de aplicación SUS V_1_0_0](docs/otros/soporte-sprint-04/usabilidad/Gu%C3%ADa%20de%20aplicaci%C3%B3n%20SUS%20V_1_0_0.md) y cálculo con `node scripts/sus-score.cjs`.
+- [04 Usabilidad V_1_0_0](docs/03%20Implementaci%C3%B3n/Sprint%2004/04%20Usabilidad%20V_1_0_0.md) — SUS con n = 10: promedio 72,0, nota C+, «Bueno», cumple el umbral de 68. Material de aplicación: [Guía de aplicación SUS V_1_0_0](docs/otros/soporte-sprint-04/usabilidad/Gu%C3%ADa%20de%20aplicaci%C3%B3n%20SUS%20V_1_0_0.md).
 
 Workflows de GitHub Actions: [ci.yml](.github/workflows/ci.yml) (typecheck, lint, pruebas, build, auditoría y CodeQL) · [tests.yml](.github/workflows/tests.yml) (backend, Vitest y E2E en Chromium, Firefox y WebKit, con el reporte HTML como artifact). [deploy-production.yml](.github/workflows/deploy-production.yml) (tras `tests.yml` en verde sobre `main`: imágenes en GHCR, migraciones, despliegue en Render y verificación de la URL pública). Configuración y operación: [Despliegue en Render V_1_0_0](docs/otros/despliegue/Despliegue%20en%20Render%20V_1_0_0.md).
 
@@ -271,5 +271,6 @@ El commit `33e7601` tiene evidencia histórica de pruebas, SonarQube y demostrac
 | Adecuación TP2 | 2026-11-12 | Completa secciones de la guía; separa antecedentes de estado vigente; enlaza gestión Sprint 2 y ruta oficial Sprint 3; declara limitaciones. |
 | Cierre Sprint 04 | 2026-11-18 | Badges de `ci.yml` y `tests.yml`; sección «Sprint 04 — entregables» con Revisión, Retrospectiva, Análisis Playwright e informes US-018 a US-021. |
 | Despliegue | 2026-11-19 | Workflow `deploy-production.yml` y su badge; guía de despliegue en Render. |
+| Usabilidad | 2026-11-19 | Enlace a «04 Usabilidad V_1_0_0» con el resultado SUS. |
 
 Las seis referencias oficiales de Drive no pudieron consultarse en esta sesión. Los requisitos se aplican desde la transcripción proporcionada por el equipo; no se atribuyen otros requisitos a archivos no leídos.
