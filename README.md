@@ -21,6 +21,7 @@ Nombre académico: **Plataforma web con Algoritmo Genético para optimizar rutas
 - [Fase 01: Inicio del Proyecto](#fase-01-inicio-del-proyecto)
 - [Fase 02: Planificación del Proyecto](#fase-02-planificación-del-proyecto)
 - [Fase 03: Implementación del Proyecto](#fase-03-implementación-del-proyecto)
+- [Índice completo del material de soporte](#índice-completo-del-material-de-soporte)
 - [Versionamiento y evidencias](#versionamiento-y-evidencias)
 
 ## Equipo
@@ -257,6 +258,76 @@ Ocho optimizaciones documentadas con antes/después y estimación SWDM v4. Los r
 
 Seguimiento y Control cuenta con evidencia parcial en informes de estado, impedimentos, Jira y calidad; su informe consolidado sigue pendiente. El video, la aceptación del PMV y el cierre global son requisitos generales del proyecto, no obligaciones atribuidas específicamente a Semana 13. Su validación continúa pendiente.
 
+## Índice completo del material de soporte
+
+Todos los documentos de `docs/otros/` (evidencia técnica, informes por historia y guías). Cada uno enlaza de vuelta a este README.
+
+**Antecedentes del Sprint 1**
+
+- [05. Mejoras posteriores al Sprint 1 V_1_1_0](docs/otros/antecedentes-sprint-01/05%20Mejoras%20posteriores%20al%20Sprint%201%20V_1_1_0.md)
+- [Evidencias técnicas históricas — Sprint 1](docs/otros/antecedentes-sprint-01/README.md)
+- [Incremento US-001 — Iniciar sesión](docs/otros/antecedentes-sprint-01/US-001.md)
+- [US-002 — Cerrar sesión](docs/otros/antecedentes-sprint-01/US-002.md)
+- [Corrección de la prueba manual de US-003 — 2026-10-01](docs/otros/antecedentes-sprint-01/US-003-correccion.md)
+- [RF-002 → US-003 — Administrar usuarios y roles](docs/otros/antecedentes-sprint-01/US-003.md)
+- [Verificación de navegación US-004 — 2026-10-01](docs/otros/antecedentes-sprint-01/US-004-navegacion.md)
+- [RF-003 → US-004 — Registrar pedidos](docs/otros/antecedentes-sprint-01/US-004.md)
+- [Guía de diseño del prototipo (DESIGN.md)](docs/otros/antecedentes-sprint-01/prototipos/stitch_huancayo_greenroute_logistics_platform/andean_route_optimization_system/DESIGN.md)
+
+**Soporte del Sprint 2**
+
+- [Integración local de Sprints 1 y 2 V_1_1_0](docs/otros/soporte-sprint-02/Integraci%C3%B3n%20Sprints%201%20y%202%20V_1_1_0.md)
+- [US-008 — Diseño y avance independiente V_1_1_0](docs/otros/soporte-sprint-02/US-008%20Dise%C3%B1o%20V_1_1_0.md)
+- [US-008 — Implementación provisional y verificación Docker V_1_1_0](docs/otros/soporte-sprint-02/US-008%20Implementaci%C3%B3n%20V_1_1_0.md)
+- [US-008 — Aplicación local de migración y aceptación real V_1_1_0](docs/otros/soporte-sprint-02/US-008%20Migraci%C3%B3n%20local%20V_1_1_0.md)
+- [US-009 Diseño V_1_1_0.md](docs/otros/soporte-sprint-02/US-009%20Dise%C3%B1o%20V_1_1_0.md)
+- [US-009 Implementación V_1_1_0.md](docs/otros/soporte-sprint-02/US-009%20Implementaci%C3%B3n%20V_1_1_0.md)
+- [US-009 Migración local V_1_1_0.md](docs/otros/soporte-sprint-02/US-009%20Migraci%C3%B3n%20local%20V_1_1_0.md)
+
+**Soporte del Sprint 3**
+
+- [Panel y acceso preparatorio del conductor V_1_1_0](docs/otros/soporte-sprint-03/01%20Panel%20y%20acceso%20preparatorio%20del%20conductor%20V_1_1_0.md)
+- [Cuentas y vinculación de conductores — etapa 1](docs/otros/soporte-sprint-03/02%20Cuentas%20y%20vinculaci%C3%B3n%20de%20conductores%20V_1_1_0.md)
+- [Diseño de restablecimiento de credenciales — etapa 2](docs/otros/soporte-sprint-03/03%20Dise%C3%B1o%20de%20restablecimiento%20de%20credenciales%20V_1_1_0.md)
+- [Auditoría del incremento parcial de planificación, OSRM y US-013](docs/otros/soporte-sprint-03/04%20Auditor%C3%ADa%20del%20incremento%20parcial%20de%20rutas%20V_1_1_0.md)
+- [Correcciones del incremento de rutas y preparación de infraestructura](docs/otros/soporte-sprint-03/05%20Correcciones%20y%20preparaci%C3%B3n%20de%20rutas%20V_1_1_0.md)
+- [06 Evidencia técnica de cierre del Sprint 3 V_1_1_0](docs/otros/soporte-sprint-03/06%20Evidencia%20t%C3%A9cnica%20de%20cierre%20del%20Sprint%203%20V_1_1_0.md)
+- [Gestión de credenciales de conductores — etapa 2](docs/otros/soporte-sprint-03/06%20Gesti%C3%B3n%20de%20credenciales%20de%20conductores%20V_1_1_0.md)
+- [Habilitación local de credenciales de conductores](docs/otros/soporte-sprint-03/07%20Habilitaci%C3%B3n%20local%20de%20credenciales%20V_1_1_0.md)
+- [Entrega pública de avances del Sprint 3](docs/otros/soporte-sprint-03/08%20Entrega%20p%C3%BAblica%20de%20avances%20V_1_1_0.md)
+- [Corrección de auditoría de dependencias — PR 8](docs/otros/soporte-sprint-03/09%20Correcci%C3%B3n%20de%20auditor%C3%ADa%20de%20dependencias%20V_1_1_0.md)
+- [Índice anterior del cierre del Sprint 3](docs/otros/soporte-sprint-03/README.md)
+- [Inventario de capturas del cierre del Sprint 3](docs/otros/soporte-sprint-03/evidencias/README.md)
+
+**Soporte del Sprint 4**
+
+- [US-018: Registrar incidencias de entrega](docs/otros/soporte-sprint-04/01%20US-018%20Registrar%20incidencias%20V_1_0_0.md)
+- [US-019: Consultar estado de rutas y entregas](docs/otros/soporte-sprint-04/02%20US-019%20Consultar%20estado%20operativo%20V_1_0_0.md)
+- [US-020: Confirmar ruta](docs/otros/soporte-sprint-04/03%20US-020%20Confirmar%20ruta%20V_1_0_0.md)
+- [US-021: Registrar información de sostenibilidad](docs/otros/soporte-sprint-04/04%20US-021%20Registrar%20sostenibilidad%20V_1_0_0.md)
+- [US-022: Consultar indicadores](docs/otros/soporte-sprint-04/05%20US-022%20Consultar%20indicadores%20V_1_0_0.md)
+- [US-023: Consultar historial](docs/otros/soporte-sprint-04/06%20US-023%20Consultar%20historial%20V_1_0_0.md)
+- [Formulario SUS para Google Forms](docs/otros/soporte-sprint-04/usabilidad/Formulario%20SUS%20V_1_0_0.md)
+- [Guía de aplicación de la evaluación SUS](docs/otros/soporte-sprint-04/usabilidad/Gu%C3%ADa%20de%20aplicaci%C3%B3n%20SUS%20V_1_0_0.md)
+
+**Despliegue**
+
+- [Despliegue en producción (Render)](docs/otros/despliegue/Despliegue%20en%20Render%20V_1_0_0.md)
+
+**Planes y especificaciones técnicas**
+
+- [Acceso preparatorio del conductor — plan de implementación](docs/otros/superpowers/plans/2026-10-29-driver-access.md)
+- [Gestión de cuentas de conductores — etapa 1](docs/otros/superpowers/plans/2026-10-29-driver-account-management.md)
+- [Etapa 2: credenciales de conductores](docs/otros/superpowers/plans/2026-10-29-driver-credentials-stage2.md)
+- [Correcciones del incremento de rutas Implementation Plan](docs/otros/superpowers/plans/2026-10-29-routing-corrections.md)
+- [Primer incremento de rutas Implementation Plan](docs/otros/superpowers/plans/2026-10-29-routing-increment.md)
+- [Contratos de planificación, cálculo OSRM y consulta de rutas V_1_1_0](docs/otros/superpowers/specs/2026-10-29-routing-osrm-design.md)
+
+**Otros documentos**
+
+- [Informe de adecuación documental — Taller de Proyectos 2](docs/otros/INFORME-EVALUACION-TP2.md)
+- [Versionamiento y evidencias de gestión](docs/otros/VERSIONAMIENTO-Y-EVIDENCIAS.md)
+
 ## Versionamiento y evidencias
 
 El historial muestra ramas por historia/actividad y PR hacia `main` o integración de sprint. Véase [flujo y candidatos a PMV](docs/otros/VERSIONAMIENTO-Y-EVIDENCIAS.md). No hay tags ni releases de GitHub en la consulta de esta revisión. `v1.0.0-MVP` UNRELEASED de Jira no es un tag Git.
@@ -271,6 +342,6 @@ El commit `33e7601` tiene evidencia histórica de pruebas, SonarQube y demostrac
 | Cierre Sprint 04 | 2026-11-18 | Badges de `ci.yml` y `tests.yml`; sección «Sprint 04 — entregables» con Revisión, Retrospectiva, Análisis Playwright e informes US-018 a US-021. |
 | Despliegue | 2026-11-19 | Workflow `deploy-production.yml` y su badge; guía de despliegue en Render. |
 | Usabilidad | 2026-11-19 | Enlace a «04 Usabilidad V_1_0_0» con el resultado SUS. |
-| Cierre Inspección 5 | 2026-11-20 | Equipo completo con roles y líder; estado vigente al cierre del Sprint 4; Requisitos funcionales y Stack tecnológico en V_1_2_0; se retiran los marcadores pendientes. |
+| Cierre Inspección 5 | 2026-11-20 | Índice completo del material de soporte (navegación README ↔ documentación en todo `docs/`); equipo completo con roles y líder; estado vigente al cierre del Sprint 4; Requisitos funcionales y Stack tecnológico en V_1_2_0; se retiran los marcadores pendientes. |
 
 Los entregables del Sprint 4 siguen la «Consigna de evaluación: implementación, calidad, despliegue y cierre del Sprint 4» de Taller de Proyectos 2 (Inspección 5).
