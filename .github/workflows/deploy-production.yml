@@ -232,7 +232,7 @@ jobs:
             echo "|---|---|---|---|"
           } >> "$GITHUB_STEP_SUMMARY"
           for path in / /login /api/health /geodata/coverage/v1/coverage.geojson; do
-            read -r code ttfb total < <(curl -sS -o /dev/null --max-time 60 -w '%{http_code} %{time_starttransfer} %{time_total}' "$base$path")
+            read -r code ttfb total < <(curl -sS -o /dev/null --max-time 60 -w '%{http_code} %{time_starttransfer} %{time_total}\n' "$base$path")
             echo "| \`${path}\` | ${code} | ${ttfb} | ${total} |" >> "$GITHUB_STEP_SUMMARY"
             [ "$code" = "200" ] || { echo "::error::${path} respondió ${code}"; exit 1; }
           done
